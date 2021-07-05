@@ -39,4 +39,4 @@ jobs:
           passphrase: ${{ secrets.SSH_KEY_PASS }}
           port: ${{ secrets.SSH_PORT }}
           source: "*"
-          target: "test"
+          target: "www/cubanmusic-backend"
