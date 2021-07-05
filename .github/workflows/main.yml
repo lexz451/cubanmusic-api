@@ -40,3 +40,4 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           source: "*"
           target: "www/cubanmusic-backend"
+          rm: true
