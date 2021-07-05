@@ -37,7 +37,7 @@ jobs:
       - name: Init SSH
         run: |
           echo $SSH_KEY >> ~/.private-key.pem
-          eval 'ssh-agent -s'
+          exec ssh-agent bash
           ssh-add ~/.private-key.pem
 
       # Runs a set of commands using the runners shell
