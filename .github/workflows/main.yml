@@ -32,7 +32,7 @@ jobs:
       - name: Init SSH
         run: |
           echo "${{ secrets.SSH_KEY }}" >> ~/.private-key.pem
-          eval 'ssh-agent -s'
+          exec ssh-agent bash
           ssh-add ~/.private-key.pem
 
 
