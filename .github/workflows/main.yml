@@ -31,11 +31,11 @@ jobs:
 
       # Runs a set of commands using the runners shell
       - name: Deploy
-        run: |
-          echo "${{secrets.SSH_KEY}}" >> ~/.private-key.pem
-          exec ssh-agent bash
-          ssh-add ~/.private-key.pem
-          chmod 600 ~/.private-key.pem
-          cd $GITHUB_WORKSPACE
-          rsync -avz -e "ssh -p ${{secrets.SSH_PORT}} -o StrictHostKeyChecking=no -i ~/.private-key.pem" ./ ${{secrets.SSH_USER}}@${{secrets.SSH_HOST}}:/home/${{secrets.SSH_USER}}/www/cubanmusic-backend
-          echo "Project deployed."
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          source: "*"
+          target: "test"
