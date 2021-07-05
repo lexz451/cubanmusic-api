@@ -36,6 +36,6 @@ jobs:
           exec ssh-agent bash
           ssh-add ~/.private-key.pem
           chmod 600 ~/.private-key.pem
+          cd $GITHUB_WORKSPACE
           rsync -avz -e "ssh -p ${{secrets.SSH_PORT}} -o StrictHostKeyChecking=no -i ~/.private-key.pem" ./ ${{secrets.SSH_USER}}@${{secrets.SSH_HOST}}:/home/${{secrets.SSH_USER}}/www/cubanmusic-backend
           echo "Project deployed."
-          ls -l
