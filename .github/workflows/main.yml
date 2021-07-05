@@ -31,7 +31,7 @@ jobs:
 
       - name: Init SSH
         run: |
-          echo ${{ secrets.SSH_KEY }} >> ~/.private-key.pem
+          echo "${{ secrets.SSH_KEY }}" >> ~/.private-key.pem
           eval 'ssh-agent -s'
           ssh-add ~/.private-key.pem
 
