@@ -29,6 +29,19 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
+      - name: Cache
+        uses: actions/cache@v2
+        with:
+          path: /tmp/composer-cache
+          key: ${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
+
+      - name: Build
+        uses: php-actions/composer@v6
+        with:
+          dev: no
+          php_version: 7.3
+          args: --optimize-autoloader
+
       # Runs a set of commands using the runners shell
       - name: Deploy
         uses: appleboy/scp-action@master
