@@ -42,6 +42,13 @@ jobs:
           php_version: 7.3
           args: --optimize-autoloader
 
+      - name: Create .env
+        uses: fmunirdev/envvar-to-dotenv-action@v0.1.0
+        env:
+          DATABASE_URL: 'x'
+        with:
+          variableName: DATABASE_URL
+
       # Runs a set of commands using the runners shell
       - name: Deploy
         uses: appleboy/scp-action@master
