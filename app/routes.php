@@ -1,8 +1,7 @@
 <?php
 declare(strict_types=1);
 
-use App\Application\Actions\User\ListUsersAction;
-use App\Application\Actions\User\ViewUserAction;
+use App\Controllers\LoginController;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\App;
@@ -15,12 +14,13 @@ return function (App $app) {
     });
 
     $app->get('/', function (Request $request, Response $response) {
-        $response->getBody()->write('Hello world!');
+        $username = $_ENV["DB_USERNAME"];
+        $response->getBody()->write("Welcome " . $username);
         return $response;
     });
 
-    $app->group('/users', function (Group $group) {
-        $group->get('', ListUsersAction::class);
-        $group->get('/{id}', ViewUserAction::class);
+    // CubanMusic Api v1.0
+    $app->group('/api/v1', function (Group $group) {
+        $group->post('/login', [LoginController::class, 'login']);
     });
 };
