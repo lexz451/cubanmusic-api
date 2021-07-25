@@ -45,9 +45,16 @@ jobs:
       - name: Create .env
         uses: fmunirdev/envvar-to-dotenv-action@v0.1.0
         env:
-          DATABASE_URL: 'x'
+          APP_NAME: ${{ secrets.APP_NAME }}
+          APP_DEBUG: ${{ secrets.APP_DEBUG }},
+          DB_HOST: ${{ secrets.DB_HOST }},
+          DB_NAME: ${{ secrets.DB_NAME }},
+          DB_PORT: ${{ secrets.DB_PORT }},
+          DB_USERNAME: ${{ secrets.DB_USERNAME }},
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }},
+          JWT_SECRET: ${{ secrets.JWT_SECRET }},
         with:
-          variableName: DATABASE_URL
+          variableName: APP_NAME,APP_DEBUG,DB_HOST,DB_NAME,DB_PORT,DB_USERNAME,DB_PASSWORD,JWT_SECRET
 
       # Runs a set of commands using the runners shell
       - name: Deploy

@@ -9,6 +9,6 @@ use function DI\autowire;
 return function (ContainerBuilder $containerBuilder) {
     // Here we map our UserRepository interface to its in memory implementation
     $containerBuilder->addDefinitions([
-        'userRepository' => autowire(UserRepository::class),
+        UserRepository::class => autowire(UserRepository::class),
     ]);
 };

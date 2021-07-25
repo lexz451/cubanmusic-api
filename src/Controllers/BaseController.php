@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Repositories\UserRepository;
+use App\Services\AuthService;
 use Cake\Validation\Validator;
 use DI\Container;
 use Illuminate\Database\Capsule\Manager;
@@ -21,11 +22,13 @@ class BaseController
 {
     protected CakeValidationFactory $validatorFactory;
     protected LoggerInterface $logger;
+    protected AuthService $auth;
 
     public function __construct(ContainerInterface $container)
     {
         $this->logger = $container->get(LoggerInterface::class);
-        $this->validatorFactory = $container.get(CakeValidationFactory::class);
+        $this->validatorFactory = $container->get(CakeValidationFactory::class);
+        $this->auth = $container->get(AuthService::class);
     }
 
     protected function jsonResponse(

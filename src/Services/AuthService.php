@@ -2,14 +2,23 @@
 
 namespace App\Services;
 
+use App\Models\User;
+use App\Repositories\UserRepository;
 use DateTime;
 use Firebase\JWT\JWT;
-use User;
+use Psr\Container\ContainerInterface;
 
 class AuthService {
 
+    private UserRepository $userRepository;
+
+    public function __construct(ContainerInterface $containerInterface)
+    {
+        $this->userRepository = $containerInterface->get(UserRepository::class);
+    }
+
     public function login($username, $password) {
-        $user = $this->userRepository->findByEmailAndPassword($username, $password);
+        $user = $this->userRepository->getByEmailAndPassword($username, $password);
         if ($user) {
             $token = $this->generateToken($user);
             return $token;

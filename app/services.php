@@ -7,6 +7,6 @@ use function DI\autowire;
 
 return function (ContainerBuilder $containerBuilder) {
     $containerBuilder->addDefinitions([
-        'authService' => autowire(AuthService::class)
+        AuthService::class => autowire(AuthService::class)
     ]);
 };

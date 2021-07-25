@@ -42,6 +42,8 @@ $container = $containerBuilder->build();
 AppFactory::setContainer($container);
 $app = AppFactory::create();
 
+$app->getContainer()->get("db"); // Fix: Eloquent ORM on Slim initialization
+
 // Register middleware
 $middleware = require_once __DIR__ . '/../app/middleware.php';
 $middleware($app);

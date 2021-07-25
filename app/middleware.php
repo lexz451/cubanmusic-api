@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-use App\Application\Middleware\SessionMiddleware;
+use App\Middleware\ApiExceptionMiddleware;
 use Selective\Validation\Encoder\JsonEncoder;
 use Selective\Validation\Middleware\ValidationExceptionMiddleware;
 use Selective\Validation\Transformer\ErrorDetailsResultTransformer;
@@ -20,6 +20,11 @@ return function (App $app) {
             $app->getResponseFactory(),
             new ErrorDetailsResultTransformer(),
             new JsonEncoder()
+        )
+    );
+    $app->add(
+        new ApiExceptionMiddleware(
+            $app->getResponseFactory()
         )
         );
 };

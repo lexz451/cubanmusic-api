@@ -2,11 +2,13 @@
 
 namespace App\Controllers;
 
+use App\Exceptions\UnauthorizedException;
 use App\Repositories\UserRepository;
 use Cake\Validation\Validator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Selective\Validation\Exception\ValidationException;
+use Selective\Validation\ValidationError;
 
 class LoginController extends BaseController {
 
@@ -22,9 +24,16 @@ class LoginController extends BaseController {
             throw new ValidationException('Invalid request', $validationResult);
         }
 
-        // Validate request
+        $username = $data['email'];
+        $password = $data['password'];
+        
+        $token = $this->auth->login($username, $password);
+        if (!$token) {
+            throw new UnauthorizedException('Invalid credentials');
+        }
+
         $message = [
-            'token' => 'xx'
+            "token" => $token
         ];
 
         return $this->jsonResponse($response, 'success', $message, 200);
