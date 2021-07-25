@@ -54,7 +54,7 @@ jobs:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }},
           JWT_SECRET: ${{ secrets.JWT_SECRET }},
         with:
-          variableName: APP_NAME,APP_DEBUG,DB_HOST,DB_NAME,DB_PORT,DB_USERNAME,DB_PASSWORD,JWT_SECRET
+          variableNames: APP_NAME,APP_DEBUG,DB_HOST,DB_NAME,DB_PORT,DB_USERNAME,DB_PASSWORD,JWT_SECRET
 
       # Runs a set of commands using the runners shell
       - name: Deploy
