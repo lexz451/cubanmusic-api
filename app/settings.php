@@ -11,7 +11,7 @@ return function (ContainerBuilder $containerBuilder) {
     $containerBuilder->addDefinitions([
         'settings' => function () {
             return [
-                'debug' => true,
+                'debug' => $_ENV['APP_DEBUG'],
                 'logger' => [
                     'name' => $_ENV['APP_NAME'],
                     'path' => __DIR__ . '/../logs/app.log',
