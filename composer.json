@@ -7,7 +7,12 @@
     "require": {
         "php": "^7.2 || ^8.0",
         "ext-json": "*",
+        "cache/apc-adapter": "^1.1",
+        "cache/array-adapter": "^1.1",
+        "cache/filesystem-adapter": "^1.1",
+        "cache/psr-6-doctrine-bridge": "^3.1",
         "cakephp/validation": "^4.2",
+        "doctrine/orm": "^2.9",
         "fakerphp/faker": "^1.15",
         "firebase/php-jwt": "^5.4",
         "illuminate/database": "^8.49",

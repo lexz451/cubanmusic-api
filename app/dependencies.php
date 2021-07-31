@@ -2,17 +2,18 @@
 
 declare(strict_types=1);
 
+use Cache\Adapter\Apc\ApcCachePool;
+use Cache\Adapter\PHPArray\ArrayCachePool;
+use Cache\Bridge\Doctrine\DoctrineCacheBridge;
 use DI\ContainerBuilder;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Tools\Setup;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Monolog\Processor\UidProcessor;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Log\LoggerInterface;
 use Selective\Validation\Factory\CakeValidationFactory;
-use Selective\Validation\Middleware\ValidationExceptionMiddleware;
-use Slim\App;
-use Slim\Factory\AppFactory;
 
 return function (ContainerBuilder $containerBuilder) {
     $containerBuilder->addDefinitions([
@@ -30,15 +31,25 @@ return function (ContainerBuilder $containerBuilder) {
 
             return $logger;
         },
-        'db' => function (ContainerInterface $c) {
+        EntityManager::class => function (ContainerInterface $c) {
             $settings = $c->get('settings');
-            $dbSettings = $settings['db'];
+            $config = Setup::createAnnotationMetadataConfiguration(
+                $settings['doctrine']['metadata_dirs'],
+                $settings['doctrine']['dev_mode']
+            );
 
-            $db = new \Illuminate\Database\Capsule\Manager();
-            $db->addConnection($dbSettings);
-            $db->setAsGlobal();
-            $db->bootEloquent();
-            return $db;
+            if ($_ENV['APP_DEBUG']) {
+                $pool = new ArrayCachePool();
+            } else {
+                $pool = new ApcCachePool();
+            }
+
+            $config->setMetadataCache($pool);
+
+            $cache = new DoctrineCacheBridge($pool);
+            $config->setQueryCacheImpl($cache);
+            
+            return EntityManager::create($settings['doctrine']['connection'], $config);
         },
         CakeValidationFactory::class => function () {
             return new CakeValidationFactory();

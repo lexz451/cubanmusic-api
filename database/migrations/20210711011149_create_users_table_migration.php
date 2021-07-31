@@ -23,8 +23,8 @@ final class CreateUsersTableMigration extends AbstractMigration
             ->addColumn('last_name', 'string', ['limit' => 255])
             ->addColumn('email', 'string', ['limit' => 255])
             ->addColumn('password', 'string', ['limit' => 255])
-            ->addColumn('role_id', 'integer', ['null' => true])
-            ->addForeignKey(['role_id'], 'roles', ['id'], ['delete' => 'SET_NULL', 'update' => 'CASCADE'])
+            ->addColumn('role', 'integer')
+            ->addForeignKey(['role'], 'roles', ['id'], ['delete' => 'CASCADE', 'update' => 'CASCADE'])
             ->addTimestamps()
             ->create();
     }
