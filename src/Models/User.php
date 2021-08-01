@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Role;
 
 class User extends Model {
     protected $table = 'users';
