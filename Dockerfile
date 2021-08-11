@@ -1,6 +1,6 @@
-FROM openjdk:8-jre-slim
-COPY .env /usr/src/cubanmusic
-COPY ./target /usr/src/cubanmusic
-WORKDIR /usr/src/cubanmusic
+FROM openjdk:16-alpine
+ARG JAR_FILE=target/*.jar
+COPY ${JAR_FILE} app.jar
+COPY .env .env
 EXPOSE 8080
-CMD ["java", "-jar", "cubanmusic-api-0.0.1-SNAPSHOT.jar", "-Denv=.env"]
+ENTRYPOINT ["java", "-jar", "/app.jar", "-Denv=.env"]
