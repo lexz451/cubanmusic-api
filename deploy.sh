@@ -1,3 +1,2 @@
-docker-compose down --rmi all
 mvn clean package
-docker-compose up -d
+java -jar ./target/cubanmusic-api-0.0.1-SNAPSHOT.jar -Denv=.env
