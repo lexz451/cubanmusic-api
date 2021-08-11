@@ -29,32 +29,20 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
-      - name: Cache
-        uses: actions/cache@v2
-        with:
-          path: /tmp/composer-cache
-          key: ${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
-
-      - name: Build
-        uses: php-actions/composer@v6
-        with:
-          dev: no
-          php_version: 7.3
-          args: --optimize-autoloader
-
       - name: Create .env
         uses: fmunirdev/envvar-to-dotenv-action@v0.1.0
         env:
-          APP_NAME: ${{ secrets.APP_NAME }}
-          APP_DEBUG: ${{ secrets.APP_DEBUG }},
-          DB_HOST: ${{ secrets.DB_HOST }},
-          DB_NAME: ${{ secrets.DB_NAME }},
-          DB_PORT: ${{ secrets.DB_PORT }},
-          DB_USERNAME: ${{ secrets.DB_USERNAME }},
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }},
+          DATABASE_HOST: ${{ secrets.DATABASE_HOST }},
+          DATABASE_NAME: ${{ secrets.DATABASE_NAME }},
+          DATABASE_PORT: ${{ secrets.DATABASE_PORT }},
+          DATABASE_USER: ${{ secrets.DATABASE_USER }},
+          DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }},
           JWT_SECRET: ${{ secrets.JWT_SECRET }},
+          JWT_EXPIRATION: ${{ secrets.JWT_EXPIRATION }},
+          ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
         with:
-          variableNames: APP_NAME,APP_DEBUG,DB_HOST,DB_NAME,DB_PORT,DB_USERNAME,DB_PASSWORD,JWT_SECRET
+          variableNames: DATABASE_HOST,DATABASE_NAME,DATABASE_PORT,DATABASE_USER,DATABASE_PASSWORD,JWT_SECRET,JWT_EXPIRATION,ADMIN_EMAIL,ADMIN_PASSWORD
 
       # Runs a set of commands using the runners shell
       - name: Deploy
@@ -66,5 +54,5 @@ jobs:
           passphrase: ${{ secrets.SSH_KEY_PASS }}
           port: ${{ secrets.SSH_PORT }}
           source: "*"
-          target: "www/api.cubanmusic.info/public_html"
+          target: "cubanmusic"
           rm: true
