@@ -63,5 +63,5 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.SSH_KEY_PASS }}
-          script: sh deploy.sh
+          script: sh cubanmusic/deploy.sh
 
