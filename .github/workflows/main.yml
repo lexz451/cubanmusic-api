@@ -55,3 +55,13 @@ jobs:
           source: "*"
           target: "cubanmusic"
           rm: true
+
+      - name: Run
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          passphrase: ${{ secrets.SSH_KEY_PASS }}
+          script: sh deploy.sh
+
