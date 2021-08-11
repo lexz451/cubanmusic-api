@@ -1,5 +1,4 @@
 FROM openjdk:16-alpine
-COPY ./target/ /usr/src/cubanmusic
-WORKDIR /usr/src/cubanmusic
+WORKDIR ./
 EXPOSE 8080
-CMD ['java', '-jar', 'cubanmusic-api-0.0.1-SNAPSHOT.jar']
+CMD ['java', '-jar', './target/cubanmusic-api-0.0.1-SNAPSHOT.jar', '-Denv=.env']
