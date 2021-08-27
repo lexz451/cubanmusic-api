@@ -13,15 +13,16 @@ open class Person() : Artist() {
 
     open var deathDate: Date? = null
 
-    @ManyToOne
+
+    @ManyToOne(cascade = [CascadeType.ALL])
     @JoinColumn(name = "birth_place_id")
     open var birthPlace: Location? = null
 
-    @ManyToOne
+    @ManyToOne(cascade = [CascadeType.ALL])
     @JoinColumn(name = "death_place_id")
     open var deathPlace: Location? = null
 
-    @ManyToOne
+    @ManyToOne(cascade = [CascadeType.ALL])
     @JoinColumn(name = "residence_place_id")
     open var residencePlace: Location? = null
 
@@ -29,7 +30,7 @@ open class Person() : Artist() {
     @Column(name = "gender", nullable = false)
     open var gender: Gender = Gender.OTHER
 
-    @ManyToOne
+    @ManyToOne(cascade = [CascadeType.ALL])
     @JoinColumn(name = "job_title_id")
     open var jobTitle: JobTitle? = null
 

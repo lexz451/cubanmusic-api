@@ -1,4 +1,4 @@
-package info.cubanmusic.cubanmusicapi.wrapper
+package info.cubanmusic.cubanmusicapi.dto
 
 data class SignUpRequest(
     val name: String,

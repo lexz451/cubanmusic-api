@@ -1,5 +1,6 @@
 package info.cubanmusic.cubanmusicapi.model
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import org.hibernate.Hibernate
 import javax.persistence.*
 
@@ -25,6 +26,7 @@ open class Country {
 
     open var emoji: String? = null
 
+    @JsonIgnore
     @OneToMany(mappedBy = "country", orphanRemoval = true)
     open var artists: MutableList<Artist> = mutableListOf()
 

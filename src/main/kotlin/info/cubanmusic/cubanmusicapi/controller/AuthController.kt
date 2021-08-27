@@ -4,10 +4,10 @@ import info.cubanmusic.cubanmusicapi.model.Role
 import info.cubanmusic.cubanmusicapi.model.User
 import info.cubanmusic.cubanmusicapi.security.JwtTokenProvider
 import info.cubanmusic.cubanmusicapi.services.UserService
-import info.cubanmusic.cubanmusicapi.wrapper.ApiResponse
-import info.cubanmusic.cubanmusicapi.wrapper.JWTAuthenticationResponse
-import info.cubanmusic.cubanmusicapi.wrapper.SignInRequest
-import info.cubanmusic.cubanmusicapi.wrapper.SignUpRequest
+import info.cubanmusic.cubanmusicapi.dto.ApiResponse
+import info.cubanmusic.cubanmusicapi.dto.JWTAuthenticationResponse
+import info.cubanmusic.cubanmusicapi.dto.SignInRequest
+import info.cubanmusic.cubanmusicapi.dto.SignUpRequest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -70,7 +70,7 @@ class AuthController {
         user.password = passwordEncoder.encode(request.password)
         user.role = Role.CURATOR
         user.enabled = false
-        userService.saveUser(user)
+        userService.save(user)
         return ResponseEntity(
             ApiResponse(true, "User successfully registered"),
             HttpStatus.OK

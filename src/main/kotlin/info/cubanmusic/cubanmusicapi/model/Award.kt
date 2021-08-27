@@ -1,5 +1,6 @@
 package info.cubanmusic.cubanmusicapi.model
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import org.hibernate.Hibernate
 import javax.persistence.*
 
@@ -31,9 +32,14 @@ open class Award {
     @ElementCollection
     open var categories: Set<String> = setOf()
 
-    @ManyToOne(cascade = [CascadeType.ALL])
-    @JoinColumn(name = "artist_id")
-    open var artist: Artist? = null
+    @JsonIgnore
+    @ManyToMany
+    @JoinTable(
+        name = "ARTIST_AWARD",
+        joinColumns = [JoinColumn(name = "AWARD_id")],
+        inverseJoinColumns = [JoinColumn(name = "ARTIST_id")]
+    )
+    open var artists: MutableList<Artist> = mutableListOf()
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

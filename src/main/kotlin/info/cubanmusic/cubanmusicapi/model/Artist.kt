@@ -1,5 +1,7 @@
 package info.cubanmusic.cubanmusicapi.model
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo
+import com.fasterxml.jackson.annotation.ObjectIdGenerators
 import org.hibernate.Hibernate
 import java.util.*
 import javax.persistence.*
@@ -15,14 +17,18 @@ open class Artist {
     open var name: String = ""
 
     open var alias: String = ""
-    @ElementCollection
 
+    @ElementCollection
     open var additionalNames: Set<String> = setOf()
 
     @OneToMany(mappedBy = "artist", cascade = [CascadeType.ALL], orphanRemoval = true)
     open var images: MutableList<Image> = mutableListOf()
 
-    @OneToMany(mappedBy = "artist", cascade = [CascadeType.ALL], orphanRemoval = true)
+
+    @ManyToMany(cascade = [CascadeType.MERGE])
+    @JoinTable(name = "ARTIST_AWARD",
+    joinColumns = [JoinColumn(name = "ARTIST_id")],
+    inverseJoinColumns = [JoinColumn(name = "AWARD_id")])
     open var awards: MutableList<Award> = mutableListOf()
 
     @ManyToMany(mappedBy = "artists", cascade = [CascadeType.ALL])
@@ -35,25 +41,36 @@ open class Artist {
     @JoinColumn(name = "country_id")
     open var country: Country? = null
 
-    open var activeSince: Date? = null
+    open var activeSince: Int? = null
 
-    open var activeUntil: Date? = null
+    open var activeUntil: Int? = null
 
     @ManyToOne
     @JoinColumn(name = "affiliation_id")
     open var affiliation: Organization? = null
 
-    @ManyToMany(mappedBy = "artists")
+
+    @ManyToMany()
+    @JoinTable(name = "ARTIST_GENRE",
+    joinColumns = [JoinColumn(name = "ARTIST_id")],
+    inverseJoinColumns = [JoinColumn(name = "GENRE_id")])
     open var genres: MutableList<Genre> = mutableListOf()
 
-    @ManyToMany(mappedBy = "artists")
+
+    @ManyToMany()
+    @JoinTable(name = "ARTIST_INSTRUMENT",
+    joinColumns = [JoinColumn(name = "ARTIST_id")],
+    inverseJoinColumns = [JoinColumn(name = "INSTRUMENT_id")])
     open var instruments: MutableList<Instrument> = mutableListOf()
 
     @ManyToOne
     @JoinColumn(name = "studied_at_id")
     open var studiedAt: Organization? = null
 
-    @ManyToMany(mappedBy = "artists")
+    @ManyToMany
+    @JoinTable(name = "RECORD_LABEL_ARTIST",
+    joinColumns = [JoinColumn(name = "ARTIST_id")],
+    inverseJoinColumns = [JoinColumn(name = "RECORD_LABEL_id")])
     open var labels: MutableList<RecordLabel> = mutableListOf()
 
     open var description: String = ""

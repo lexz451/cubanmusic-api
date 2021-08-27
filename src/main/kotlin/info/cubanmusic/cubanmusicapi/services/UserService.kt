@@ -17,7 +17,7 @@ class UserService {
         return if (user.isPresent) user.get() else null
     }
 
-    fun saveUser(user: User) = userRepository.save(user)
+    fun save(user: User) = userRepository.save(user)
 
     fun existsByEmail(email: String): Boolean {
         return userRepository.existsByEmail(email)

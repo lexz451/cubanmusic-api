@@ -1,5 +1,6 @@
 package info.cubanmusic.cubanmusicapi.model
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import javax.persistence.*
 
 @Table(name = "job_title")
@@ -15,6 +16,7 @@ open class JobTitle {
 
     open var description: String = ""
 
+    @JsonIgnore
     @OneToMany(mappedBy = "jobTitle", orphanRemoval = true)
     open var persons: MutableList<Person> = mutableListOf()
 }

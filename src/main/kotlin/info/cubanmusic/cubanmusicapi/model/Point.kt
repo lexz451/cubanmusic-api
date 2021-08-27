@@ -8,9 +8,9 @@ import javax.persistence.Entity
 
 @Embeddable
 open class Point {
-    @Column(length = 25, nullable = false, name = "lat")
+    @Column(length = 25, name = "lat")
     open var latitude: BigInteger = BigInteger.ZERO
-    @Column(length = 25, nullable = false, name = "lng")
+    @Column(length = 25, name = "lng")
     open var longitude: BigInteger = BigInteger.ZERO
 
     override fun equals(other: Any?): Boolean {

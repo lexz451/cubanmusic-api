@@ -8,7 +8,7 @@ import javax.persistence.Entity
 @Embeddable
 open class Phone {
 
-    @Column(unique = true, length = 10)
+    @Column(length = 10)
     open var code: String? = null
 
     open var number: String = ""

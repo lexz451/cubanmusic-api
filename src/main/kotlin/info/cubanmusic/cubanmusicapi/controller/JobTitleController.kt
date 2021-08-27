@@ -1,7 +1,6 @@
 package info.cubanmusic.cubanmusicapi.controller
 
-import info.cubanmusic.cubanmusicapi.model.Country
-import info.cubanmusic.cubanmusicapi.services.CountryService
+import info.cubanmusic.cubanmusicapi.services.JobTitleService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -9,19 +8,19 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
-@RestController()
-@RequestMapping("/api/v1/countries")
-class CountryController {
+@RestController
+@RequestMapping("/api/v1/jobtitles")
+class JobTitleController {
 
     @Autowired
-    private lateinit var countryService: CountryService
+    lateinit var jobTitleService: JobTitleService
 
     @GetMapping("")
     fun findAll(): ResponseEntity<*> {
-        val countries = countryService.findAll()
-        if (countries.isEmpty()) {
+        val titles = jobTitleService.findAll()
+        if (titles.isEmpty()) {
             return ResponseEntity<HttpStatus>(HttpStatus.NO_CONTENT)
         }
-        return ResponseEntity<List<Country>>(countries, HttpStatus.OK)
+        return ResponseEntity(titles, HttpStatus.OK)
     }
 }

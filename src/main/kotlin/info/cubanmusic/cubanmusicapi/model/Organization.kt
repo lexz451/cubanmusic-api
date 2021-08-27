@@ -1,6 +1,7 @@
 package info.cubanmusic.cubanmusicapi.model
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import javax.persistence.*
 
 @Table(name = "organization", indexes = [
@@ -34,9 +35,11 @@ open class Organization {
 
     open var address: String = ""
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "organizations", cascade = [CascadeType.ALL])
     open var collaborations: MutableList<Album> = mutableListOf()
 
+    @JsonIgnore
     @OneToMany(mappedBy = "affiliation", orphanRemoval = true)
     open var affiliated: MutableList<Artist> = mutableListOf()
 }

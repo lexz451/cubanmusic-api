@@ -18,7 +18,7 @@ open class Album {
 
     open var releasedOn: Date? = null
 
-    @OneToOne(cascade = [CascadeType.ALL], orphanRemoval = true)
+    @ManyToOne
     @JoinColumn(name = "record_label_id")
     open var recordLabel: RecordLabel? = null
 

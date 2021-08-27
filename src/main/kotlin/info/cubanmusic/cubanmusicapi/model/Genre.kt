@@ -1,5 +1,6 @@
 package info.cubanmusic.cubanmusicapi.model
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import javax.persistence.*
 
 @Table(name = "genre")
@@ -13,12 +14,4 @@ open class Genre {
     open var name: String = ""
 
     open var description: String = ""
-
-    @ManyToMany(cascade = [CascadeType.ALL])
-    @JoinTable(
-        name = "GENRE_ARTIST",
-        joinColumns = [JoinColumn(name = "GENRE_id")],
-        inverseJoinColumns = [JoinColumn(name = "ARTIST_id")]
-    )
-    open var artists: MutableList<Artist> = mutableListOf()
 }
