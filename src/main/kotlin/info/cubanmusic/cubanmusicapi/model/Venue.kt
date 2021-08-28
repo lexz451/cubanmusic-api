@@ -34,8 +34,8 @@ open class Venue {
 
     open var website: String? = null
 
-    @Embedded
-    open var point: Point? = null
+    /*@Embedded
+    open var point: Point? = null*/
 
     @OneToOne
     @JoinColumn(name = "image_id")

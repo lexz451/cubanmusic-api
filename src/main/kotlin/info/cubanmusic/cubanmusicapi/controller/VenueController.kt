@@ -35,17 +35,17 @@ class VenueController {
 
     @PostMapping("/new")
     fun create(@RequestBody request: VenueDTO): ResponseEntity<*> {
-        var venue = fromRequest(Venue(), request)
-        venue = venuesService.save(venue)
-        return ResponseEntity(venue, HttpStatus.OK)
+        val venue = fromRequest(Venue(), request)
+        venuesService.save(venue)
+        return ResponseEntity<HttpStatus>(HttpStatus.OK)
     }
 
     @PutMapping("/{id}")
     fun update(@PathVariable id: Long, @RequestBody request: VenueDTO): ResponseEntity<*> {
         var venue = venuesService.findById(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
         venue = fromRequest(venue, request)
-        venue = venuesService.save(venue)
-        return ResponseEntity(venue, HttpStatus.OK)
+        venuesService.save(venue)
+        return ResponseEntity<HttpStatus>(HttpStatus.OK)
     }
 
     private fun fromRequest(venue: Venue, request: VenueDTO): Venue {

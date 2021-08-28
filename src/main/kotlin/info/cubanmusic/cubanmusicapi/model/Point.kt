@@ -24,13 +24,8 @@ open class Point {
     }
 
     override fun hashCode(): Int {
-        var result: Int = latitude.hashCode()
+        var result = latitude.hashCode()
         result = 31 * result + longitude.hashCode()
         return result
-    }
-
-    @Override
-    override fun toString(): String {
-        return this::class.simpleName + "(latitude = $latitude , longitude = $longitude )"
     }
 }
