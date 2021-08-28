@@ -72,7 +72,6 @@ class DatabaseSeeder : ApplicationRunner {
         } else {
             logger.info("Database already have countries. Skipping.")
         }
-        
 
         logger.info("Seeding admin account...!")
         if (userService.findByEmail(adminEmail) == null) {
@@ -91,6 +90,37 @@ class DatabaseSeeder : ApplicationRunner {
             }
         } else {
             logger.info("Admin user already exists. Skipping.")
+        }
+
+        logger.info("Seeding basic data")
+        if (genreService.findAll().isEmpty()) {
+            for (i in 1..10) {
+                val genre = Genre().apply {
+                    name = "Género #$i"
+                    description = "Descripción del género"
+                }
+                genreService.save(genre)
+            }
+        }
+
+        if (instrumentService.findAll().isEmpty()) {
+            for (i in 1..10) {
+                val inst = Instrument().apply {
+                    name = "Instrument #$i"
+                    description = ""
+                }
+                instrumentService.save(inst)
+            }
+        }
+
+        if (jobTitleService.findAll().isEmpty()) {
+            for (i in 1..10) {
+                val jobTitle = JobTitle().apply {
+                    title = "Ocupación #$i"
+                    description = ""
+                }
+                jobTitleService.save(jobTitle)
+            }
         }
 
         logger.info("Finished seeding database. Enjoy!")

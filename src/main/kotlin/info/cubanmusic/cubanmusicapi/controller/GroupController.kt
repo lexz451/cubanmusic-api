@@ -53,16 +53,17 @@ class GroupController {
 
     @PostMapping("/new")
     fun create(@RequestBody request: ArtistDTO): ResponseEntity<*> {
-        var group = fromRequest(Group(), request)
-        group = groupService.save(group)
-        return ResponseEntity(group, HttpStatus.OK)
+        val group = fromRequest(Group(), request)
+        groupService.save(group)
+        return ResponseEntity<HttpStatus>(HttpStatus.OK)
     }
 
     @PutMapping("/{id}")
     fun update(@PathVariable id: Long, @RequestBody request: ArtistDTO): ResponseEntity<*> {
         var group = groupService.findById(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
         group = fromRequest(group, request)
-        return ResponseEntity(group, HttpStatus.OK)
+        groupService.save(group)
+        return ResponseEntity<HttpStatus>(HttpStatus.OK)
     }
 
     private fun toResponse(group: Group): ArtistDTO {

@@ -27,7 +27,7 @@ open class Person() : Artist() {
     open var residencePlace: Location? = null
 
     @Enumerated
-    @Column(name = "gender", nullable = false)
+    @Column(name = "gender")
     open var gender: Gender = Gender.OTHER
 
     @ManyToOne(cascade = [CascadeType.ALL])
