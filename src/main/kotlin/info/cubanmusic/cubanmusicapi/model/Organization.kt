@@ -28,8 +28,8 @@ open class Organization {
     @JoinColumn(name = "country_id")
     open var country: Country? = null
 
-    @Embedded
-    open var point: Point? = null
+    /*@Embedded
+    open var point: Point? = null*/
 
     open var website: String = ""
 
