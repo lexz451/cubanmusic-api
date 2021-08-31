@@ -24,7 +24,7 @@ class VenueController {
         if (venues.isEmpty()) {
             return ResponseEntity<HttpStatus>(HttpStatus.NO_CONTENT)
         }
-        return ResponseEntity(venues, HttpStatus.OK)
+        return ResponseEntity(venues.map { toResponse(it) }, HttpStatus.OK)
     }
 
     @GetMapping("/{id}")
@@ -45,6 +45,13 @@ class VenueController {
         var venue = venuesService.findById(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
         venue = fromRequest(venue, request)
         venuesService.save(venue)
+        return ResponseEntity<HttpStatus>(HttpStatus.OK)
+    }
+    
+    @DeleteMapping("/{id}")
+    fun delete(@PathVariable id: Long): ResponseEntity<*> {
+        venuesService.findById(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
+        venuesService.delete(id)
         return ResponseEntity<HttpStatus>(HttpStatus.OK)
     }
 

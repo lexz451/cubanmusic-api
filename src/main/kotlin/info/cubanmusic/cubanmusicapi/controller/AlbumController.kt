@@ -52,6 +52,13 @@ class AlbumController {
         return ResponseEntity<HttpStatus>(HttpStatus.OK)
     }
 
+    @DeleteMapping("/{id}")
+    fun delete(@PathVariable id: Long): ResponseEntity<*> {
+        albumService.findById(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
+        albumService.delete(id)
+        return ResponseEntity<HttpStatus>(HttpStatus.OK);
+    }
+
     private fun fromRequest(album: Album, request: AlbumDTO): Album {
         album.id = request.id
         album.title = request.title ?: ""

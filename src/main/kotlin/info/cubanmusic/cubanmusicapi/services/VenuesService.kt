@@ -17,4 +17,6 @@ class VenuesService {
     fun findById(id: Long) = venuesRepository.findByIdOrNull(id)
 
     fun save(venue: Venue) = venuesRepository.save(venue)
+
+    fun delete(id: Long) = venuesRepository.deleteById(id)
 }

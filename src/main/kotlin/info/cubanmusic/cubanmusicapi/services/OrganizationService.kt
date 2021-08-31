@@ -19,4 +19,6 @@ class OrganizationService {
     fun findAllByIds(ids: List<Long>): MutableList<Organization> = organizationRepository.findAllById(ids)
 
     fun save(org: Organization) = organizationRepository.save(org)
+
+    fun delete(id: Long) = organizationRepository.deleteById(id)
 }

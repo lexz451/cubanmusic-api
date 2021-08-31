@@ -22,7 +22,7 @@ open class Album {
     @JoinColumn(name = "record_label_id")
     open var recordLabel: RecordLabel? = null
 
-    @ManyToMany(cascade = [CascadeType.ALL])
+    @ManyToMany()
     @JoinTable(
         name = "ALBUM_ARTIST",
         joinColumns = [JoinColumn(name = "ALBUM_id")],
@@ -30,7 +30,7 @@ open class Album {
     )
     open var artists: MutableList<Artist> = mutableListOf()
 
-    @ManyToMany(cascade = [CascadeType.ALL])
+    @ManyToMany()
     @JoinTable(
         name = "ALBUM_ARTIST_COLLABORATIONS",
         joinColumns = [JoinColumn(name = "ALBUM_id")],
@@ -38,7 +38,7 @@ open class Album {
     )
     open var collaborations: MutableList<Artist> = mutableListOf()
 
-    @ManyToMany(cascade = [CascadeType.ALL])
+    @ManyToMany()
     @JoinTable(
         name = "ALBUM_ORGANIZATION_COLLABORATIONS",
         joinColumns = [JoinColumn(name = "ALBUM_id")],

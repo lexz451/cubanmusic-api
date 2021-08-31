@@ -20,4 +20,6 @@ class LabelService {
 
     fun save(label: RecordLabel) = labelRepository.save(label)
 
+    fun delete(id: Long) = labelRepository.deleteById(id)
+
 }

@@ -27,7 +27,7 @@ class AwardController {
         if (awards.isEmpty()) {
             return ResponseEntity<HttpStatus>(HttpStatus.NO_CONTENT)
         }
-        return ResponseEntity(awards, HttpStatus.OK)
+        return ResponseEntity(awards.map { toResponse(it) }, HttpStatus.OK)
     }
 
     @GetMapping("/{id}")
@@ -39,16 +39,23 @@ class AwardController {
     @PostMapping("/new")
     fun create(@RequestBody request: AwardDTO): ResponseEntity<*> {
         var award = fromRequest(Award(), request)
-        award = awardService.save(award)
-        return ResponseEntity(award, HttpStatus.OK)
+        awardService.save(award)
+        return ResponseEntity<HttpStatus>(HttpStatus.OK)
     }
 
     @PutMapping("/{id}")
     fun update(@PathVariable id: Long, @RequestBody request: AwardDTO): ResponseEntity<*> {
         var award = awardService.findById(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
         award = fromRequest(award, request)
-        award = awardService.save(award)
-        return ResponseEntity(award, HttpStatus.OK)
+        awardService.save(award)
+        return ResponseEntity<HttpStatus>(HttpStatus.OK)
+    }
+
+    @DeleteMapping("/{id}")
+    fun delete(@PathVariable id: Long): ResponseEntity<*> {
+        awardService.findById(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
+        awardService.delete(id)
+        return ResponseEntity<HttpStatus>(HttpStatus.OK)
     }
 
     private fun fromRequest(award: Award, request: AwardDTO): Award {

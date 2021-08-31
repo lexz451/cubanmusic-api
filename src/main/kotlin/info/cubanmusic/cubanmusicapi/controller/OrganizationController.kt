@@ -24,7 +24,7 @@ class OrganizationController {
         if (organizations.isEmpty()) {
             return ResponseEntity<HttpStatus>(HttpStatus.NO_CONTENT)
         }
-        return ResponseEntity(organizations, HttpStatus.OK)
+        return ResponseEntity(organizations.map { toResponse(it) }, HttpStatus.OK)
     }
 
     @GetMapping("/{id}")
@@ -36,16 +36,23 @@ class OrganizationController {
     @PostMapping("/new")
     fun create(@RequestBody request: OrganizationDTO): ResponseEntity<*> {
         var org = fromRequest(Organization(), request)
-        org = organizationService.save(org)
-        return ResponseEntity(org, HttpStatus.OK)
+        organizationService.save(org)
+        return ResponseEntity<HttpStatus>(HttpStatus.OK)
     }
 
     @PutMapping("/{id}")
     fun update(@PathVariable id: Long, @RequestBody request: OrganizationDTO):  ResponseEntity<*> {
         var org = organizationService.findById(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
         org = fromRequest(org, request)
-        org = organizationService.save(org)
-        return ResponseEntity(org, HttpStatus.OK)
+        organizationService.save(org)
+        return ResponseEntity<HttpStatus>(HttpStatus.OK)
+    }
+
+    @DeleteMapping("/{id}")
+    fun delete(@PathVariable id: Long): ResponseEntity<*> {
+        organizationService.findById(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
+        organizationService.delete(id)
+        return ResponseEntity<HttpStatus>(HttpStatus.OK)
     }
 
     private fun fromRequest(org: Organization, request: OrganizationDTO): Organization {

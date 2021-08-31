@@ -19,4 +19,6 @@ class AlbumService {
     fun findById(id: Long) = albumRepository.findByIdOrNull(id)
 
     fun save(album: Album) = albumRepository.save(album)
+
+    fun delete(id: Long) = albumRepository.deleteById(id)
 }

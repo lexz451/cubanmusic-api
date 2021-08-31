@@ -51,7 +51,7 @@ class PersonController {
         if (persons.isEmpty()) {
             return ResponseEntity<HttpStatus>(HttpStatus.NO_CONTENT)
         }
-        return ResponseEntity(persons.map { p -> toResponse(p) }, HttpStatus.OK)
+        return ResponseEntity(persons.map { toResponse(it) }, HttpStatus.OK)
     }
 
     @GetMapping("/{id}")
@@ -63,8 +63,8 @@ class PersonController {
     @PostMapping("/new")
     fun create(@RequestBody request: ArtistDTO): ResponseEntity<*> {
         var person = fromRequest(Person(), request)
-        person = personService.save(person)
-        return ResponseEntity(person, HttpStatus.OK)
+        personService.save(person)
+        return ResponseEntity<HttpStatus>(HttpStatus.OK)
     }
 
     @PutMapping("/{id}")
@@ -72,6 +72,13 @@ class PersonController {
         var person = personService.findById(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
         person = fromRequest(person, request)
         personService.save(person)
+        return ResponseEntity<HttpStatus>(HttpStatus.OK)
+    }
+
+    @DeleteMapping("/{id}")
+    fun delete(@PathVariable id: Long): ResponseEntity<*> {
+        personService.findById(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
+        personService.delete(id)
         return ResponseEntity<HttpStatus>(HttpStatus.OK)
     }
 

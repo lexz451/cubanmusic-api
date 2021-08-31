@@ -4,9 +4,11 @@ package info.cubanmusic.cubanmusicapi.model
 import com.fasterxml.jackson.annotation.JsonIgnore
 import javax.persistence.*
 
-@Table(name = "organization", indexes = [
-    Index(name = "idx_organization_name", columnList = "name")
-])
+@Table(
+    name = "organization", indexes = [
+        Index(name = "idx_organization_name", columnList = "name")
+    ]
+)
 @Entity
 open class Organization {
     @Id
@@ -27,6 +29,9 @@ open class Organization {
     @ManyToOne
     @JoinColumn(name = "country_id")
     open var country: Country? = null
+
+    @OneToMany(mappedBy = "grantedBy", cascade = [CascadeType.ALL])
+    open var awards: MutableList<Award> = mutableListOf()
 
     /*@Embedded
     open var point: Point? = null*/

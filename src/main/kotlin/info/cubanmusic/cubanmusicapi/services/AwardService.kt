@@ -19,4 +19,6 @@ class AwardService {
     fun findById(id: Long) = awardRepository.findByIdOrNull(id)
 
     fun save(award: Award) = awardRepository.save(award)
+
+    fun delete(id: Long) = awardRepository.deleteById(id)
 }

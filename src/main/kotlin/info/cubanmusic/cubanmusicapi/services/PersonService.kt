@@ -20,4 +20,6 @@ class PersonService {
     fun findById(id: Long) = personRepository.findByIdOrNull(id)
 
     fun save(person: Person) = personRepository.save(person)
+
+    fun delete(id: Long) = personRepository.deleteById(id)
 }

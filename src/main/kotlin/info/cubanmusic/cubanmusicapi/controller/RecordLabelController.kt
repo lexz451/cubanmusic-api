@@ -25,7 +25,7 @@ class RecordLabelController {
         if (labels.isEmpty()) {
             return ResponseEntity<HttpStatus>(HttpStatus.NO_CONTENT)
         }
-        return ResponseEntity(labels, HttpStatus.OK)
+        return ResponseEntity(labels.map { toResponse(it) }, HttpStatus.OK)
     }
 
     @GetMapping("/{id}")
@@ -38,20 +38,25 @@ class RecordLabelController {
     }
 
     @PostMapping("/new")
-    fun create(@RequestBody label: RecordLabelDTO): ResponseEntity<*> {
-        @Suppress("LocalVariableName")
-        var _label = fromRequest(RecordLabel(), label)
-        _label = labelService.save(_label)
-        return ResponseEntity(_label, HttpStatus.OK)
+    fun create(@RequestBody request: RecordLabelDTO): ResponseEntity<*> {
+        var label = fromRequest(RecordLabel(), request)
+        labelService.save(label)
+        return ResponseEntity<HttpStatus>(HttpStatus.OK)
     }
 
     @PutMapping("/{id}")
-    fun update(@PathVariable id: Long, @RequestBody label: RecordLabelDTO): ResponseEntity<*> {
-        @Suppress("LocalVariableName")
-        var _label = labelService.findById(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
-        _label = fromRequest(_label, label)
-        _label = labelService.save(_label)
-        return ResponseEntity(_label, HttpStatus.OK)
+    fun update(@PathVariable id: Long, @RequestBody request: RecordLabelDTO): ResponseEntity<*> {
+        var label = labelService.findById(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
+        label = fromRequest(label, request)
+        labelService.save(label)
+        return ResponseEntity<HttpStatus>(HttpStatus.OK)
+    }
+
+    @DeleteMapping("/{id}")
+    fun delete(@PathVariable id: Long): ResponseEntity<*> {
+        labelService.findById(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.OK)
+        labelService.delete(id)
+        return ResponseEntity<HttpStatus>(HttpStatus.OK)
     }
 
     private fun fromRequest(recordLabel: RecordLabel, request: RecordLabelDTO): RecordLabel {

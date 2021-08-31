@@ -19,4 +19,6 @@ class GroupService {
     fun findById(id: Long): Group? = groupRepository.findByIdOrNull(id)
 
     fun save(group: Group): Group = groupRepository.save(group)
+
+    fun delete(id: Long) = groupRepository.deleteById(id)
 }

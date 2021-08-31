@@ -42,7 +42,7 @@ class GroupController {
         if (groups.isEmpty()) {
             return ResponseEntity<HttpStatus>(HttpStatus.NO_CONTENT)
         }
-        return ResponseEntity(groups, HttpStatus.OK)
+        return ResponseEntity(groups.map { toResponse(it) }, HttpStatus.OK)
     }
 
     @GetMapping("/{id}")
@@ -63,6 +63,13 @@ class GroupController {
         var group = groupService.findById(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
         group = fromRequest(group, request)
         groupService.save(group)
+        return ResponseEntity<HttpStatus>(HttpStatus.OK)
+    }
+
+    @DeleteMapping("/{id}")
+    fun delete(@PathVariable id: Long): ResponseEntity<*> {
+        groupService.findById(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
+        groupService.delete(id)
         return ResponseEntity<HttpStatus>(HttpStatus.OK)
     }
 
