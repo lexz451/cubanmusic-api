@@ -1,8 +1,19 @@
 version: "3.3"
 
 services:
+  cubanmusic_db:
+    image: mysql
+    ports: 
+      - "3306:3306"
+    restart: always
+    env_file: .env
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - cubanmusic  
   cubanmusic:
-    image: cubanmusic-0.0.1
+    restart: always
+    image: cubanmusic
     build:
       context: ./
       dockerfile: ./Dockerfile
@@ -11,10 +22,11 @@ services:
     ports:
       - "8080:8080"
     networks:
-      - isolated_n
-    hostname: cubanmusic
+      - cubanmusic
+    command: "mvn clean package"  
 volumes:
   files_data:
+  db_data:
 networks:
-  isolated_n:
+  cubanmusic:
     driver: bridge

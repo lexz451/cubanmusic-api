@@ -12,6 +12,7 @@ import org.springframework.boot.ApplicationRunner
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Component
 import org.springframework.util.ResourceUtils
+import org.springframework.core.io.ClassPathResource
 import java.io.FileInputStream
 import java.time.Instant
 import java.time.LocalDate
@@ -61,8 +62,7 @@ class DatabaseSeeder : ApplicationRunner {
         logger.info("Seeding countries...!")
         if (countryService.findAll().isEmpty()) {
             try {
-                val file = ResourceUtils.getFile("classpath:static/countries.csv")
-                val inputStream = FileInputStream(file)
+                val inputStream = ClassPathResource("static/countries.csv").inputStream
                 val countries = CSVHelper.csvToCountries(inputStream)
                 countryService.saveAll(countries)
             } catch (e: Exception) {
