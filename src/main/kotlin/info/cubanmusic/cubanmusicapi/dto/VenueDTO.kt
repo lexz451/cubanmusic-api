@@ -14,4 +14,10 @@ class VenueDTO {
     var email: String? = null
     var website: String? = null
     var address: String? = null
+    var latitude: String? = null
+    var longitude: String? = null
+    var youtube: String? = null
+    var instagram: String? = null
+    var facebook: String? = null
+    var twitter: String? = null
 }

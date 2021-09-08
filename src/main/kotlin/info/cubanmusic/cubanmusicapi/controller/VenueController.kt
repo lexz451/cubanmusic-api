@@ -10,10 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import org.slf4j.LoggerFactory
+
 
 @RestController
 @RequestMapping("/api/v1/venues")
 class VenueController {
+
+    private val logger = LoggerFactory.getLogger(VenueController::class.java)
 
     @Autowired
     lateinit var venuesService: VenuesService
@@ -67,6 +71,14 @@ class VenueController {
         venue.email = request.email
         venue.website = request.website
         venue.address = request.address
+        
+        venue.latitude = request.latitude?.toFloatOrNull()
+        venue.longitude = request.longitude?.toFloatOrNull()
+        
+        venue.youtube = request.youtube
+        venue.facebook = request.facebook
+        venue.instagram = request.instagram
+        venue.twitter = request.twitter
         return venue
     }
 
@@ -83,6 +95,19 @@ class VenueController {
             email = venue.email
             website = venue.website
             address = venue.address
+
+            if (venue.latitude != null) {
+                latitude = venue.latitude?.toString()
+            }
+            
+            if (venue.longitude != null) {
+                longitude = venue.longitude?.toString()
+            }
+
+            facebook = venue.facebook
+            youtube = venue.youtube
+            instagram = venue.instagram
+            twitter = venue.twitter
         }
     }
 }

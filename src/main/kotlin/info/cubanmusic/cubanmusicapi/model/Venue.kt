@@ -40,4 +40,13 @@ open class Venue {
     @OneToOne
     @JoinColumn(name = "image_id")
     open var image: Image? = null
+
+
+    open var latitude: Float? = null
+    open var longitude: Float? = null
+
+    open var facebook: String? = null
+    open var youtube: String? = null
+    open var instagram: String? = null
+    open var twitter: String? = null
 }
