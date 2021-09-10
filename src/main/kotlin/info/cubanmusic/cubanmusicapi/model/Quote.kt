@@ -9,5 +9,6 @@ import javax.persistence.Entity
 open class Quote {
     open var source: String? = null
     open var quote: String? = null
+    open var author: String? = null
     open var date: Date? = null
 }

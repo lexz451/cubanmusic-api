@@ -23,6 +23,7 @@ data class ArtistDTO(
     var albums: List<Long> = emptyList(),
     var collaborations: List<Long> = emptyList(),
     var country: Long? = null,
+    var nationality: String? = null,
     var activeSince: Int? = null,
     var activeUntil: Int? = null,
     var affiliation: Long? = null,
@@ -47,5 +48,5 @@ data class ArtistDTO(
     var libOfCongress: String? = null,
     var quotes: List<Quote> = emptyList(),
     var members: List<Long> = emptyList(),
-    var images: List<Image> = emptyList()
+    var images: List<Long> = emptyList()
 )

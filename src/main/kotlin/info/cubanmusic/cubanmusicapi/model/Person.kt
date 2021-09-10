@@ -40,4 +40,5 @@ open class Person() : Artist() {
     @ManyToOne
     @JoinColumn(name = "related_to_id")
     open var relatedTo: Person? = null
+
 }

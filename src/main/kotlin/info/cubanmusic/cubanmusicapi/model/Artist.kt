@@ -21,14 +21,19 @@ open class Artist {
     @ElementCollection
     open var additionalNames: Set<String> = setOf()
 
-    @OneToMany(mappedBy = "artist", cascade = [CascadeType.ALL], orphanRemoval = true)
-    open var images: MutableList<Image> = mutableListOf()
+
+    open var nationality: String? = null
+
+
+    //open var images: MutableList<Image> = mutableListOf()
 
 
     @ManyToMany(cascade = [CascadeType.MERGE])
-    @JoinTable(name = "ARTIST_AWARD",
-    joinColumns = [JoinColumn(name = "ARTIST_id")],
-    inverseJoinColumns = [JoinColumn(name = "AWARD_id")])
+    @JoinTable(
+        name = "ARTIST_AWARD",
+        joinColumns = [JoinColumn(name = "ARTIST_id")],
+        inverseJoinColumns = [JoinColumn(name = "AWARD_id")]
+    )
     open var awards: MutableList<Award> = mutableListOf()
 
     @ManyToMany(mappedBy = "artists", cascade = [CascadeType.ALL])
@@ -36,7 +41,7 @@ open class Artist {
 
     @ManyToMany(mappedBy = "collaborations", cascade = [CascadeType.ALL])
     open var collaborations: MutableList<Album> = mutableListOf()
-    
+
     @ManyToOne
     @JoinColumn(name = "country_id")
     open var country: Country? = null
@@ -51,16 +56,20 @@ open class Artist {
 
 
     @ManyToMany()
-    @JoinTable(name = "ARTIST_GENRE",
-    joinColumns = [JoinColumn(name = "ARTIST_id")],
-    inverseJoinColumns = [JoinColumn(name = "GENRE_id")])
+    @JoinTable(
+        name = "ARTIST_GENRE",
+        joinColumns = [JoinColumn(name = "ARTIST_id")],
+        inverseJoinColumns = [JoinColumn(name = "GENRE_id")]
+    )
     open var genres: MutableList<Genre> = mutableListOf()
 
 
     @ManyToMany()
-    @JoinTable(name = "ARTIST_INSTRUMENT",
-    joinColumns = [JoinColumn(name = "ARTIST_id")],
-    inverseJoinColumns = [JoinColumn(name = "INSTRUMENT_id")])
+    @JoinTable(
+        name = "ARTIST_INSTRUMENT",
+        joinColumns = [JoinColumn(name = "ARTIST_id")],
+        inverseJoinColumns = [JoinColumn(name = "INSTRUMENT_id")]
+    )
     open var instruments: MutableList<Instrument> = mutableListOf()
 
     @ManyToOne
@@ -68,9 +77,11 @@ open class Artist {
     open var studiedAt: Organization? = null
 
     @ManyToMany
-    @JoinTable(name = "RECORD_LABEL_ARTIST",
-    joinColumns = [JoinColumn(name = "ARTIST_id")],
-    inverseJoinColumns = [JoinColumn(name = "RECORD_LABEL_id")])
+    @JoinTable(
+        name = "RECORD_LABEL_ARTIST",
+        joinColumns = [JoinColumn(name = "ARTIST_id")],
+        inverseJoinColumns = [JoinColumn(name = "RECORD_LABEL_id")]
+    )
     open var labels: MutableList<RecordLabel> = mutableListOf()
 
     open var description: String = ""
@@ -104,9 +115,14 @@ open class Artist {
     open var libOfCongress: String? = null
 
     @ElementCollection(targetClass = Quote::class)
-    open var quotes: Set<Quote> = setOf()
+    open var quotes: MutableSet<Quote> = mutableSetOf()
 
-    //@ElementCollection
+    @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true)
+    @JoinColumn(name = "artist_id")
+    open var images: MutableList<Image> = mutableListOf()
+
+
+//@ElementCollection
     //open var articles: Set<Article> = setOf()
 
     override fun equals(other: Any?): Boolean {

@@ -4,6 +4,7 @@ import java.time.Instant
 import java.util.*
 import javax.persistence.*
 
+
 @Table(name = "image")
 @Entity
 open class Image {
@@ -17,7 +18,14 @@ open class Image {
     open var date: Date? = null
     open var description: String? = null
 
-    @ManyToOne
-    @JoinColumn(name = "artist_id")
-    open var artist: Artist? = null
+    open var filename: String? = null
+    open var filetype: String? = null
+
+    @ElementCollection
+    open var tags: List<String> = emptyList()
+
+    @Lob
+    open var filedata: ByteArray = byteArrayOf()
+
+
 }
