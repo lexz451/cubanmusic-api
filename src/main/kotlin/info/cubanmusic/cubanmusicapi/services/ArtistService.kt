@@ -4,6 +4,7 @@ import info.cubanmusic.cubanmusicapi.model.Country
 import info.cubanmusic.cubanmusicapi.model.Artist
 import info.cubanmusic.cubanmusicapi.repository.ArtistRepository
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
 @Service("artistService")
@@ -16,7 +17,7 @@ class ArtistService {
 
     fun findAllByIds(ids: List<Long>): MutableList<Artist> = artistRepository.findAllById(ids)
 
-    fun findById(id: Long) = artistRepository.findById(id)
+    fun findById(id: Long) = artistRepository.findByIdOrNull(id)
 
     fun save(artist: Artist) = artistRepository.save(artist)
 

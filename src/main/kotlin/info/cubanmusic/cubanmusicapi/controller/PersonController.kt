@@ -95,21 +95,6 @@ class PersonController {
         return ResponseEntity<HttpStatus>(HttpStatus.OK)
     }
 
-    @Suppress("LocalVariableName")
-    @PostMapping("/{id}/quote")
-    fun addQuote(@PathVariable id: Long, @RequestBody req: QuoteDTO): ResponseEntity<*> {
-        val person = personService.findById(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
-        val _quote = Quote().apply {
-            source = req.source
-            author = req.author
-            quote = req.quote
-            date = Utils.parseDate(req.date)
-        }
-        person.quotes.add(_quote)
-        personService.save(person)
-        return ResponseEntity<HttpStatus>(HttpStatus.OK)
-    }
-
     private fun toResponse(person: Person): ArtistDTO {
         return ArtistDTO().apply {
             id = person.id
@@ -168,6 +153,7 @@ class PersonController {
             tiktok = person.tiktok
             libOfCongress = person.libOfCongress
             quotes = person.quotes.toList()
+            relatedArticles = person.relatedArticles.toList()
             images = person.images.map { it.id!! }
         }
     }
@@ -258,7 +244,7 @@ class PersonController {
         person.tiktok = request.tiktok
         person.libOfCongress = request.libOfCongress
         person.quotes = request.quotes.toMutableSet()
-
+        person.relatedArticles = request.relatedArticles.toMutableSet()
         person.images.clear()
         person.images.addAll(imagesService.findAllByIds(request.images))
 

@@ -84,6 +84,7 @@ open class Artist {
     )
     open var labels: MutableList<RecordLabel> = mutableListOf()
 
+    @Lob
     open var description: String = ""
 
     open var email: String? = null
@@ -116,6 +117,9 @@ open class Artist {
 
     @ElementCollection(targetClass = Quote::class)
     open var quotes: MutableSet<Quote> = mutableSetOf()
+
+    @ElementCollection(targetClass = Article::class)
+    open var relatedArticles: MutableSet<Article> = mutableSetOf()
 
     @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true)
     @JoinColumn(name = "artist_id")

@@ -1,9 +1,6 @@
 package info.cubanmusic.cubanmusicapi.dto
 
-import info.cubanmusic.cubanmusicapi.model.Gender
-import info.cubanmusic.cubanmusicapi.model.Image
-import info.cubanmusic.cubanmusicapi.model.Location
-import info.cubanmusic.cubanmusicapi.model.Quote
+import info.cubanmusic.cubanmusicapi.model.*
 
 data class ArtistDTO(
     var id: Long? = null,
@@ -47,6 +44,7 @@ data class ArtistDTO(
     var tiktok: String? = null,
     var libOfCongress: String? = null,
     var quotes: List<Quote> = emptyList(),
+    var relatedArticles: List<Article> = emptyList(),
     var members: List<Long> = emptyList(),
-    var images: List<Long> = emptyList()
+    var images: List<Long> = emptyList(),
 )
