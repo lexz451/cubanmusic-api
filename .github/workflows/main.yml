@@ -41,13 +41,8 @@ jobs:
           JWT_EXPIRATION: ${{ secrets.JWT_EXPIRATION }},
           ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
           ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
-
-          MYSQL_DATABASE: ${{ secrets.DATABASE_NAME }},
-          MYSQL_USER: ${{ secrets.DATABASE_USER }},
-          MYSQL_PASSWORD: ${{ secrets.DATABASE_PASSWORD }},
-          MYSQL_ROOT_PASSWORD: root
         with:
-          variableNames: DATABASE_HOST,DATABASE_NAME,DATABASE_PORT,DATABASE_USER,DATABASE_PASSWORD,JWT_SECRET,JWT_EXPIRATION,ADMIN_EMAIL,ADMIN_PASSWORD,MYSQL_DATABASE,MYSQL_USER,MYSQL_PASSWORD,MYSQL_ROOT_PASSWORD
+          variableNames: DATABASE_HOST,DATABASE_NAME,DATABASE_PORT,DATABASE_USER,DATABASE_PASSWORD,JWT_SECRET,JWT_EXPIRATION,ADMIN_EMAIL,ADMIN_PASSWORD
 
       # Runs a set of commands using the runners shell
       - name: Deploy
@@ -68,5 +63,5 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.SSH_KEY_PASS }}
-          script: cd cubanmusic && sh deploy.sh && exit
+          script: cd cubanmusic && sh restart.sh && exit
 
