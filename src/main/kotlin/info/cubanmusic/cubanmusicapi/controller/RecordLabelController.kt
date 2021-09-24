@@ -40,8 +40,8 @@ class RecordLabelController {
     @PostMapping("/new")
     fun create(@RequestBody request: RecordLabelDTO): ResponseEntity<*> {
         var label = fromRequest(RecordLabel(), request)
-        labelService.save(label)
-        return ResponseEntity<HttpStatus>(HttpStatus.OK)
+        label = labelService.save(label)
+        return ResponseEntity(label.id, HttpStatus.OK)
     }
 
     @PutMapping("/{id}")
@@ -60,7 +60,6 @@ class RecordLabelController {
     }
 
     private fun fromRequest(recordLabel: RecordLabel, request: RecordLabelDTO): RecordLabel {
-        recordLabel.id = request.id
         recordLabel.ipiCode = request.ipiCode
         recordLabel.isniCode = request.isniCode
         recordLabel.name = request.name ?: ""

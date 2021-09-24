@@ -35,7 +35,7 @@ class OrganizationController {
 
     @PostMapping("/new")
     fun create(@RequestBody request: OrganizationDTO): ResponseEntity<*> {
-        var org = fromRequest(Organization(), request)
+        val org = fromRequest(Organization(), request)
         organizationService.save(org)
         return ResponseEntity<HttpStatus>(HttpStatus.OK)
     }
@@ -56,7 +56,6 @@ class OrganizationController {
     }
 
     private fun fromRequest(org: Organization, request: OrganizationDTO): Organization {
-        org.id = request.id
         org.name = request.name ?: ""
         org.description = request.description ?: ""
         request.country?.let {

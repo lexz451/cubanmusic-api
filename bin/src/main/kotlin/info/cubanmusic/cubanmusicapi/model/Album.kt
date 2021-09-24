@@ -58,7 +58,7 @@ open class Album {
 
     @Override
     override fun toString(): String {
-        return this::class.simpleName + "(id = $id , title = $title , description = $description , releasedOn = $releasedOn , recordLabel = $recordLabel )"
+        return this::class.simpleName + "(id = $id , title = $title , description = $biography , releasedOn = $releaseDate , recordLabel = $recordLabel )"
     }
 
 }

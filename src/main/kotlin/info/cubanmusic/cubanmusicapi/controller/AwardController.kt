@@ -38,7 +38,7 @@ class AwardController {
 
     @PostMapping("/new")
     fun create(@RequestBody request: AwardDTO): ResponseEntity<*> {
-        var award = fromRequest(Award(), request)
+        val award = fromRequest(Award(), request)
         awardService.save(award)
         return ResponseEntity<HttpStatus>(HttpStatus.OK)
     }
@@ -59,7 +59,6 @@ class AwardController {
     }
 
     private fun fromRequest(award: Award, request: AwardDTO): Award {
-        award.id = request.id
         award.title = request.title
         award.description = request.description
         request.country?.let {

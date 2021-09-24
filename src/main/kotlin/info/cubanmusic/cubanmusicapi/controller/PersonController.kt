@@ -7,13 +7,12 @@ import info.cubanmusic.cubanmusicapi.model.Gender
 import info.cubanmusic.cubanmusicapi.model.Person
 import info.cubanmusic.cubanmusicapi.services.*
 import info.cubanmusic.cubanmusicapi.dto.ArtistDTO
-import info.cubanmusic.cubanmusicapi.dto.LocationDTO
-import info.cubanmusic.cubanmusicapi.dto.QuoteDTO
-import info.cubanmusic.cubanmusicapi.model.Location
-import info.cubanmusic.cubanmusicapi.model.Quote
+import info.cubanmusic.cubanmusicapi.dto.PersonDTO
+import info.cubanmusic.cubanmusicapi.repository.*
 import org.slf4j.LoggerFactory
 
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -26,229 +25,162 @@ class PersonController {
     private val logger = LoggerFactory.getLogger(PersonController::class.java)
 
     @Autowired
-    lateinit var personService: PersonService
-
+    private lateinit var locationRepository: LocationRepository
     @Autowired
-    lateinit var locationService: LocationService
-
+    private lateinit var countryRepository: CountryRepository
     @Autowired
-    lateinit var jobTitleService: JobTitleService
-
+    private lateinit var organizationRepository: OrganizationRepository
     @Autowired
-    lateinit var awardService: AwardService
-
+    private lateinit var genreRepository: GenreRepository
     @Autowired
-    lateinit var albumService: AlbumService
-
+    private lateinit var awardRepository: AwardRepository
     @Autowired
-    lateinit var countryService: CountryService
-
+    private lateinit var instrumentRepository: InstrumentRepository
     @Autowired
-    lateinit var organizationService: OrganizationService
-
+    private lateinit var schoolRepository: SchoolRepository
     @Autowired
-    lateinit var genreService: GenreService
-
+    private lateinit var jobTitleRepository: JobTitleRepository
     @Autowired
-    lateinit var instrumentService: InstrumentService
-
+    private lateinit var personRepository: PersonRepository
     @Autowired
-    lateinit var labelService: LabelService
-
+    private lateinit var albumRepository: AlbumRepository
     @Autowired
-    lateinit var imagesService: ImagesService
+    private lateinit var labelRepository: RecordLabelRepository;
+    @Autowired
+    private lateinit var imagesRepository: ImageRepository;
 
     @GetMapping("")
     fun findAll(): ResponseEntity<*> {
-        val persons = personService.findAll()
+        val persons = personRepository.findAll()
         if (persons.isEmpty()) {
             return ResponseEntity<HttpStatus>(HttpStatus.NO_CONTENT)
         }
-        return ResponseEntity(persons.map { toResponse(it) }, HttpStatus.OK)
+        return ResponseEntity(persons.map { fromModel(it) }, HttpStatus.OK)
     }
 
     @GetMapping("/{id}")
     fun findById(@PathVariable id: Long): ResponseEntity<*> {
-        val person = personService.findById(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
-        return ResponseEntity(toResponse(person), HttpStatus.OK)
+        val person = personRepository.findByIdOrNull(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
+        return ResponseEntity(fromModel(person), HttpStatus.OK)
     }
 
     @PostMapping("/new")
-    fun create(@RequestBody request: ArtistDTO): ResponseEntity<*> {
-        val person = fromRequest(Person(), request)
-        personService.save(person)
-        return ResponseEntity<HttpStatus>(HttpStatus.OK)
+    fun create(@RequestBody request: PersonDTO): ResponseEntity<*> {
+        var person = toModel(request, Person())
+        person = personRepository.save(person)
+        return ResponseEntity(person.id, HttpStatus.OK)
     }
 
     @PutMapping("/{id}")
-    fun update(@PathVariable id: Long, @RequestBody request: ArtistDTO): ResponseEntity<*> {
-        var person = personService.findById(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
-        person = fromRequest(person, request)
-        personService.save(person)
+    fun update(@PathVariable id: Long, @RequestBody request: PersonDTO): ResponseEntity<*> {
+        var person = personRepository.findByIdOrNull(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
+        person = toModel(request, person)
+        personRepository.save(person)
         return ResponseEntity<HttpStatus>(HttpStatus.OK)
     }
 
     @DeleteMapping("/{id}")
     fun delete(@PathVariable id: Long): ResponseEntity<*> {
-        personService.findById(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
-        personService.delete(id)
+        personRepository.findByIdOrNull(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
+        personRepository.deleteById(id)
         return ResponseEntity<HttpStatus>(HttpStatus.OK)
     }
 
-    private fun toResponse(person: Person): ArtistDTO {
-        return ArtistDTO().apply {
-            id = person.id
-            name = person.name
-            alias = person.alias
-            additionalNames = person.additionalNames.toList()
-            description = person.description
-            birthDate = Utils.formatDate(person.birthDate)
-            deathDate = Utils.formatDate(person.deathDate)
-            birthPlace = LocationDTO().apply {
-                id = person.birthPlace?.id
-                city = person.birthPlace?.city
-                state = person.birthPlace?.state
-                country = person.birthPlace?.country?.id
-            }
-            deathPlace = LocationDTO().apply {
-                id = person.deathPlace?.id
-                city = person.deathPlace?.city
-                state = person.deathPlace?.state
-                country = person.deathPlace?.country?.id
-            }
-            residencePlace = LocationDTO().apply {
-                id = person.residencePlace?.id
-                city = person.residencePlace?.city
-                state = person.residencePlace?.state
-                country = person.residencePlace?.country?.id
-            }
-            gender = person.gender.name
-            jobTitle = person.jobTitle?.id
-            jobRoles = person.jobRoles.toList()
-            relatedTo = person.relatedTo?.id
-            awards = person.awards.map { it.id!! }
-            albums = person.albums.map { it.id!! }
-            collaborations = person.collaborations.map { it.id!! }
-            country = person.country?.id
-            nationality = person.nationality
-            activeSince = person.activeSince
-            activeUntil = person.activeUntil
-            affiliation = person.affiliation?.id
-            genres = person.genres.map { it.id!! }
-            instruments = person.instruments.map { it.id!! }
-            studyAt = person.studiedAt?.id
-            labels = person.labels.map { it.id!! }
-            email = person.email
-            website = person.website
-            isniCode = person.isniCode
-            spotify = person.spotify
-            appleMusic = person.appleMusic
-            youtube = person.youtube
-            viberate = person.viberate
-            soundCloud = person.soundCloud
-            deezer = person.deezer
-            instagram = person.instagram
-            facebook = person.facebook
-            twitter = person.twitter
-            tiktok = person.tiktok
-            libOfCongress = person.libOfCongress
-            quotes = person.quotes.toList()
-            relatedArticles = person.relatedArticles.toList()
-            images = person.images.map { it.id!! }
+    fun fromModel(artist: Person): PersonDTO {
+        return PersonDTO().apply {
+            id = artist.id
+            name = artist.name
+            additionalNames = artist.additionalNames.toList()
+            alias = artist.alias
+            biography = artist.biography
+
+            birthDate = Utils.formatDate(artist.birthDate)
+            deathDate = Utils.formatDate(artist.deathDate)
+            birthPlace = artist.birthPlace?.id
+            deathPlace = artist.deathPlace?.id
+            residencePlace = artist.residencePlace?.id
+            gender = artist.gender.name
+            jobTitle = artist.jobTitle?.id
+            jobRoles = artist.jobRoles.toList()
+            relatedTo = artist.relatedTo?.id
+            label = artist.recordLabel?.id
+
+            email = artist.email
+            website = artist.website
+            activeSince = artist.activeSince
+            activeUntil = artist.activeUntil
+            isniCode = artist.isniCode
+            spotify = artist.spotify
+            appleMusic = artist.appleMusic
+            soundCloud = artist.soundCloud
+            deezer = artist.deezer
+            youtube = artist.youtube
+            instagram = artist.instagram
+            viberate = artist.viberate
+            facebook = artist.facebook
+            twitter = artist.twitter
+            tiktok = artist.tiktok
+            libOfCongress = artist.libOfCongress
+            nationality = artist.nationality
+            country = artist.country?.id
+            affiliation = artist.affiliation?.id
+            genres = artist.genres.map { it.id!! }
+            awards = artist.awards.map { it.id!! }
+            instruments = artist.instruments.map { it.id!! }
+            studyAt = artist.studyAt?.id
+            albums = artist.albums.map { it.id!! }
         }
     }
 
-    private fun fromRequest(person: Person, request: ArtistDTO): Person {
-        person.name = request.name ?: ""
-        person.alias = request.alias ?: ""
-        person.additionalNames = request.additionalNames.toMutableSet()
-        person.description = request.description ?: ""
-        person.birthDate = Utils.parseDate(request.birthDate)
-        person.deathDate = Utils.parseDate(request.deathDate)
-        person.birthPlace = Location().apply {
-            id = request.birthPlace?.id
-            request.birthPlace?.city?.let {
-                city = it
-            }
-            request.birthPlace?.state?.let {
-                state = it
-            }
-            request.birthPlace?.country?.let {
-                country = countryService.findById(it)
-            }
-        }
-        person.deathPlace = Location().apply {
-            id = request.deathPlace?.id
-            request.deathPlace?.city?.let {
-                city = it
-            }
-            request.deathPlace?.state?.let {
-                state = it
-            }
-            request.deathPlace?.country?.let {
-                country = countryService.findById(it)
-            }
-        }
-        person.residencePlace = Location().apply {
-            id = request.residencePlace?.id
-            request.residencePlace?.city?.let {
-                city = it
-            }
-            request.residencePlace?.state?.let {
-                state = it
-            }
-            request.residencePlace?.country?.let {
-                country = countryService.findById(it)
-            }
-        }
-        person.gender = Gender.valueOf(request.gender)
-        request.jobTitle?.let { person.jobTitle = jobTitleService.findById(it) }
-        person.jobRoles = request.jobRoles.toMutableSet()
-        request.relatedTo?.let { person.relatedTo = personService.findById(it) }
-        if (request.awards.isNotEmpty()) {
-            person.awards = awardService.findAllByIds(request.awards)
-        }
-        if (request.albums.isNotEmpty()) {
-            person.albums = albumService.findAllByIds(request.albums)
-        }
-        if (request.collaborations.isNotEmpty()) {
-            person.collaborations = albumService.findAllByIds(request.collaborations)
-        }
-        request.country?.let { person.country = countryService.findById(it) }
-        person.nationality = request.nationality
-        person.activeSince = request.activeSince
-        person.activeUntil = request.activeUntil
-        request.affiliation?.let { person.affiliation = organizationService.findById(it) }
-        if (request.genres.isNotEmpty()) {
-            person.genres = genreService.findAllByIds(request.genres)
-        }
-        if (request.instruments.isNotEmpty()) {
-            person.instruments = instrumentService.findAllByIds(request.instruments)
-        }
-        request.studyAt?.let { person.studiedAt = organizationService.findById(it) }
-        if (request.labels.isNotEmpty()) {
-            person.labels = labelService.findAllByIds(request.labels)
-        }
-        person.email = request.email
-        person.website = request.website
-        person.isniCode = request.isniCode
-        person.spotify = request.spotify
-        person.appleMusic = request.appleMusic
-        person.youtube = request.youtube
-        person.viberate = request.viberate
-        person.soundCloud = request.soundCloud
-        person.deezer = request.deezer
-        person.instagram = request.instagram
-        person.facebook = request.facebook
-        person.twitter = request.twitter
-        person.tiktok = request.tiktok
-        person.libOfCongress = request.libOfCongress
-        person.quotes = request.quotes.toMutableSet()
-        person.relatedArticles = request.relatedArticles.toMutableSet()
-        person.images.clear()
-        person.images.addAll(imagesService.findAllByIds(request.images))
+    fun toModel(artistDTO: PersonDTO, artist: Person): Person {
+        return artist.apply {
+            name = artistDTO.name
+            additionalNames = artistDTO.additionalNames.toMutableSet()
+            alias = artistDTO.alias
+            biography = artistDTO.biography
 
-        return person
+            birthDate = Utils.parseDate(artistDTO.birthDate)
+            deathDate = Utils.parseDate(artistDTO.deathDate)
+            birthPlace = locationRepository.findByIdOrNull(artistDTO.birthPlace ?: -1)
+            deathPlace = locationRepository.findByIdOrNull(artistDTO.deathPlace ?: -1)
+            residencePlace = locationRepository.findByIdOrNull(artistDTO.residencePlace ?: -1)
+            gender = Gender.valueOf(artistDTO.gender)
+            jobTitle = jobTitleRepository.findByIdOrNull(artistDTO.jobTitle ?: -1)
+            jobRoles = artistDTO.jobRoles.toMutableSet()
+            recordLabel = labelRepository.findByIdOrNull(artistDTO.label ?: -1)
+
+            relatedTo = personRepository.findByIdOrNull(artistDTO.relatedTo ?: -1)
+
+            email = artistDTO.email
+            website = artistDTO.website
+            activeSince = artistDTO.activeSince
+            activeUntil = artistDTO.activeUntil
+            isniCode = artistDTO.isniCode
+            spotify = artistDTO.spotify
+            appleMusic = artistDTO.appleMusic
+            soundCloud = artistDTO.soundCloud
+            deezer = artistDTO.deezer
+            youtube = artistDTO.youtube
+            instagram = artistDTO.instagram
+            viberate = artistDTO.viberate
+            facebook = artistDTO.facebook
+            twitter = artistDTO.twitter
+            tiktok = artistDTO.tiktok
+            libOfCongress = artistDTO.libOfCongress
+            nationality = artistDTO.nationality
+
+            country = countryRepository.findByIdOrNull(artistDTO.country ?: -1)
+
+            affiliation = organizationRepository.findByIdOrNull(artistDTO.affiliation ?: -1)
+
+
+            genres = genreRepository.findAllById(artistDTO.genres)
+            awards = awardRepository.findAllById(artistDTO.awards)
+            instruments = instrumentRepository.findAllById(artistDTO.instruments)
+
+            studyAt = schoolRepository.findByIdOrNull(artistDTO.studyAt ?: -1)
+
+            albums = albumRepository.findAllById(artistDTO.albums)
+        }
     }
-
 }

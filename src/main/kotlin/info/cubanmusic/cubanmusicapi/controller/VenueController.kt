@@ -39,9 +39,9 @@ class VenueController {
 
     @PostMapping("/new")
     fun create(@RequestBody request: VenueDTO): ResponseEntity<*> {
-        val venue = fromRequest(Venue(), request)
-        venuesService.save(venue)
-        return ResponseEntity<HttpStatus>(HttpStatus.OK)
+        var venue = fromRequest(Venue(), request)
+        venue = venuesService.save(venue)
+        return ResponseEntity(venue.id,HttpStatus.OK)
     }
 
     @PutMapping("/{id}")
@@ -60,7 +60,6 @@ class VenueController {
     }
 
     private fun fromRequest(venue: Venue, request: VenueDTO): Venue {
-        venue.id = request.id
         venue.name = request.name
         venue.description = request.description
         venue.venueType = VenueTypes.valueOf(request.venueType ?: VenueTypes.CLUB.name)
@@ -71,10 +70,8 @@ class VenueController {
         venue.email = request.email
         venue.website = request.website
         venue.address = request.address
-        
         venue.latitude = request.latitude?.toFloatOrNull()
         venue.longitude = request.longitude?.toFloatOrNull()
-        
         venue.youtube = request.youtube
         venue.facebook = request.facebook
         venue.instagram = request.instagram
@@ -95,15 +92,12 @@ class VenueController {
             email = venue.email
             website = venue.website
             address = venue.address
-
             if (venue.latitude != null) {
                 latitude = venue.latitude?.toString()
             }
-            
             if (venue.longitude != null) {
                 longitude = venue.longitude?.toString()
             }
-
             facebook = venue.facebook
             youtube = venue.youtube
             instagram = venue.instagram

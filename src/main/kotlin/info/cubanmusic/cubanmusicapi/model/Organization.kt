@@ -2,23 +2,14 @@ package info.cubanmusic.cubanmusicapi.model
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import org.springframework.data.jpa.domain.AbstractAuditable
 import javax.persistence.*
 
-@Table(
-    name = "organization", indexes = [
-        Index(name = "idx_organization_name", columnList = "name")
-    ]
-)
 @Entity
-open class Organization {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    open var id: Long? = null
+open class Organization : Contributor() {
 
-    open var name: String = ""
-
-    open var description: String = ""
+    @Lob
+    open var description: String? = null
 
     @Embedded
     open var phone: Phone? = null
@@ -33,18 +24,8 @@ open class Organization {
     @OneToMany(mappedBy = "grantedBy", cascade = [CascadeType.ALL])
     open var awards: MutableList<Award> = mutableListOf()
 
-    /*@Embedded
-    open var point: Point? = null*/
-
     open var website: String = ""
 
     open var address: String = ""
 
-    @JsonIgnore
-    @ManyToMany(mappedBy = "organizations", cascade = [CascadeType.ALL])
-    open var collaborations: MutableList<Album> = mutableListOf()
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "affiliation", orphanRemoval = true)
-    open var affiliated: MutableList<Artist> = mutableListOf()
 }

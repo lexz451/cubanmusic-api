@@ -1,12 +1,17 @@
 package info.cubanmusic.cubanmusicapi.dto
 
+import info.cubanmusic.cubanmusicapi.helper.Utils
+import info.cubanmusic.cubanmusicapi.model.Album
+import info.cubanmusic.cubanmusicapi.repository.RecordLabelRepository
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.repository.findByIdOrNull
+
 class AlbumDTO {
     var id: Long? = null
     var title: String? = null
     var description: String? = null
-    var releasedOn: String? = null
+    var releaseDate: String? = null
+    var copyrightYear: Int? = null
     var recordLabel: Long? = null
-    var artists: MutableList<Long> = mutableListOf()
-    var collaborations: MutableList<Long> = mutableListOf()
-    var organizations: MutableList<Long> = mutableListOf()
+    var contributor: List<Long> = emptyList()
 }

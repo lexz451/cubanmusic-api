@@ -1,7 +1,7 @@
 package info.cubanmusic.cubanmusicapi.dto
 
 class ArticleDTO {
-    var uuid: String? = null
+    var id: Long? = null
     var title: String? = null
     var author: String? = null
     var source: String? = null

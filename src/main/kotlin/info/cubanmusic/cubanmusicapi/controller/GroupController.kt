@@ -3,12 +3,10 @@ package info.cubanmusic.cubanmusicapi.controller
 import info.cubanmusic.cubanmusicapi.model.Group
 import info.cubanmusic.cubanmusicapi.services.*
 import info.cubanmusic.cubanmusicapi.dto.ArtistDTO
-import info.cubanmusic.cubanmusicapi.dto.LocationDTO
-import info.cubanmusic.cubanmusicapi.helper.Utils
-import info.cubanmusic.cubanmusicapi.model.Gender
-import info.cubanmusic.cubanmusicapi.model.Location
-import info.cubanmusic.cubanmusicapi.model.Person
+import info.cubanmusic.cubanmusicapi.dto.GroupDTO
+import info.cubanmusic.cubanmusicapi.repository.*
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -18,144 +16,120 @@ import org.springframework.web.bind.annotation.*
 class GroupController {
 
     @Autowired
-    lateinit var awardService: AwardService
+    private lateinit var groupRepository: GroupRepository
     @Autowired
-    lateinit var albumService: AlbumService
+    private lateinit var countryRepository: CountryRepository
     @Autowired
-    lateinit var countryService: CountryService
+    private lateinit var organizationRepository: OrganizationRepository
     @Autowired
-    lateinit var organizationService: OrganizationService
+    private lateinit var genreRepository: GenreRepository
     @Autowired
-    lateinit var genreService: GenreService
+    private lateinit var awardRepository: AwardRepository
     @Autowired
-    lateinit var instrumentService: InstrumentService
+    private lateinit var instrumentRepository: InstrumentRepository
     @Autowired
-    lateinit var personService: PersonService
-    @Autowired
-    lateinit var labelService: LabelService
-    @Autowired
-    lateinit var groupService: GroupService
+    private lateinit var schoolRepository: SchoolRepository
 
     @GetMapping("")
     fun findAll(): ResponseEntity<*> {
-        val groups = groupService.findAll()
+        val groups = groupRepository.findAll()
         if (groups.isEmpty()) {
             return ResponseEntity<HttpStatus>(HttpStatus.NO_CONTENT)
         }
-        return ResponseEntity(groups.map { toResponse(it) }, HttpStatus.OK)
+        return ResponseEntity(groups.map { fromModel(it) }, HttpStatus.OK)
     }
 
     @GetMapping("/{id}")
     fun findById(@PathVariable id: Long): ResponseEntity<*> {
-        val group = groupService.findById(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
-        return ResponseEntity(toResponse(group), HttpStatus.OK)
+        val group = groupRepository.findByIdOrNull(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
+        return ResponseEntity(fromModel(group), HttpStatus.OK)
     }
 
     @PostMapping("/new")
-    fun create(@RequestBody request: ArtistDTO): ResponseEntity<*> {
-        val group = fromRequest(Group(), request)
-        groupService.save(group)
+    fun create(@RequestBody request: GroupDTO): ResponseEntity<*> {
+        val group = toModel(request, Group())
+        groupRepository.save(group)
         return ResponseEntity<HttpStatus>(HttpStatus.OK)
     }
 
     @PutMapping("/{id}")
-    fun update(@PathVariable id: Long, @RequestBody request: ArtistDTO): ResponseEntity<*> {
-        var group = groupService.findById(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
-        group = fromRequest(group, request)
-        groupService.save(group)
+    fun update(@PathVariable id: Long, @RequestBody request: GroupDTO): ResponseEntity<*> {
+        var group = groupRepository.findByIdOrNull(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
+        group = toModel(request, group)
+        groupRepository.save(group)
         return ResponseEntity<HttpStatus>(HttpStatus.OK)
     }
 
     @DeleteMapping("/{id}")
     fun delete(@PathVariable id: Long): ResponseEntity<*> {
-        groupService.findById(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
-        groupService.delete(id)
+        groupRepository.findByIdOrNull(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
+        groupRepository.deleteById(id)
         return ResponseEntity<HttpStatus>(HttpStatus.OK)
     }
 
-    private fun toResponse(group: Group): ArtistDTO {
-        return ArtistDTO().apply {
-            id = group.id
-            name = group.name
-            alias = group.alias
-            additionalNames = group.additionalNames.toList()
-            description = group.description
-            awards = group.awards.map { it.id!! }
-            albums = group.albums.map { it.id!! }
-            collaborations = group.collaborations.map { it.id!! }
-            members = group.members.map { it.id!! }
-            country = group.country?.id
-            activeSince = group.activeSince
-            activeUntil = group.activeUntil
-            affiliation = group.affiliation?.id
-            genres = group.genres.map { it.id!! }
-            instruments = group.instruments.map { it.id!! }
-            studyAt = group.studiedAt?.id
-            labels = group.labels.map { it.id!! }
-            email = group.email
-            website = group.website
-            isniCode = group.isniCode
-            spotify = group.spotify
-            appleMusic = group.appleMusic
-            youtube = group.youtube
-            viberate = group.viberate
-            soundCloud = group.soundCloud
-            deezer = group.deezer
-            instagram = group.instagram
-            facebook = group.facebook
-            twitter = group.twitter
-            tiktok = group.tiktok
-            libOfCongress = group.libOfCongress
-            quotes = group.quotes.toList()
+    fun fromModel(artist: Group): GroupDTO {
+        return GroupDTO().apply {
+            id = artist.id
+            name = artist.name
+            additionalNames = artist.additionalNames.toList()
+            alias = artist.alias
+            biography = artist.biography
+            email = artist.email
+            website = artist.website
+            activeSince = artist.activeSince
+            activeUntil = artist.activeUntil
+            isniCode = artist.isniCode
+            spotify = artist.spotify
+            appleMusic = artist.appleMusic
+            soundCloud = artist.soundCloud
+            deezer = artist.deezer
+            youtube = artist.youtube
+            instagram = artist.instagram
+            viberate = artist.viberate
+            facebook = artist.facebook
+            twitter = artist.twitter
+            tiktok = artist.tiktok
+            libOfCongress = artist.libOfCongress
+            nationality = artist.nationality
+            country = artist.country?.id
+            affiliation = artist.affiliation?.id
+            genres = artist.genres.map { it.id!! }
+            awards = artist.awards.map { it.id!! }
+            instruments = artist.instruments.map { it.id!! }
+            studyAt = artist.studyAt?.id
+            members = artist.members.map { it.id!! }
         }
     }
 
-    private fun fromRequest(group: Group, request: ArtistDTO): Group {
-        group.name = request.name ?: ""
-        group.alias = request.alias ?: ""
-        group.additionalNames = request.additionalNames.toMutableSet()
-        group.description = request.description ?: ""
-        if (request.awards.isNotEmpty()) {
-            group.awards = awardService.findAllByIds(request.awards)
+    fun toModel(artistDTO: GroupDTO, artist: Group): Group {
+        return artist.apply {
+            name = artistDTO.name
+            additionalNames = artistDTO.additionalNames.toMutableSet()
+            alias = artistDTO.alias
+            biography = artistDTO.biography
+            email = artistDTO.email
+            website = artistDTO.website
+            activeSince = artistDTO.activeSince
+            activeUntil = artistDTO.activeUntil
+            isniCode = artistDTO.isniCode
+            spotify = artistDTO.spotify
+            appleMusic = artistDTO.appleMusic
+            soundCloud = artistDTO.soundCloud
+            deezer = artistDTO.deezer
+            youtube = artistDTO.youtube
+            instagram = artistDTO.instagram
+            viberate = artistDTO.viberate
+            facebook = artistDTO.facebook
+            twitter = artistDTO.twitter
+            tiktok = artistDTO.tiktok
+            libOfCongress = artistDTO.libOfCongress
+            nationality = artistDTO.nationality
+            country = countryRepository.findByIdOrNull(artistDTO.country)
+            affiliation = organizationRepository.findByIdOrNull(artistDTO.affiliation)
+            genres = genreRepository.findAllById(artistDTO.genres)
+            awards = awardRepository.findAllById(artistDTO.awards)
+            instruments = instrumentRepository.findAllById(artistDTO.instruments)
+            studyAt = schoolRepository.findByIdOrNull(artistDTO.studyAt)
         }
-        if (request.albums.isNotEmpty()) {
-            group.albums = albumService.findAllByIds(request.albums)
-        }
-        if (request.collaborations.isNotEmpty()) {
-            group.collaborations = albumService.findAllByIds(request.collaborations)
-        }
-        if (request.members.isNotEmpty()) {
-            group.members = personService.findAllByIds(request.members)
-        }
-        request.country?.let { group.country = countryService.findById(it) }
-        group.activeSince = request.activeSince
-        group.activeUntil = request.activeUntil
-        request.affiliation?.let { group.affiliation = organizationService.findById(it) }
-        if (request.genres.isNotEmpty()) {
-            group.genres = genreService.findAllByIds(request.genres)
-        }
-        if (request.instruments.isNotEmpty()) {
-            group.instruments = instrumentService.findAllByIds(request.instruments)
-        }
-        request.studyAt?.let { group.studiedAt = organizationService.findById(it) }
-        if (request.labels.isNotEmpty()) {
-            group.labels = labelService.findAllByIds(request.labels)
-        }
-        group.email = request.email
-        group.website = request.website
-        group.isniCode = request.isniCode
-        group.spotify = request.spotify
-        group.appleMusic = request.appleMusic
-        group.youtube = request.youtube
-        group.viberate = request.viberate
-        group.soundCloud = request.soundCloud
-        group.deezer = request.deezer
-        group.instagram = request.instagram
-        group.facebook = request.facebook
-        group.twitter = request.twitter
-        group.tiktok = request.tiktok
-        group.libOfCongress = request.libOfCongress
-        group.quotes = request.quotes.toMutableSet()
-        return group
     }
 }

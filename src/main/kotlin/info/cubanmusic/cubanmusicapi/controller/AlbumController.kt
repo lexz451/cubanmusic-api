@@ -3,8 +3,11 @@ package info.cubanmusic.cubanmusicapi.controller
 import info.cubanmusic.cubanmusicapi.dto.AlbumDTO
 import info.cubanmusic.cubanmusicapi.helper.Utils
 import info.cubanmusic.cubanmusicapi.model.Album
+import info.cubanmusic.cubanmusicapi.repository.AlbumRepository
+import info.cubanmusic.cubanmusicapi.repository.RecordLabelRepository
 import info.cubanmusic.cubanmusicapi.services.*
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -14,81 +17,68 @@ import org.springframework.web.bind.annotation.*
 class AlbumController {
 
     @Autowired
-    lateinit var albumService: AlbumService
+    private lateinit var albumRepository: AlbumRepository
     @Autowired
-    lateinit var labelService: LabelService
-    @Autowired
-    lateinit var artistService: ArtistService
-    @Autowired
-    lateinit var organizationService: OrganizationService
+    private lateinit var recordLabelRepository: RecordLabelRepository
 
     @GetMapping("")
     fun findAll(): ResponseEntity<*> {
-        val albums = albumService.findAll()
+        val albums = albumRepository.findAll()
         if (albums.isEmpty()) {
             return ResponseEntity<HttpStatus>(HttpStatus.NO_CONTENT)
         }
-        return ResponseEntity(albums.map { toResponse(it) }, HttpStatus.OK)
+        return ResponseEntity(albums.map { fromModel(it) }, HttpStatus.OK)
     }
 
     @GetMapping("/{id}")
     fun findById(@PathVariable id: Long): ResponseEntity<*> {
-        val album = albumService.findById(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
-        return ResponseEntity(toResponse(album), HttpStatus.OK)
+        val album = albumRepository.findByIdOrNull(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
+        return ResponseEntity(fromModel(album), HttpStatus.OK)
     }
 
     @PostMapping("/new")
     fun create(@RequestBody request: AlbumDTO): ResponseEntity<*> {
-        val album = fromRequest(Album(), request)
-        albumService.save(album)
-        return ResponseEntity<HttpStatus>(HttpStatus.OK)
+        var album = toModel(request, Album())
+        album = albumRepository.save(album)
+        return ResponseEntity(album.id,HttpStatus.OK)
     }
 
     @PutMapping("/{id}")
     fun update(@PathVariable id: Long, @RequestBody request: AlbumDTO): ResponseEntity<*> {
-        var album = albumService.findById(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
-        album = fromRequest(album, request)
-        albumService.save(album)
+        var album = albumRepository.findByIdOrNull(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
+        album = toModel(request, album)
+        albumRepository.save(album)
         return ResponseEntity<HttpStatus>(HttpStatus.OK)
     }
 
     @DeleteMapping("/{id}")
     fun delete(@PathVariable id: Long): ResponseEntity<*> {
-        albumService.findById(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
-        albumService.delete(id)
+        albumRepository.findByIdOrNull(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
+        albumRepository.deleteById(id)
         return ResponseEntity<HttpStatus>(HttpStatus.OK);
     }
 
-    private fun fromRequest(album: Album, request: AlbumDTO): Album {
-        album.id = request.id
-        album.title = request.title ?: ""
-        album.description = request.description ?: ""
-        album.releasedOn = Utils.parseDate(request.releasedOn)
-        request.recordLabel?.let {
-            album.recordLabel = labelService.findById(it)
-        }
-        if (request.artists.isNotEmpty()) {
-            album.artists = artistService.findAllByIds(request.artists)
-        }
-        if (request.collaborations.isNotEmpty()) {
-            album.collaborations = artistService.findAllByIds(request.collaborations)
-        }
-        if (request.organizations.isNotEmpty()) {
-            album.organizations = organizationService.findAllByIds(request.organizations)
-        }
-        return album
-    }
-
-    private fun toResponse(album: Album): AlbumDTO {
+    fun fromModel(album: Album): AlbumDTO {
         return AlbumDTO().apply {
             id = album.id
             title = album.title
             description = album.description
-            releasedOn = Utils.formatDate(album.releasedOn)
+            releaseDate = Utils.formatDate(album.releaseDate)
+            copyrightYear = album.copyrightYear
             recordLabel = album.recordLabel?.id
-            artists = album.artists.map { it.id!! }.toMutableList()
-            collaborations = album.collaborations.map { it.id!! }.toMutableList()
-            organizations = album.organizations.map { it.id!! }.toMutableList()
         }
     }
+
+    fun toModel(albumDTO: AlbumDTO, album: Album): Album {
+        return album.apply {
+            title = albumDTO.title
+            description = albumDTO.description
+            releaseDate = Utils.parseDate(albumDTO.releaseDate)
+            copyrightYear = albumDTO.copyrightYear
+            albumDTO.recordLabel?.let {
+                recordLabel = recordLabelRepository.findByIdOrNull(it);
+            }
+        }
+    }
+
 }

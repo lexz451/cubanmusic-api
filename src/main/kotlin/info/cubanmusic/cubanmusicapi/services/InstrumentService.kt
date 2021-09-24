@@ -19,4 +19,6 @@ class InstrumentService {
     fun findAllByIds(ids: List<Long>): MutableList<Instrument> = instrumentRepository.findAllById(ids)
 
     fun save(instrument: Instrument) = instrumentRepository.save(instrument)
+
+    fun delete(id: Long) = instrumentRepository.deleteById(id)
 }

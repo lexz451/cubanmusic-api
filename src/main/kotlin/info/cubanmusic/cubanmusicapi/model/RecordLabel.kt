@@ -1,7 +1,7 @@
 package info.cubanmusic.cubanmusicapi.model
 
-import org.hibernate.Hibernate
-import javax.persistence.*
+import javax.persistence.Column
+import javax.persistence.Entity
 
 @Entity
 open class RecordLabel : Organization() {
@@ -9,5 +9,4 @@ open class RecordLabel : Organization() {
     open var ipiCode: String? = null
     @Column(unique = true)
     open var isniCode: String? = null
-
 }

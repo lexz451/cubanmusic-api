@@ -1,19 +1,18 @@
 package info.cubanmusic.cubanmusicapi.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import org.springframework.data.jpa.domain.AbstractAuditable
+import org.springframework.data.jpa.domain.AbstractPersistable
+import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import javax.persistence.*
 
-@Table(name = "instrument")
+@Table(name = "instruments")
 @Entity
-open class Instrument {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    open var id: Long? = null
+@EntityListeners(AuditingEntityListener::class)
+open class Instrument : AbstractAuditable<User, Long>() {
 
     open var name: String = ""
 
+    @Lob
     open var description: String = ""
-
-
 }

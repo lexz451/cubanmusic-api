@@ -2,19 +2,17 @@ package info.cubanmusic.cubanmusicapi.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import org.hibernate.Hibernate
+import org.springframework.data.jpa.domain.AbstractAuditable
 import javax.persistence.*
 
-@Table(name = "award")
+@Table(name = "awards")
 @Entity
-open class Award {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    open var id: Long? = null
+open class Award : AbstractAuditable<User, Long>() {
 
     @Column(length = 100)
     open var title: String? = null
 
+    @Lob
     open var description: String = ""
 
     @OneToOne
@@ -40,19 +38,4 @@ open class Award {
         inverseJoinColumns = [JoinColumn(name = "ARTIST_id")]
     )
     open var artists: MutableList<Artist> = mutableListOf()
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
-        other as Award
-
-        return id != null && id == other.id
-    }
-
-    override fun hashCode(): Int = 1963314904
-
-    @Override
-    override fun toString(): String {
-        return this::class.simpleName + "(id = $id , title = $title , description = $description , image = $image , country = $country , grantedBy = $grantedBy )"
-    }
 }
