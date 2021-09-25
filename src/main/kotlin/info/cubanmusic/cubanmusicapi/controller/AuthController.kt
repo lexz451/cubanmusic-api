@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.GetMapping
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -33,6 +34,12 @@ class AuthController {
     private lateinit var userService: UserService
     @Autowired
     private lateinit var passwordEncoder: PasswordEncoder
+
+    @GetMapping("/users")
+    fun getUsers(): ResponseEntity<*> {
+        val users = userService.findAll();
+        return ResponseEntity(users, HttpStatus.OK);
+    }
 
     @PostMapping("/signin")
     @Secured("IS_AUTHENTICATED_ANONYMOUSLY")
@@ -69,7 +76,7 @@ class AuthController {
         user.email = request.email
         user.password = passwordEncoder.encode(request.password)
         user.role = Role.CURATOR
-        user.enabled = false
+        user.enabled = true
         userService.save(user)
         return ResponseEntity(
             ApiResponse(true, "User successfully registered"),
