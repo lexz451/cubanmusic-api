@@ -41,7 +41,7 @@ class DatabaseSeeder : ApplicationRunner {
         log.info("Seeding countries...!")
         if (countryService.findAll().isEmpty()) {
             try {
-                val file = ResourceUtils.getFile("classpath:static/countries.csv");
+                val file = ResourceUtils.getFile("classpath:countries.csv");
                 val inputStream = FileInputStream(file);
                 val countries = CSVHelper.csvToCountries(inputStream)
                 countryService.saveAll(countries)
