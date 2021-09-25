@@ -38,7 +38,7 @@ class DatabaseSeeder : ApplicationRunner {
     override fun run(args: ApplicationArguments?) {
         log.info("Start seeding database...!")
 
-        log.info("Seeding countries...!")
+        /*log.info("Seeding countries...!")
         if (countryService.findAll().isEmpty()) {
             try {
                 val file = ResourceUtils.getFile("classpath:static/countries.csv");
@@ -51,7 +51,7 @@ class DatabaseSeeder : ApplicationRunner {
             }
         } else {
             log.info("Database already have countries. Skipping.")
-        }
+        }*/
 
         log.info("Seeding admin account...!")
         if (userService.findByEmail(adminEmail) == null) {
