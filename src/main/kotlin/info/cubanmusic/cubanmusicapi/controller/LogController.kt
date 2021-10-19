@@ -64,8 +64,9 @@ class LogController {
     )
 
     @GetMapping("/latest")
-    fun getLogs(): List<Log?> {
-        return getLatestChangeLog();
+    fun getLogs(): ResponseEntity<*> {
+        val logs = getLatestChangeLog();
+        return ResponseEntity(logs, HttpStatus.OK);
     }
 
     fun getLatestChangeLog(): List<Log?> {

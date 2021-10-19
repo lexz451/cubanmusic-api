@@ -1,2 +1,2 @@
 #!/bin/bash
-kill $(cat ../cubanmusic.pid)
+kill $(cat ../cubamusic.pid)
