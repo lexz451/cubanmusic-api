@@ -63,14 +63,12 @@ class LogController {
         var updatedBy: User? = null
     )
 
-    @GetMapping("")
+    @GetMapping("/latest")
     fun getLogs(): List<Log?> {
-        return runBlocking {
-            getLatestChangeLog()
-        }
+        return getLatestChangeLog();
     }
 
-    suspend fun getLatestChangeLog(): List<Log?> {
+    fun getLatestChangeLog(): List<Log?> {
         val users = userRepository.findAll()
         val persons = personRepository.findAll().take(10)
         val groups = groupRepository.findAll().take(10)
