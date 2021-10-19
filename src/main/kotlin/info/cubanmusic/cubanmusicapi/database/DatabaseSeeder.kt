@@ -38,21 +38,6 @@ class DatabaseSeeder : ApplicationRunner {
     override fun run(args: ApplicationArguments?) {
         log.info("Start seeding database...!")
 
-        /*log.info("Seeding countries...!")
-        if (countryService.findAll().isEmpty()) {
-            try {
-                val file = ResourceUtils.getFile("classpath:static/countries.csv");
-                val inputStream = FileInputStream(file);
-                val countries = CSVHelper.csvToCountries(inputStream)
-                countryService.saveAll(countries)
-            } catch (e: Exception) {
-                log.error("An error occurred when reading csv file.", e)
-                throw RuntimeException("An error occurred when reading csv file.")
-            }
-        } else {
-            log.info("Database already have countries. Skipping.")
-        }*/
-
         log.info("Seeding admin account...!")
         if (userService.findByEmail(adminEmail) == null) {
             try {

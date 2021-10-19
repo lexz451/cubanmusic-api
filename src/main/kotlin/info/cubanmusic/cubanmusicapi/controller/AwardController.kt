@@ -2,28 +2,29 @@ package info.cubanmusic.cubanmusicapi.controller
 
 import info.cubanmusic.cubanmusicapi.dto.AwardDTO
 import info.cubanmusic.cubanmusicapi.model.Award
-import info.cubanmusic.cubanmusicapi.services.AwardService
-import info.cubanmusic.cubanmusicapi.services.CountryService
-import info.cubanmusic.cubanmusicapi.services.OrganizationService
+import info.cubanmusic.cubanmusicapi.repository.AwardRepository
+import info.cubanmusic.cubanmusicapi.repository.CountryRepository
+import info.cubanmusic.cubanmusicapi.repository.OrganizationRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import org.springframework.data.repository.findByIdOrNull
 
 @RestController
 @RequestMapping("/api/v1/awards")
 class AwardController {
 
     @Autowired
-    lateinit var awardService: AwardService
+    lateinit var awardRepository: AwardRepository
     @Autowired
-    lateinit var countryService: CountryService
+    lateinit var countryRepository: CountryRepository
     @Autowired
-    lateinit var organizationService: OrganizationService
+    lateinit var organizationRepository: OrganizationRepository
 
     @GetMapping("")
     fun findAll(): ResponseEntity<*> {
-        val awards = awardService.findAll()
+        val awards = awardRepository.findAll()
         if (awards.isEmpty()) {
             return ResponseEntity<HttpStatus>(HttpStatus.NO_CONTENT)
         }
@@ -32,29 +33,29 @@ class AwardController {
 
     @GetMapping("/{id}")
     fun findById(@PathVariable id: Long): ResponseEntity<*> {
-        val award = awardService.findById(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
+        val award = awardRepository.findByIdOrNull(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
         return ResponseEntity(toResponse(award), HttpStatus.OK)
     }
 
     @PostMapping("/new")
     fun create(@RequestBody request: AwardDTO): ResponseEntity<*> {
-        val award = fromRequest(Award(), request)
-        awardService.save(award)
-        return ResponseEntity<HttpStatus>(HttpStatus.OK)
+        var award = fromRequest(Award(), request)
+        award = awardRepository.save(award)
+        return ResponseEntity(award.id, HttpStatus.OK)
     }
 
     @PutMapping("/{id}")
     fun update(@PathVariable id: Long, @RequestBody request: AwardDTO): ResponseEntity<*> {
-        var award = awardService.findById(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
+        var award = awardRepository.findByIdOrNull(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
         award = fromRequest(award, request)
-        awardService.save(award)
+        awardRepository.save(award)
         return ResponseEntity<HttpStatus>(HttpStatus.OK)
     }
 
     @DeleteMapping("/{id}")
     fun delete(@PathVariable id: Long): ResponseEntity<*> {
-        awardService.findById(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
-        awardService.delete(id)
+        awardRepository.findByIdOrNull(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
+        awardRepository.deleteById(id)
         return ResponseEntity<HttpStatus>(HttpStatus.OK)
     }
 
@@ -62,10 +63,10 @@ class AwardController {
         award.title = request.title
         award.description = request.description
         request.country?.let {
-            award.country = countryService.findById(it)
+            award.country = countryRepository.findByIdOrNull(it)
         }
         request.grantedBy?.let {
-            award.grantedBy = organizationService.findById(it)
+            award.grantedBy = organizationRepository.findByIdOrNull(it)
         }
         award.categories = request.categories.toMutableSet()
         return award

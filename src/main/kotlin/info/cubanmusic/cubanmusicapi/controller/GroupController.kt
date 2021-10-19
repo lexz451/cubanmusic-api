@@ -29,6 +29,8 @@ class GroupController {
     private lateinit var instrumentRepository: InstrumentRepository
     @Autowired
     private lateinit var schoolRepository: SchoolRepository
+    @Autowired
+    private lateinit var recordLabelRepository: RecordLabelRepository
 
     @GetMapping("")
     fun findAll(): ResponseEntity<*> {
@@ -47,9 +49,9 @@ class GroupController {
 
     @PostMapping("/new")
     fun create(@RequestBody request: GroupDTO): ResponseEntity<*> {
-        val group = toModel(request, Group())
-        groupRepository.save(group)
-        return ResponseEntity<HttpStatus>(HttpStatus.OK)
+        var group = toModel(request, Group())
+        group = groupRepository.save(group)
+        return ResponseEntity(group.id, HttpStatus.OK)
     }
 
     @PutMapping("/{id}")
@@ -95,9 +97,8 @@ class GroupController {
             affiliation = artist.affiliation?.id
             genres = artist.genres.map { it.id!! }
             awards = artist.awards.map { it.id!! }
-            instruments = artist.instruments.map { it.id!! }
-            studyAt = artist.studyAt?.id
             members = artist.members.map { it.id!! }
+            label = artist.recordLabel?.id
         }
     }
 
@@ -123,13 +124,23 @@ class GroupController {
             twitter = artistDTO.twitter
             tiktok = artistDTO.tiktok
             libOfCongress = artistDTO.libOfCongress
-            nationality = artistDTO.nationality
-            country = countryRepository.findByIdOrNull(artistDTO.country)
-            affiliation = organizationRepository.findByIdOrNull(artistDTO.affiliation)
-            genres = genreRepository.findAllById(artistDTO.genres)
-            awards = awardRepository.findAllById(artistDTO.awards)
-            instruments = instrumentRepository.findAllById(artistDTO.instruments)
-            studyAt = schoolRepository.findByIdOrNull(artistDTO.studyAt)
+            artistDTO.country?.let { 
+                System.out.println(artistDTO.country)
+                country = countryRepository.findByIdOrNull(it)
+            }
+            artistDTO.affiliation?.let {
+                affiliation = organizationRepository.findByIdOrNull(it)
+            }
+            if (artistDTO.genres.isNotEmpty()) {
+                genres = genreRepository.findAllById(artistDTO.genres)
+            }
+            if (artistDTO.awards.isNotEmpty()) {
+                awards = awardRepository.findAllById(artistDTO.awards)
+            }
+            artistDTO.label?.let { 
+                recordLabel = recordLabelRepository.findByIdOrNull(it)    
+            }
+            
         }
     }
 }

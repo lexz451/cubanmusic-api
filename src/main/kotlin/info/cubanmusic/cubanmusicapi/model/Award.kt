@@ -27,8 +27,9 @@ open class Award : AbstractAuditable<User, Long>() {
     @JoinColumn(name = "granted_by_id")
     open var grantedBy: Organization? = null
 
+    @Basic(fetch = FetchType.LAZY)
     @ElementCollection
-    open var categories: Set<String> = setOf()
+    open var categories: MutableSet<String> = mutableSetOf()
 
     @JsonIgnore
     @ManyToMany
