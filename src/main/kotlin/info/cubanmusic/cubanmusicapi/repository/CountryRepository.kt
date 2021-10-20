@@ -12,9 +12,9 @@ import java.util.*
 @Repository
 interface CountryRepository : JpaRepository<Country, Long>, JpaSpecificationExecutor<Country> {
 
-    @Query("SELECT * FROM countries")
+    @Query("SELECT * FROM countries", nativeQuery = true)
     override fun findAll(): List<Country>
 
-    @Query("SELECT * FROM countries WHERE id = ?1")
+    @Query("SELECT * FROM countries WHERE id = ?1", nativeQuery = true)
     fun findByIdNative(id: Long): Country?
 }
