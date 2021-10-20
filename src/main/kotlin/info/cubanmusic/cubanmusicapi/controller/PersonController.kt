@@ -1,14 +1,11 @@
 package info.cubanmusic.cubanmusicapi.controller
 
-import info.cubanmusic.cubanmusicapi.services.ImagesService
-import info.cubanmusic.cubanmusicapi.services.JobTitleService
 import info.cubanmusic.cubanmusicapi.helper.Utils
 import info.cubanmusic.cubanmusicapi.model.Gender
 import info.cubanmusic.cubanmusicapi.model.Person
-import info.cubanmusic.cubanmusicapi.services.*
-import info.cubanmusic.cubanmusicapi.dto.ArtistDTO
 import info.cubanmusic.cubanmusicapi.dto.PersonDTO
 import info.cubanmusic.cubanmusicapi.repository.*
+import info.cubanmusic.cubanmusicapi.services.CountryService
 import org.slf4j.LoggerFactory
 
 import org.springframework.beans.factory.annotation.Autowired
@@ -27,7 +24,7 @@ class PersonController {
     @Autowired
     private lateinit var locationRepository: LocationRepository
     @Autowired
-    private lateinit var countryRepository: CountryRepository
+    private lateinit var countryService: CountryService
     @Autowired
     private lateinit var organizationRepository: OrganizationRepository
     @Autowired
@@ -169,7 +166,9 @@ class PersonController {
             libOfCongress = artistDTO.libOfCongress
             nationality = artistDTO.nationality
 
-            country = countryRepository.findByIdOrNull(artistDTO.country ?: -1)
+            artistDTO.country?.let {
+                country = countryService.findById(it)
+            }
 
             affiliation = organizationRepository.findByIdOrNull(artistDTO.affiliation ?: -1)
 

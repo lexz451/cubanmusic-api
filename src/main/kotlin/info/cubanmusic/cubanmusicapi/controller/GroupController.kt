@@ -18,7 +18,7 @@ class GroupController {
     @Autowired
     private lateinit var groupRepository: GroupRepository
     @Autowired
-    private lateinit var countryRepository: CountryRepository
+    private lateinit var countryService: CountryService
     @Autowired
     private lateinit var organizationRepository: OrganizationRepository
     @Autowired
@@ -124,9 +124,8 @@ class GroupController {
             twitter = artistDTO.twitter
             tiktok = artistDTO.tiktok
             libOfCongress = artistDTO.libOfCongress
-            artistDTO.country?.let { 
-                System.out.println(artistDTO.country)
-                country = countryRepository.findByIdOrNull(it)
+            artistDTO.country?.let {
+                country = countryService.findById(it)
             }
             artistDTO.affiliation?.let {
                 affiliation = organizationRepository.findByIdOrNull(it)

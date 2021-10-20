@@ -15,7 +15,7 @@
 	<description>CubanMusic JSON API Backend</description>
 	<properties>
 		<java.version>16</java.version>
-		<kotlin.version>1.5.30</kotlin.version>
+		<kotlin.version>1.5.31</kotlin.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -121,6 +121,12 @@
             <groupId>org.jetbrains.kotlinx</groupId>
             <artifactId>kotlinx-coroutines-reactor</artifactId>
             <version>1.5.2-native-mt</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.buralo.spring.boot.memcached</groupId>
+            <artifactId>memcached-spring-boot-starter</artifactId>
+            <version>1.1.0</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

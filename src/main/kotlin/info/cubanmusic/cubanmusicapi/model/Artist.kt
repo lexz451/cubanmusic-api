@@ -49,11 +49,11 @@ open class Artist : Contributor() {
 
     open var nationality: String? = null
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "country_id")
     open var country: Country? = null
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "affiliation_id")
     open var affiliation: Organization? = null
 

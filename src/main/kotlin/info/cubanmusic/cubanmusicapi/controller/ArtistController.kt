@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity
 import info.cubanmusic.cubanmusicapi.model.QuoteReference
 import info.cubanmusic.cubanmusicapi.model.Image
 import info.cubanmusic.cubanmusicapi.repository.*
+import info.cubanmusic.cubanmusicapi.services.CountryService
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.web.bind.annotation.*
 
@@ -31,7 +32,7 @@ class ArtistController {
     @Autowired
     lateinit var articleRepository: ArticleReferenceRepository
     @Autowired
-    lateinit var countryRepository: CountryRepository
+    lateinit var countryService: CountryService
     @Autowired
     lateinit var organizationRepository: OrganizationRepository
     @Autowired
@@ -191,7 +192,9 @@ class ArtistController {
             tiktok = artistDTO.tiktok
             libOfCongress = artistDTO.libOfCongress
             nationality = artistDTO.nationality
-            country = countryRepository.findByIdOrNull(artistDTO.country)
+            artistDTO.country?.let {
+                country = countryService.findById(it)
+            }
             affiliation = organizationRepository.findByIdOrNull(artistDTO.affiliation)
             genres = genreRepository.findAllById(artistDTO.genres)
             awards = awardRepository.findAllById(artistDTO.awards)

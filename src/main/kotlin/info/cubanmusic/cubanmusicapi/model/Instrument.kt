@@ -6,7 +6,9 @@ import org.springframework.data.jpa.domain.AbstractPersistable
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import javax.persistence.*
 
-@Table(name = "instruments")
+@Table(name = "instruments", indexes = [
+    Index(name = "idx_instrument_id_name_unq", columnList = "id, name", unique = true)
+])
 @Entity
 @EntityListeners(AuditingEntityListener::class)
 open class Instrument : AbstractAuditable<User, Long>() {

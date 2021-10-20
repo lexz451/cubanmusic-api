@@ -4,7 +4,9 @@ import org.springframework.data.jpa.domain.AbstractAuditable
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import javax.persistence.*
 
-@Table(name = "job_titles")
+@Table(name = "job_titles", indexes = [
+    Index(name = "idx_jobtitle_id_name_unq", columnList = "id, name", unique = true)
+])
 @Entity
 @EntityListeners(AuditingEntityListener::class)
 open class JobTitle : AbstractAuditable<User, Long>() {

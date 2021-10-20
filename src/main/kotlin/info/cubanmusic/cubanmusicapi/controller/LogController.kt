@@ -2,23 +2,13 @@ package info.cubanmusic.cubanmusicapi.controller
 
 import info.cubanmusic.cubanmusicapi.model.*
 import info.cubanmusic.cubanmusicapi.repository.*
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.runBlocking
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.http.ResponseEntity
-import org.springframework.scheduling.annotation.Async
-import org.springframework.scheduling.annotation.AsyncResult
-import org.yaml.snakeyaml.util.ArrayUtils
-import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.*
-import java.util.concurrent.Flow
-import java.util.stream.Stream
 
 @RestController
 @RequestMapping("/api/v1/logs")
@@ -48,8 +38,6 @@ class LogController {
     lateinit var locationRepository: LocationRepository
     @Autowired
     lateinit var imageRepository: LocationRepository
-    @Autowired
-    lateinit var countryRepository: CountryRepository
     @Autowired
     lateinit var userRepository: UserRepository
 

@@ -7,7 +7,4 @@ import org.springframework.data.jpa.repository.Query
 
 @Suppress("FunctionName")
 interface AlbumRepository : JpaRepository<Album, Long>, JpaSpecificationExecutor<Album> {
-
-    fun findByArtists_Id(id: Long): List<Album>
-
 }

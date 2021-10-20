@@ -19,9 +19,6 @@ import java.io.FileInputStream
 class DatabaseSeeder : ApplicationRunner {
 
     @Autowired
-    private lateinit var countryService: CountryService
-
-    @Autowired
     private lateinit var userService: UserService
 
     @Autowired

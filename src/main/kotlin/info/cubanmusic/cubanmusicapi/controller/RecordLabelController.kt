@@ -3,9 +3,10 @@ package info.cubanmusic.cubanmusicapi.controller
 import info.cubanmusic.cubanmusicapi.dto.RecordLabelDTO
 import info.cubanmusic.cubanmusicapi.model.Phone
 import info.cubanmusic.cubanmusicapi.model.RecordLabel
+import info.cubanmusic.cubanmusicapi.repository.RecordLabelRepository
 import info.cubanmusic.cubanmusicapi.services.CountryService
-import info.cubanmusic.cubanmusicapi.services.LabelService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -15,13 +16,13 @@ import org.springframework.web.bind.annotation.*
 class RecordLabelController {
 
     @Autowired
-    lateinit var labelService: LabelService
+    lateinit var labelRepository: RecordLabelRepository
     @Autowired
     lateinit var countryService: CountryService
 
     @GetMapping("")
     fun findAll(): ResponseEntity<*> {
-        val labels = labelService.findAll()
+        val labels = labelRepository.findAll()
         if (labels.isEmpty()) {
             return ResponseEntity<HttpStatus>(HttpStatus.NO_CONTENT)
         }
@@ -30,7 +31,7 @@ class RecordLabelController {
 
     @GetMapping("/{id}")
     fun findById(@PathVariable id: Long): ResponseEntity<*> {
-        val label = labelService.findById(id)
+        val label = labelRepository.findByIdOrNull(id)
         label?.let {
             return ResponseEntity(toResponse(it), HttpStatus.OK)
         }
@@ -40,22 +41,22 @@ class RecordLabelController {
     @PostMapping("/new")
     fun create(@RequestBody request: RecordLabelDTO): ResponseEntity<*> {
         var label = fromRequest(RecordLabel(), request)
-        label = labelService.save(label)
+        label = labelRepository.save(label)
         return ResponseEntity(label.id, HttpStatus.OK)
     }
 
     @PutMapping("/{id}")
     fun update(@PathVariable id: Long, @RequestBody request: RecordLabelDTO): ResponseEntity<*> {
-        var label = labelService.findById(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
+        var label = labelRepository.findByIdOrNull(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
         label = fromRequest(label, request)
-        labelService.save(label)
+        labelRepository.save(label)
         return ResponseEntity<HttpStatus>(HttpStatus.OK)
     }
 
     @DeleteMapping("/{id}")
     fun delete(@PathVariable id: Long): ResponseEntity<*> {
-        labelService.findById(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.OK)
-        labelService.delete(id)
+        labelRepository.findById(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.OK)
+        labelRepository.deleteById(id)
         return ResponseEntity<HttpStatus>(HttpStatus.OK)
     }
 

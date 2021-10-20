@@ -1,6 +1,7 @@
 package info.cubanmusic.cubanmusicapi.controller
 
 import info.cubanmusic.cubanmusicapi.model.Country
+
 import info.cubanmusic.cubanmusicapi.services.CountryService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -25,7 +26,7 @@ class CountryController {
 
     @PostMapping("/new")
     fun create(@RequestBody country: Country): ResponseEntity<*> {
-        val _country = countryService.save(country)
-        return ResponseEntity(_country.id, HttpStatus.OK)
+        val c = countryService.save(country)
+        return ResponseEntity(c.id, HttpStatus.OK)
     }
 }

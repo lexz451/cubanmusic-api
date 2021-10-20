@@ -3,20 +3,20 @@ package info.cubanmusic.cubanmusicapi.services
 import info.cubanmusic.cubanmusicapi.model.Country
 import info.cubanmusic.cubanmusicapi.repository.CountryRepository
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.repository.findByIdOrNull
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 
-@Service("countryService")
+@Service
 class CountryService {
 
     @Autowired
-    private lateinit var countryRepository: CountryRepository
+    lateinit var countryRepository: CountryRepository
 
-    fun findAll(): List<Country> = countryRepository.findAll()
+    @Cacheable("countries")
+    fun findAll() = countryRepository.findAll()
 
-    fun findById(id: Long) = countryRepository.findByIdOrNull(id)
+    @Cacheable
+    fun findById(id: Long): Country? = countryRepository.findByIdNative(id)
 
-    fun save(country: Country) = countryRepository.save(country)
-
-    fun saveAll(countries: List<Country>): MutableList<Country> = countryRepository.saveAll(countries)
+    fun save(country: Country): Country = countryRepository.save(country)
 }

@@ -5,12 +5,13 @@ import info.cubanmusic.cubanmusicapi.helper.Utils
 import info.cubanmusic.cubanmusicapi.model.Phone
 import info.cubanmusic.cubanmusicapi.model.Venue
 import info.cubanmusic.cubanmusicapi.model.VenueTypes
-import info.cubanmusic.cubanmusicapi.services.VenuesService
+import info.cubanmusic.cubanmusicapi.repository.VenueRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.slf4j.LoggerFactory
+import org.springframework.data.repository.findByIdOrNull
 
 
 @RestController
@@ -20,11 +21,11 @@ class VenueController {
     private val logger = LoggerFactory.getLogger(VenueController::class.java)
 
     @Autowired
-    lateinit var venuesService: VenuesService
+    lateinit var venueRepository: VenueRepository
 
     @GetMapping("")
     fun findAll(): ResponseEntity<*> {
-        val venues = venuesService.findAll()
+        val venues = venueRepository.findAll()
         if (venues.isEmpty()) {
             return ResponseEntity<HttpStatus>(HttpStatus.NO_CONTENT)
         }
@@ -33,29 +34,29 @@ class VenueController {
 
     @GetMapping("/{id}")
     fun findById(@PathVariable id: Long): ResponseEntity<*> {
-        val venue = venuesService.findById(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
+        val venue = venueRepository.findByIdOrNull(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
         return ResponseEntity(toResponse(venue), HttpStatus.OK)
     }
 
     @PostMapping("/new")
     fun create(@RequestBody request: VenueDTO): ResponseEntity<*> {
         var venue = fromRequest(Venue(), request)
-        venue = venuesService.save(venue)
+        venue = venueRepository.save(venue)
         return ResponseEntity(venue.id,HttpStatus.OK)
     }
 
     @PutMapping("/{id}")
     fun update(@PathVariable id: Long, @RequestBody request: VenueDTO): ResponseEntity<*> {
-        var venue = venuesService.findById(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
+        var venue = venueRepository.findByIdOrNull(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
         venue = fromRequest(venue, request)
-        venuesService.save(venue)
+        venueRepository.save(venue)
         return ResponseEntity<HttpStatus>(HttpStatus.OK)
     }
     
     @DeleteMapping("/{id}")
     fun delete(@PathVariable id: Long): ResponseEntity<*> {
-        venuesService.findById(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
-        venuesService.delete(id)
+        venueRepository.findByIdOrNull(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
+        venueRepository.deleteById(id)
         return ResponseEntity<HttpStatus>(HttpStatus.OK)
     }
 

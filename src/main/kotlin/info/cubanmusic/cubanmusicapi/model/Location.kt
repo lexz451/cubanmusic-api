@@ -4,7 +4,9 @@ import org.springframework.data.jpa.domain.AbstractAuditable
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import javax.persistence.*
 
-@Table(name = "locations")
+@Table(name = "locations", indexes = [
+    Index(name = "idx_location_id_city_unq", columnList = "id, city, state, country_id", unique = true)
+])
 @Entity
 @EntityListeners(AuditingEntityListener::class)
 open class Location : AbstractAuditable<User, Long>() {

@@ -8,7 +8,9 @@ import javax.persistence.*
 import com.fasterxml.jackson.annotation.JsonIgnore
 
 
-@Table(name = "images")
+@Table(name = "images", indexes = [
+    Index(name = "idx_image_id_filename_unq", columnList = "id, filename", unique = true)
+])
 @Entity
 @EntityListeners(AuditingEntityListener::class)
 open class Image : AbstractAuditable<User, Long>() {

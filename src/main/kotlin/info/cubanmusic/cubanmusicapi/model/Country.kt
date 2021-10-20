@@ -6,7 +6,9 @@ import org.springframework.data.jpa.domain.AbstractAuditable
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import javax.persistence.*
 
-@Table(name = "countries")
+@Table(name = "countries", indexes = [
+    Index(name = "idx_country_name_iso2code_unq", columnList = "name, iso2Code", unique = true)
+])
 @Entity
 open class Country : AbstractAuditable<User, Long>() {
 
