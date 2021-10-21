@@ -9,6 +9,5 @@ import org.springframework.data.jpa.repository.Query
 interface PersonRepository : JpaRepository<Person, Long>, JpaSpecificationExecutor<Person> {
 
     @Cacheable("persons")
-    @Query("SELECT * FROM contributor WHERE dtype = 'Person'", nativeQuery = true)
     override fun findAll(): List<Person>
 }
