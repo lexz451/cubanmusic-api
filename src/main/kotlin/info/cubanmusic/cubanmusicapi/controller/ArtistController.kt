@@ -1,33 +1,23 @@
 package info.cubanmusic.cubanmusicapi.controller
 
-import info.cubanmusic.cubanmusicapi.dto.AlbumDTO
 import info.cubanmusic.cubanmusicapi.dto.ArticleDTO
 import info.cubanmusic.cubanmusicapi.dto.ArtistDTO
 import info.cubanmusic.cubanmusicapi.dto.QuoteDTO
-import info.cubanmusic.cubanmusicapi.dto.ImageDTO
 import info.cubanmusic.cubanmusicapi.helper.Utils
-import info.cubanmusic.cubanmusicapi.model.Album
 import info.cubanmusic.cubanmusicapi.model.ArticleReference
 import info.cubanmusic.cubanmusicapi.model.Artist
+import info.cubanmusic.cubanmusicapi.model.QuoteReference
+import info.cubanmusic.cubanmusicapi.repository.*
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import info.cubanmusic.cubanmusicapi.model.QuoteReference
-import info.cubanmusic.cubanmusicapi.model.Image
-import info.cubanmusic.cubanmusicapi.repository.*
-import info.cubanmusic.cubanmusicapi.services.ArtistService
-import info.cubanmusic.cubanmusicapi.services.CountryService
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.web.bind.annotation.*
-
 
 
 @RestController()
 @RequestMapping("/api/v1/artists")
 class ArtistController {
-
-    @Autowired
-    lateinit var artistService: ArtistService
 
     @Autowired
     lateinit var artistRepository: ArtistRepository
@@ -36,7 +26,7 @@ class ArtistController {
     @Autowired
     lateinit var articleRepository: ArticleReferenceRepository
     @Autowired
-    lateinit var countryService: CountryService
+    lateinit var countryRepository: CountryRepository
     @Autowired
     lateinit var organizationRepository: OrganizationRepository
     @Autowired
@@ -55,7 +45,7 @@ class ArtistController {
 
     @GetMapping("")
     fun findAll(): ResponseEntity<*> {
-        val artists = artistService.findAll()
+        val artists = artistRepository.findAll()
         if (artists.isEmpty()) {
             return ResponseEntity<HttpStatus>(HttpStatus.NO_CONTENT)
         }
@@ -197,7 +187,7 @@ class ArtistController {
             libOfCongress = artistDTO.libOfCongress
             nationality = artistDTO.nationality
             artistDTO.country?.let {
-                country = countryService.findById(it)
+                country = countryRepository.findByIdOrNull(it)
             }
             affiliation = organizationRepository.findByIdOrNull(artistDTO.affiliation)
             genres = genreRepository.findAllById(artistDTO.genres)

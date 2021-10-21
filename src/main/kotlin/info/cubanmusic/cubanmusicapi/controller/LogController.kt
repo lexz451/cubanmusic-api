@@ -2,7 +2,6 @@ package info.cubanmusic.cubanmusicapi.controller
 
 import info.cubanmusic.cubanmusicapi.model.*
 import info.cubanmusic.cubanmusicapi.repository.*
-import info.cubanmusic.cubanmusicapi.services.VenueService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -28,7 +27,7 @@ class LogController {
     @Autowired
     lateinit var recordLabelRepository: RecordLabelRepository
     @Autowired
-    lateinit var venueService: VenueService
+    lateinit var venueRepository: VenueRepository
     @Autowired
     lateinit var genreRepository: GenreRepository
     @Autowired
@@ -66,7 +65,7 @@ class LogController {
         val awards = awardRepository.findAll().take(10)
         val orgs = organizationRepository.findAll().take(10)
         val records = recordLabelRepository.findAll().take(10)
-        val venue = venueService.findAll().take(10)
+        val venue = venueRepository.findAll().take(10)
         val genre = genreRepository.findAll().take(10)
         val jobTitle = jobTitleRepository.findAll().take(10)
         val instrument = instrumentRepository.findAll().take(10)

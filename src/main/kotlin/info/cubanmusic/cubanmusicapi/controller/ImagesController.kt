@@ -28,7 +28,6 @@ class ImagesController {
 
     private var logger = LoggerFactory.getLogger(ImagesController::class.java)
 
-
     @GetMapping("")
     fun findAllById(@RequestParam ids: String?): ResponseEntity<*> {
         return try {

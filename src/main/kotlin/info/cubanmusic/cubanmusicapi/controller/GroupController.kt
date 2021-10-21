@@ -1,9 +1,7 @@
 package info.cubanmusic.cubanmusicapi.controller
 
-import info.cubanmusic.cubanmusicapi.model.Group
-import info.cubanmusic.cubanmusicapi.services.*
-import info.cubanmusic.cubanmusicapi.dto.ArtistDTO
 import info.cubanmusic.cubanmusicapi.dto.GroupDTO
+import info.cubanmusic.cubanmusicapi.model.Group
 import info.cubanmusic.cubanmusicapi.repository.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.findByIdOrNull
@@ -18,17 +16,13 @@ class GroupController {
     @Autowired
     private lateinit var groupRepository: GroupRepository
     @Autowired
-    private lateinit var countryService: CountryService
+    private lateinit var countryRepository: CountryRepository
     @Autowired
     private lateinit var organizationRepository: OrganizationRepository
     @Autowired
     private lateinit var genreRepository: GenreRepository
     @Autowired
     private lateinit var awardRepository: AwardRepository
-    @Autowired
-    private lateinit var instrumentRepository: InstrumentRepository
-    @Autowired
-    private lateinit var schoolRepository: SchoolRepository
     @Autowired
     private lateinit var recordLabelRepository: RecordLabelRepository
 
@@ -125,7 +119,7 @@ class GroupController {
             tiktok = artistDTO.tiktok
             libOfCongress = artistDTO.libOfCongress
             artistDTO.country?.let {
-                country = countryService.findById(it)
+                country = countryRepository.findByIdOrNull(it)
             }
             artistDTO.affiliation?.let {
                 affiliation = organizationRepository.findByIdOrNull(it)

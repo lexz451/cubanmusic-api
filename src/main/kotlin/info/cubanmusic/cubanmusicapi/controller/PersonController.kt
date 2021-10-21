@@ -1,13 +1,11 @@
 package info.cubanmusic.cubanmusicapi.controller
 
+import info.cubanmusic.cubanmusicapi.dto.PersonDTO
 import info.cubanmusic.cubanmusicapi.helper.Utils
 import info.cubanmusic.cubanmusicapi.model.Gender
 import info.cubanmusic.cubanmusicapi.model.Person
-import info.cubanmusic.cubanmusicapi.dto.PersonDTO
 import info.cubanmusic.cubanmusicapi.repository.*
-import info.cubanmusic.cubanmusicapi.services.CountryService
 import org.slf4j.LoggerFactory
-
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
@@ -24,7 +22,7 @@ class PersonController {
     @Autowired
     private lateinit var locationRepository: LocationRepository
     @Autowired
-    private lateinit var countryService: CountryService
+    private lateinit var countryRepository: CountryRepository
     @Autowired
     private lateinit var organizationRepository: OrganizationRepository
     @Autowired
@@ -167,7 +165,7 @@ class PersonController {
             nationality = artistDTO.nationality
 
             artistDTO.country?.let {
-                country = countryService.findById(it)
+                country = countryRepository.findByIdOrNull(it)
             }
 
             affiliation = organizationRepository.findByIdOrNull(artistDTO.affiliation ?: -1)

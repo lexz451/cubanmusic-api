@@ -3,13 +3,13 @@ package info.cubanmusic.cubanmusicapi.controller
 import info.cubanmusic.cubanmusicapi.dto.AwardDTO
 import info.cubanmusic.cubanmusicapi.model.Award
 import info.cubanmusic.cubanmusicapi.repository.AwardRepository
+import info.cubanmusic.cubanmusicapi.repository.CountryRepository
 import info.cubanmusic.cubanmusicapi.repository.OrganizationRepository
-import info.cubanmusic.cubanmusicapi.services.CountryService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import org.springframework.data.repository.findByIdOrNull
 
 @RestController
 @RequestMapping("/api/v1/awards")
@@ -18,7 +18,7 @@ class AwardController {
     @Autowired
     lateinit var awardRepository: AwardRepository
     @Autowired
-    lateinit var countryService: CountryService
+    lateinit var countryRepository: CountryRepository
     @Autowired
     lateinit var organizationRepository: OrganizationRepository
 
@@ -63,7 +63,7 @@ class AwardController {
         award.title = request.title
         award.description = request.description
         request.country?.let {
-            award.country = countryService.findById(it)
+            award.country = countryRepository.findByIdOrNull(it)
         }
         request.grantedBy?.let {
             award.grantedBy = organizationRepository.findByIdOrNull(it)

@@ -3,9 +3,8 @@ package info.cubanmusic.cubanmusicapi.controller
 import info.cubanmusic.cubanmusicapi.dto.OrganizationDTO
 import info.cubanmusic.cubanmusicapi.model.Organization
 import info.cubanmusic.cubanmusicapi.model.Phone
-
+import info.cubanmusic.cubanmusicapi.repository.CountryRepository
 import info.cubanmusic.cubanmusicapi.repository.OrganizationRepository
-import info.cubanmusic.cubanmusicapi.services.CountryService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
@@ -18,7 +17,7 @@ class OrganizationController {
     @Autowired
     lateinit var organizationRepository: OrganizationRepository
     @Autowired
-    lateinit var countryService: CountryService
+    lateinit var countryRepository: CountryRepository
 
     @GetMapping("")
     fun findAll(): ResponseEntity<*> {
@@ -61,7 +60,7 @@ class OrganizationController {
         org.name = request.name ?: ""
         org.description = request.description ?: ""
         request.country?.let {
-            org.country = countryService.findById(it)
+            org.country = countryRepository.findByIdOrNull(it)
         }
         org.address = request.address ?: ""
         org.email = request.email

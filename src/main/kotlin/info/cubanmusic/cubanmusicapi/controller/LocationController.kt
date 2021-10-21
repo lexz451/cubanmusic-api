@@ -2,9 +2,8 @@ package info.cubanmusic.cubanmusicapi.controller
 
 import info.cubanmusic.cubanmusicapi.dto.LocationDTO
 import info.cubanmusic.cubanmusicapi.model.Location
-
+import info.cubanmusic.cubanmusicapi.repository.CountryRepository
 import info.cubanmusic.cubanmusicapi.repository.LocationRepository
-import info.cubanmusic.cubanmusicapi.services.CountryService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
@@ -18,7 +17,7 @@ class LocationController {
    @Autowired
    private lateinit var locationRepository: LocationRepository
    @Autowired
-   private lateinit var countryService: CountryService
+   private lateinit var countryRepository: CountryRepository
 
     @GetMapping("")
     fun findAll(): ResponseEntity<*> {
@@ -54,7 +53,7 @@ class LocationController {
             city = locationDTO.city
             state = locationDTO.state
             locationDTO.country?.let {
-                country = countryService.findById(it)
+                country = countryRepository.findByIdOrNull(it)
             }
         }
     }

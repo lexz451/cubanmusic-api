@@ -1,6 +1,7 @@
 package info.cubanmusic.cubanmusicapi.repository;
 
 import info.cubanmusic.cubanmusicapi.model.Country
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.domain.Example
 import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.repository.JpaRepository
@@ -12,6 +13,7 @@ import java.util.*
 @Repository
 interface CountryRepository : JpaRepository<Country, Long>, JpaSpecificationExecutor<Country> {
 
+    @Cacheable("countries")
     @Query("SELECT * FROM countries", nativeQuery = true)
     override fun findAll(): List<Country>
 

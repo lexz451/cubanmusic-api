@@ -3,8 +3,8 @@ package info.cubanmusic.cubanmusicapi.controller
 import info.cubanmusic.cubanmusicapi.dto.RecordLabelDTO
 import info.cubanmusic.cubanmusicapi.model.Phone
 import info.cubanmusic.cubanmusicapi.model.RecordLabel
+import info.cubanmusic.cubanmusicapi.repository.CountryRepository
 import info.cubanmusic.cubanmusicapi.repository.RecordLabelRepository
-import info.cubanmusic.cubanmusicapi.services.CountryService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
@@ -18,7 +18,7 @@ class RecordLabelController {
     @Autowired
     lateinit var labelRepository: RecordLabelRepository
     @Autowired
-    lateinit var countryService: CountryService
+    lateinit var countryRepository: CountryRepository
 
     @GetMapping("")
     fun findAll(): ResponseEntity<*> {
@@ -66,7 +66,7 @@ class RecordLabelController {
         recordLabel.name = request.name ?: ""
         recordLabel.description = request.description ?: ""
         request.country?.let {
-            recordLabel.country = countryService.findById(it)
+            recordLabel.country = countryRepository.findByIdOrNull(it)
         }
         recordLabel.address = request.address ?: ""
         recordLabel.email = request.email
