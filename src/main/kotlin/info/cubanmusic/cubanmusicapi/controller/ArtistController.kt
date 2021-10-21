@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity
 import info.cubanmusic.cubanmusicapi.model.QuoteReference
 import info.cubanmusic.cubanmusicapi.model.Image
 import info.cubanmusic.cubanmusicapi.repository.*
+import info.cubanmusic.cubanmusicapi.services.ArtistService
 import info.cubanmusic.cubanmusicapi.services.CountryService
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.web.bind.annotation.*
@@ -24,6 +25,9 @@ import org.springframework.web.bind.annotation.*
 @RestController()
 @RequestMapping("/api/v1/artists")
 class ArtistController {
+
+    @Autowired
+    lateinit var artistService: ArtistService
 
     @Autowired
     lateinit var artistRepository: ArtistRepository
@@ -51,7 +55,7 @@ class ArtistController {
 
     @GetMapping("")
     fun findAll(): ResponseEntity<*> {
-        val artists = artistRepository.findAll();
+        val artists = artistService.findAll()
         if (artists.isEmpty()) {
             return ResponseEntity<HttpStatus>(HttpStatus.NO_CONTENT)
         }

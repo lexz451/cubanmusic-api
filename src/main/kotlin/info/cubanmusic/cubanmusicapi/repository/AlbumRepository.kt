@@ -7,4 +7,7 @@ import org.springframework.data.jpa.repository.Query
 
 @Suppress("FunctionName")
 interface AlbumRepository : JpaRepository<Album, Long>, JpaSpecificationExecutor<Album> {
+
+    @Query("SELECT * FROM albums")
+    override fun findAll(): List<Album>
 }

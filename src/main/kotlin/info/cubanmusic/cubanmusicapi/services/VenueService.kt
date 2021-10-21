@@ -11,7 +11,7 @@ class VenueService {
 
     @Autowired
     lateinit var venueRepository: VenueRepository
-    
+
     @Cacheable("venues")
     fun findAll() = venueRepository.findAll()
 
