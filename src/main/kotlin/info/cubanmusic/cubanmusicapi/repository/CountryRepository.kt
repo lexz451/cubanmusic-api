@@ -1,6 +1,7 @@
 package info.cubanmusic.cubanmusicapi.repository;
 
 import info.cubanmusic.cubanmusicapi.model.Country
+import org.springframework.cache.annotation.CacheEvict
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.domain.Example
 import org.springframework.data.domain.Sort
@@ -19,4 +20,10 @@ interface CountryRepository : JpaRepository<Country, Long>, JpaSpecificationExec
 
     @Query("SELECT * FROM countries WHERE id = ?1", nativeQuery = true)
     fun findByIdNative(id: Long): Country?
+
+    @CacheEvict("countries", allEntries = true)
+    override fun <S : Country?> save(entity: S): S
+
+    @CacheEvict("countries", allEntries = true)
+    override fun deleteById(id: Long)
 }
