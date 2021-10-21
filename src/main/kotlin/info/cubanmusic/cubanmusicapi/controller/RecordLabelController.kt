@@ -55,7 +55,7 @@ class RecordLabelController {
 
     @DeleteMapping("/{id}")
     fun delete(@PathVariable id: Long): ResponseEntity<*> {
-        labelRepository.findById(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.OK)
+        labelRepository.findByIdOrNull(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.OK)
         labelRepository.deleteById(id)
         return ResponseEntity<HttpStatus>(HttpStatus.OK)
     }
