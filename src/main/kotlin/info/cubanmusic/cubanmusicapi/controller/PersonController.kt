@@ -115,6 +115,7 @@ class PersonController {
             facebook = artist.facebook
             twitter = artist.twitter
             tiktok = artist.tiktok
+            reverbNation = artist.reverbNation
             libOfCongress = artist.libOfCongress
             nationality = artist.nationality
             country = artist.country?.id
@@ -158,6 +159,7 @@ class PersonController {
             youtube = artistDTO.youtube
             instagram = artistDTO.instagram
             viberate = artistDTO.viberate
+            reverbNation = artistDTO.reverbNation
             facebook = artistDTO.facebook
             twitter = artistDTO.twitter
             tiktok = artistDTO.tiktok

@@ -6,7 +6,7 @@ import javax.persistence.*
 @Entity
 open class Artist : Contributor() {
 
-    @Basic(fetch = FetchType.LAZY)
+    @Basic(fetch = FetchType.EAGER)
     @ElementCollection
     open var additionalNames: MutableSet<String> = mutableSetOf()
 
@@ -45,9 +45,12 @@ open class Artist : Contributor() {
 
     open var tiktok: String? = null
 
+    open var reverbNation: String? = null
+
     open var libOfCongress: String? = null
 
     open var nationality: String? = null
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "country_id")

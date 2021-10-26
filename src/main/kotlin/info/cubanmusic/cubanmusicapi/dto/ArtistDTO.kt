@@ -37,6 +37,7 @@ open class ArtistDTO(
         var facebook: String? = null,
         var twitter: String? = null,
         var tiktok: String? = null,
+        var reverbNation: String? = null,
         var libOfCongress: String? = null,
         var images: List<Long> = emptyList()
 ) {

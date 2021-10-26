@@ -82,6 +82,7 @@ class GroupController {
             youtube = artist.youtube
             instagram = artist.instagram
             viberate = artist.viberate
+            reverbNation = artist.reverbNation
             facebook = artist.facebook
             twitter = artist.twitter
             tiktok = artist.tiktok
@@ -114,6 +115,7 @@ class GroupController {
             youtube = artistDTO.youtube
             instagram = artistDTO.instagram
             viberate = artistDTO.viberate
+            reverbNation = artistDTO.reverbNation
             facebook = artistDTO.facebook
             twitter = artistDTO.twitter
             tiktok = artistDTO.tiktok
