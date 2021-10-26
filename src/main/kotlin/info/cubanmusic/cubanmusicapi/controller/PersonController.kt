@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
 
 
@@ -44,6 +45,7 @@ class PersonController {
     @Autowired
     private lateinit var imagesRepository: ImageRepository;
 
+    @Transactional()
     @GetMapping("")
     fun findAll(): ResponseEntity<*> {
         val persons = personRepository.findAll()
@@ -53,6 +55,7 @@ class PersonController {
         return ResponseEntity(persons.map { fromModel(it) }, HttpStatus.OK)
     }
 
+    @Transactional()
     @GetMapping("/{id}")
     fun findById(@PathVariable id: Long): ResponseEntity<*> {
         val person = personRepository.findByIdOrNull(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
@@ -85,7 +88,7 @@ class PersonController {
         return PersonDTO().apply {
             id = artist.id
             name = artist.name
-            additionalNames = artist.additionalNames.toList()
+            additionalNames = artist.additionalNames.toMutableList()
             alias = artist.alias
             biography = artist.biography
 

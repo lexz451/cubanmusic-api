@@ -6,7 +6,6 @@ import javax.persistence.*
 @Entity
 open class Artist : Contributor() {
 
-    @Basic(fetch = FetchType.EAGER)
     @ElementCollection
     open var additionalNames: MutableSet<String> = mutableSetOf()
 
@@ -52,11 +51,11 @@ open class Artist : Contributor() {
     open var nationality: String? = null
 
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "country_id")
     open var country: Country? = null
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "affiliation_id")
     open var affiliation: Organization? = null
 
@@ -85,7 +84,7 @@ open class Artist : Contributor() {
     open var instruments: MutableList<Instrument> = mutableListOf()
 
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "school_id")
     open var studyAt: School? = null
 
@@ -103,7 +102,7 @@ open class Artist : Contributor() {
             inverseJoinColumns = [JoinColumn(name = "albums_id")])
     open var albums: MutableList<Album> = mutableListOf()
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "label_id")
     open var recordLabel: RecordLabel? = null
 

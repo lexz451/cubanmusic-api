@@ -14,4 +14,5 @@ class AlbumDTO {
     var copyrightYear: Int? = null
     var recordLabel: Long? = null
     var contributor: List<Long> = emptyList()
+    var artists: List<Long> = emptyList()
 }

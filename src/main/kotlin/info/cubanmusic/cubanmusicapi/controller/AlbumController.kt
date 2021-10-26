@@ -65,6 +65,7 @@ class AlbumController {
             releaseDate = Utils.formatDate(album.releaseDate)
             copyrightYear = album.copyrightYear
             recordLabel = album.recordLabel?.id
+            artists = album.artists.map { it.id!! }
         }
     }
 

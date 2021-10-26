@@ -41,7 +41,15 @@ class SearchController {
                      "UNION ALL " +
                      "SELECT 'Organization', id, name " +
                      "FROM contributor " +
-                     "WHERE name LIKE '%$keyword%' AND dtype = 'Organization'")
+                     "WHERE name LIKE '%$keyword%' AND dtype = 'Organization' " +
+                     "UNION ALL " +
+                     "SELECT 'Award', id, title " +
+                     "FROM awards " +
+                     "WHERE title LIKE '%$keyword%' " +
+                     "UNION ALL " +
+                     "SELECT 'Venue', id, name " +
+                     "FROM venues " +
+                     "WHERE name LIKE '%$keyword%'")
         return ResponseEntity(query.resultList, HttpStatus.OK)
     }
 

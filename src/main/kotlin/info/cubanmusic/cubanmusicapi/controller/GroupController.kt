@@ -67,7 +67,7 @@ class GroupController {
         return GroupDTO().apply {
             id = artist.id
             name = artist.name
-            additionalNames = artist.additionalNames.toList()
+            additionalNames = artist.additionalNames.toMutableList()
             alias = artist.alias
             biography = artist.biography
             email = artist.email

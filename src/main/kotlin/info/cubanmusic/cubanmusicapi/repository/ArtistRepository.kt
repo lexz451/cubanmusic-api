@@ -13,10 +13,10 @@ interface ArtistRepository : JpaRepository<Artist, Long>, JpaSpecificationExecut
     @Query("SELECT * FROM contributor", nativeQuery = true)
     override fun findAll(): List<Artist>
 
-    @CacheEvict("artists", allEntries = true)
+    @CacheEvict(cacheNames = ["artists", "albums"], allEntries = true)
     override fun <S : Artist?> save(entity: S): S
 
-    @CacheEvict("artists", allEntries = true)
+    @CacheEvict(cacheNames = ["artists", "albums"], allEntries = true)
     override fun deleteById(id: Long)
 
 }
