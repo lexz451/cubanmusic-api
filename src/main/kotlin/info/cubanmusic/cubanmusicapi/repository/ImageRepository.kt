@@ -13,10 +13,17 @@ interface ImageRepository : JpaRepository<Image, Long>, JpaSpecificationExecutor
     @Query("SELECT * FROM images", nativeQuery = true)
     override fun findAll(): List<Image>
 
+    @Cacheable("images")
+    @Query("select i from Image i where i.artist.id = ?1")
+    fun findByArtistId(id: Long): List<Image>
+
     @CacheEvict("images", allEntries = true)
     override fun <S : Image?> save(entity: S): S
 
     @CacheEvict("images", allEntries = true)
     override fun deleteById(id: Long)
+
+
+    
 
 }

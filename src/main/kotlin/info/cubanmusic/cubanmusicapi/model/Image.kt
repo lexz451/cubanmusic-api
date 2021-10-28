@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 
 
 @Table(name = "images", indexes = [
-    Index(name = "idx_image_id_filename_unq", columnList = "id, filename", unique = true)
+    Index(name = "idx_image_artist_id", columnList = "artist_id")
 ])
 @Entity
 @EntityListeners(AuditingEntityListener::class)
@@ -28,13 +28,12 @@ open class Image : AbstractAuditable<User, Long>() {
 
     open var filetype: String? = null
 
-    @ElementCollection
-    open var tags: List<String> = emptyList()
+    @ElementCollection(fetch = FetchType.EAGER)
+    open var tags: MutableSet<String> = mutableSetOf()
 
     @Lob
     open var filedata: ByteArray = byteArrayOf()
 
-    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "artist_id")
     open var artist: Artist? = null

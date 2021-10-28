@@ -62,7 +62,7 @@ class AlbumController {
             id = album.id
             title = album.title
             description = album.description
-            releaseDate = Utils.formatDate(album.releaseDate)
+            releasedDate = Utils.formatDate(album.releaseDate)
             copyrightYear = album.copyrightYear
             recordLabel = album.recordLabel?.id
             artists = album.artists.map { it.id!! }
@@ -73,7 +73,7 @@ class AlbumController {
         return album.apply {
             title = albumDTO.title
             description = albumDTO.description
-            releaseDate = Utils.parseDate(albumDTO.releaseDate)
+            releaseDate = Utils.parseDate(albumDTO.releasedDate)
             copyrightYear = albumDTO.copyrightYear
             albumDTO.recordLabel?.let {
                 recordLabel = recordLabelRepository.findByIdOrNull(it);

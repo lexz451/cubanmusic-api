@@ -101,6 +101,7 @@ class ArtistController {
             val _article = ArticleDTO()
             _article.id = it.id
             _article.title = it.title
+            _article.url = it.url
             _article.author = it.author
             _article.source = it.source
             _article.date = Utils.formatDate(it.date)
@@ -115,6 +116,7 @@ class ArtistController {
             source = req.source
             author = req.author
             title = req.title
+            url = req.url
             date = Utils.parseDate(req.date)
         }
         articleReference.artist = artistRepository.findByIdOrNull(id)

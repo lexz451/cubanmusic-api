@@ -14,10 +14,8 @@ open class Country : AbstractAuditable<User, Long>() {
 
     open var name: String = ""
 
-    @Column(length = 2)
     open var iso2Code: String? = null
 
-    @Column(length = 3)
     open var iso3Code: String? = null
 
     open var phoneCode: String? = null

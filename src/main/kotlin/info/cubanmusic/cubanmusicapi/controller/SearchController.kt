@@ -21,7 +21,6 @@ class SearchController {
     @PostMapping("")
     fun search(@RequestBody keyword: String?): ResponseEntity<*> {
         if (keyword == null) return ResponseEntity<HttpStatus>(HttpStatus.NO_CONTENT)
-        log.info("Searching by keyword: $keyword")
         val query = em.createNativeQuery(
              "SELECT 'Artist' OriginatingTable, id, name " +
                      "FROM contributor " +

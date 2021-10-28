@@ -10,7 +10,7 @@ class AlbumDTO {
     var id: Long? = null
     var title: String? = null
     var description: String? = null
-    var releaseDate: String? = null
+    var releasedDate: String? = null
     var copyrightYear: Int? = null
     var recordLabel: Long? = null
     var contributor: List<Long> = emptyList()
