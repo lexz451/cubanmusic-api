@@ -37,10 +37,6 @@ open class Venue : AbstractAuditable<User, Long>() {
 
     open var website: String? = null
 
-    @OneToOne
-    @JoinColumn(name = "image_id")
-    open var image: Image? = null
-
     open var latitude: Float? = null
 
     open var longitude: Float? = null
@@ -52,4 +48,7 @@ open class Venue : AbstractAuditable<User, Long>() {
     open var instagram: String? = null
 
     open var twitter: String? = null
+
+    @Lob
+    open var image: String? = null
 }

@@ -15,4 +15,5 @@ class AlbumDTO {
     var recordLabel: Long? = null
     var contributor: List<Long> = emptyList()
     var artists: List<Long> = emptyList()
+    var image: String? = null
 }

@@ -66,6 +66,7 @@ class AlbumController {
             copyrightYear = album.copyrightYear
             recordLabel = album.recordLabel?.id
             artists = album.artists.map { it.id!! }
+            image = album.image
         }
     }
 
@@ -78,6 +79,7 @@ class AlbumController {
             albumDTO.recordLabel?.let {
                 recordLabel = recordLabelRepository.findByIdOrNull(it);
             }
+            image = albumDTO.image
         }
     }
 

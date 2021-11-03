@@ -77,6 +77,7 @@ class VenueController {
         venue.facebook = request.facebook
         venue.instagram = request.instagram
         venue.twitter = request.twitter
+        venue.image = request.image
         return venue
     }
 
@@ -103,6 +104,7 @@ class VenueController {
             youtube = venue.youtube
             instagram = venue.instagram
             twitter = venue.twitter
+            image = venue.image
         }
     }
 }

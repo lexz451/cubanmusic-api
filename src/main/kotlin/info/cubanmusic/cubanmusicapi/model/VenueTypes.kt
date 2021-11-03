@@ -15,5 +15,6 @@ enum class VenueTypes {
     HOME,
     PARK,
     FIELD,
-    CONCERT_HALL
+    CONCERT_HALL,
+    THEATER
 }

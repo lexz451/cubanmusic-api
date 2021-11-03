@@ -27,4 +27,7 @@ open class Album : AbstractAuditable<User, Long>() {
 
     @ManyToMany(mappedBy = "albums")
     open var artists: MutableList<Artist> = mutableListOf()
+
+    @Lob
+    open var image: String? = null
 }

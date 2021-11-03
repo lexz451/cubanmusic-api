@@ -20,4 +20,5 @@ class VenueDTO {
     var instagram: String? = null
     var facebook: String? = null
     var twitter: String? = null
+    var image: String? = null
 }
