@@ -1,0 +1,39 @@
+nohup: ignoring input
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v2.4.9)
+
+2021-09-24 16:02:48.472  INFO 12152 --- [           main] i.c.cubanmusicapi.ApplicationKt          : Starting ApplicationKt v0.0.1-SNAPSHOT using Java 11.0.10 on LAPTOP-09DBPLP9 with PID 12152 (C:\Users\Alejandro\Documents\GitHub\cubanmusic-api\target\cubanmusic-api-0.0.1-SNAPSHOT.jar started by Alejandro in C:\Users\Alejandro\Documents\GitHub\cubanmusic-api)
+2021-09-24 16:02:48.476  INFO 12152 --- [           main] i.c.cubanmusicapi.ApplicationKt          : No active profile set, falling back to default profiles: default
+2021-09-24 16:02:50.362  INFO 12152 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2021-09-24 16:02:50.638  INFO 12152 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 267 ms. Found 18 JPA repository interfaces.
+2021-09-24 16:02:51.302  INFO 12152 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler@2a2da905' of type [org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2021-09-24 16:02:51.307  INFO 12152 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'methodSecurityMetadataSource' of type [org.springframework.security.access.method.DelegatingMethodSecurityMetadataSource] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2021-09-24 16:02:52.664  INFO 12152 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
+2021-09-24 16:02:52.676  INFO 12152 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2021-09-24 16:02:52.677  INFO 12152 --- [           main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.50]
+2021-09-24 16:02:52.741  INFO 12152 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2021-09-24 16:02:52.741  INFO 12152 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 4156 ms
+2021-09-24 16:02:52.946  WARN 12152 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2021-09-24 16:02:53.304  INFO 12152 --- [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2021-09-24 16:02:53.389  INFO 12152 --- [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 5.4.32.Final
+2021-09-24 16:02:53.546  INFO 12152 --- [           main] o.hibernate.annotations.common.Version   : HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+2021-09-24 16:02:53.656  INFO 12152 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2021-09-24 16:02:53.898  INFO 12152 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2021-09-24 16:02:53.913  INFO 12152 --- [           main] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+2021-09-24 16:02:55.781  INFO 12152 --- [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2021-09-24 16:02:55.791  INFO 12152 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2021-09-24 16:02:59.204  INFO 12152 --- [           main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@21698e5a, org.springframework.security.web.context.SecurityContextPersistenceFilter@6282f1eb, org.springframework.security.web.header.HeaderWriterFilter@5c79c5ec, org.springframework.web.filter.CorsFilter@3dc2f14, org.springframework.security.web.authentication.logout.LogoutFilter@2336cd91, info.cubanmusic.cubanmusicapi.security.JwtAuthenticationFilter@4ad896f7, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@1115be8c, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@590dea35, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@2e8986b6, org.springframework.security.web.session.SessionManagementFilter@11d1735e, org.springframework.security.web.access.ExceptionTranslationFilter@1cb849b2, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@58b5f7d2]
+2021-09-24 16:02:59.912  INFO 12152 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
+2021-09-24 16:02:59.922  INFO 12152 --- [           main] i.c.cubanmusicapi.ApplicationKt          : Started ApplicationKt in 12.362 seconds (JVM running for 13.374)
+2021-09-24 16:02:59.925  INFO 12152 --- [           main] i.c.c.database.DatabaseSeeder            : Start seeding database...!
+2021-09-24 16:02:59.925  INFO 12152 --- [           main] i.c.c.database.DatabaseSeeder            : Seeding countries...!
+2021-09-24 16:03:00.026  INFO 12152 --- [           main] i.c.c.database.DatabaseSeeder            : Database already have countries. Skipping.
+2021-09-24 16:03:00.027  INFO 12152 --- [           main] i.c.c.database.DatabaseSeeder            : Seeding admin account...!
+2021-09-24 16:03:00.130  INFO 12152 --- [           main] i.c.c.database.DatabaseSeeder            : Admin user already exists. Skipping.
+2021-09-24 16:03:00.130  INFO 12152 --- [           main] i.c.c.database.DatabaseSeeder            : Finished seeding database. Enjoy!
