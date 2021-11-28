@@ -1,6 +1,7 @@
 package info.cubanmusic.cubanmusicapi.controller
 
 
+import com.google.gson.Gson
 import info.cubanmusic.cubanmusicapi.dto.ArticleDTO
 import info.cubanmusic.cubanmusicapi.dto.OrganizationDTO
 import info.cubanmusic.cubanmusicapi.dto.QuoteDTO
@@ -19,9 +20,12 @@ import info.cubanmusic.cubanmusicapi.model.Group
 import info.cubanmusic.cubanmusicapi.model.Organization
 import info.cubanmusic.cubanmusicapi.model.Venue
 import info.cubanmusic.cubanmusicapi.repository.*
+import jdk.jshell.execution.Util
+import org.slf4j.LoggerFactory
 import kotlin.collections.emptyList
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.web.bind.annotation.*
+import java.nio.charset.Charset
 import javax.persistence.EntityManager
 import javax.persistence.PersistenceContext
 
@@ -43,6 +47,10 @@ class WebController {
     lateinit var venuesRepository: VenueRepository
     @Autowired
     lateinit var organizationRepository: OrganizationRepository
+    @Autowired
+    lateinit var recordLabelRepository: RecordLabelRepository
+
+    val logger = LoggerFactory.getLogger(WebController::class.java)
 
     @GetMapping("/artists")
     @Secured("IS_AUTHENTICATED_ANONYMOUSLY")
@@ -153,44 +161,50 @@ class WebController {
          }, HttpStatus.OK);
     }
 
-    @PersistenceContext
-    lateinit var em: EntityManager
-
-    @PostMapping("/search")
-    fun search(@RequestBody keyword: String?): ResponseEntity<*> {
+    @GetMapping("/search")
+    @Secured("IS_AUTHENTICATED_ANONYMOUSLY")
+    fun search(@RequestParam keyword: String?): ResponseEntity<*> {
+        logger.info("Trigger search with query: $keyword")
         if (keyword == null) return ResponseEntity<HttpStatus>(HttpStatus.NO_CONTENT)
-        val query = em.createNativeQuery(
-                "SELECT 'Artist' OriginatingTable, id, name " +
-                        "FROM contributor " +
-                        "WHERE name LIKE '%$keyword%' AND dtype = 'Person' " +
-                        "UNION ALL " +
-                        "SELECT 'Album', id, title " +
-                        "FROM albums " +
-                        "WHERE title LIKE '%$keyword%' " +
-                        "UNION ALL " +
-                        "SELECT 'Group', id, name " +
-                        "FROM contributor " +
-                        "WHERE name LIKE '%$keyword%' AND dtype = 'Group' " +
-                        "UNION ALL " +
-                        "SELECT 'RecordLabel', id, name " +
-                        "FROM contributor " +
-                        "WHERE name LIKE '%$keyword%' AND dtype = 'RecordLabel' " +
-                        "UNION ALL " +
-                        "SELECT 'Organization', id, name " +
-                        "FROM contributor " +
-                        "WHERE name LIKE '%$keyword%' AND dtype = 'Organization' " +
-                        "UNION ALL " +
-                        "SELECT 'Award', id, title " +
-                        "FROM awards " +
-                        "WHERE title LIKE '%$keyword%' " +
-                        "UNION ALL " +
-                        "SELECT 'Venue', id, name " +
-                        "FROM venues " +
-                        "WHERE name LIKE '%$keyword%'")
-        return ResponseEntity(query.resultList, HttpStatus.OK)
+
+        val artists = personRepository.searchByName(keyword).map {
+            val image = it[3]
+            if (image != null) {
+                val base64 = Utils.decompressBytes(image as ByteArray)
+                if (base64 != null) {
+                    it[3] = base64
+                }
+            }
+            it
+        }.toTypedArray()
+
+        val groups = groupRepository.searchByName(keyword).map {
+            val image = it[3]
+            if (image != null) {
+                val base64 = Utils.decompressBytes(image as ByteArray)
+                if (base64 != null) {
+                    it[3] = base64
+                }
+            }
+            it
+        }.toTypedArray()
+
+        val venues = venuesRepository.searchByName(keyword).toTypedArray()
+        val organizations = organizationRepository.searchByName(keyword).toTypedArray()
+        val recordLabels = recordLabelRepository.searchByName(keyword).toTypedArray()
+
+        val results = arrayOf(
+            *artists,
+            *groups,
+            *venues,
+            *organizations,
+            *recordLabels
+        )
+
+        return ResponseEntity(results, HttpStatus.OK)
     }
 
-    fun mapArtist() = { artist: Artist ->  
+    fun mapArtist() = { artist: Artist ->
         ArtistDTO().apply { 
             id = artist.id
             name = artist.name
