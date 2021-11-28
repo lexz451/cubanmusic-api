@@ -1,3 +1,6 @@
+.vscode
+.env
+
 HELP.md
 target/
 !.mvn/wrapper/maven-wrapper.jar
@@ -28,14 +31,3 @@ target/
 build/
 !**/src/main/**/build/
 !**/src/test/**/build/
-
-### VS Code ###
-.vscode/
-
-### Dotenv ###
-.env
-
-
-
-.env.local
-/target/
