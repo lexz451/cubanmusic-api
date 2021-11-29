@@ -10,11 +10,17 @@ import javax.persistence.*
     Index(name = "idx_instrument_id_name_unq", columnList = "id, name", unique = true)
 ])
 @Entity
-@EntityListeners(AuditingEntityListener::class)
-open class Instrument : AbstractAuditable<User, Long>() {
+open class Instrument {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
+    open var id: Long? = null
 
     open var name: String = ""
 
     @Lob
     open var description: String = ""
+
+
+
 }

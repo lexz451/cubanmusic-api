@@ -6,6 +6,7 @@ import javax.persistence.*
 @Entity
 open class Artist : Contributor() {
 
+    @Basic(fetch = FetchType.EAGER)
     @ElementCollection
     open var additionalNames: MutableSet<String> = mutableSetOf()
 
@@ -51,9 +52,9 @@ open class Artist : Contributor() {
     open var nationality: String? = null
 
 
-    @ManyToOne
+    /*@ManyToOne
     @JoinColumn(name = "country_id")
-    open var country: Country? = null
+    open var country: Country? = null*/
 
     @ManyToOne
     @JoinColumn(name = "affiliation_id")
@@ -75,7 +76,7 @@ open class Artist : Contributor() {
     )
     open var awards: MutableList<Award> = mutableListOf()
 
-    @ManyToMany()
+    @ManyToMany
     @JoinTable(
         name = "ARTIST_INSTRUMENT",
         joinColumns = [JoinColumn(name = "ARTIST_id")],

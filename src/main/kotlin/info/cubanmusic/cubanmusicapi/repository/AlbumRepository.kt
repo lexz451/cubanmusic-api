@@ -1,6 +1,7 @@
 package info.cubanmusic.cubanmusicapi.repository;
 
 import info.cubanmusic.cubanmusicapi.model.Album
+import info.cubanmusic.cubanmusicapi.projections.AlbumItemInfo
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.jpa.repository.JpaRepository
@@ -19,4 +20,7 @@ interface AlbumRepository : JpaRepository<Album, Long>, JpaSpecificationExecutor
 
     @CacheEvict("albums", allEntries = true)
     override fun deleteById(id: Long)
+
+    fun findDistinctByArtists_IdOrderByReleaseDateAsc(id: Long): List<AlbumItemInfo>
+
 }

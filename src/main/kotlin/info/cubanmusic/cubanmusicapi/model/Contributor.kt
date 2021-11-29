@@ -10,9 +10,11 @@ import javax.persistence.*
     Index(name = "idx_contributor_id_name_unq", columnList = "id, name", unique = true)
 ])
 @Entity
-@EntityListeners(AuditingEntityListener::class)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@Polymorphism(type = PolymorphismType.IMPLICIT)
-open class Contributor : AbstractAuditable<User, Long>() {
+open class Contributor {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
+    open var id: Long? = null
     open var name: String? = null
 }

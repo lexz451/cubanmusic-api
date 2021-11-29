@@ -10,7 +10,11 @@ import javax.persistence.*
     Index(name = "idx_country_name_iso2code_unq", columnList = "name, iso2Code", unique = true)
 ])
 @Entity
-open class Country : AbstractAuditable<User, Long>() {
+open class Country {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
+    open var id: Long? = null
 
     open var name: String = ""
 

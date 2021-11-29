@@ -9,7 +9,12 @@ import javax.persistence.*
     Index(name = "idx_articlereference_id_unq", columnList = "id, title", unique = true)
 ])
 @Entity
-open class ArticleReference : AbstractAuditable<User,Long>() {
+open class ArticleReference {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
+    open var id: Long? = null
+
     open var title: String? = null
     open var url: String? = null
     @JsonIgnore

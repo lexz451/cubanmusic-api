@@ -3,6 +3,13 @@ package info.cubanmusic.cubanmusicapi.model
 import java.util.*
 import javax.persistence.*
 
+@NamedEntityGraph(
+    name = "person-detail-entity-graph",
+    attributeNodes = [
+        NamedAttributeNode("jobRoles"),
+        //NamedAttributeNode("additionalNames")
+    ]
+)
 @Entity
 open class Person : Artist() {
 

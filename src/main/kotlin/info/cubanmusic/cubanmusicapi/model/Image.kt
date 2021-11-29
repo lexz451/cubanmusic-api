@@ -12,8 +12,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore
     Index(name = "idx_image_artist_id", columnList = "artist_id")
 ])
 @Entity
-@EntityListeners(AuditingEntityListener::class)
-open class Image : AbstractAuditable<User, Long>() {
+open class Image {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id", nullable = false)
+    open var id: Long? = null
 
     open var title: String? = null
 
@@ -28,7 +31,7 @@ open class Image : AbstractAuditable<User, Long>() {
 
     open var filetype: String? = null
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     open var tags: MutableSet<String> = mutableSetOf()
 
     @Lob

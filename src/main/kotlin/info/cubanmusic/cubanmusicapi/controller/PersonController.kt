@@ -45,7 +45,7 @@ class PersonController {
     @Autowired
     private lateinit var imagesRepository: ImageRepository;
 
-    @Transactional()
+    @Transactional(readOnly = true)
     @GetMapping("")
     fun findAll(): ResponseEntity<*> {
         val persons = personRepository.findAll()
@@ -121,7 +121,7 @@ class PersonController {
             reverbNation = artist.reverbNation
             libOfCongress = artist.libOfCongress
             nationality = artist.nationality
-            country = artist.country?.id
+            //country = artist.country?.id
             affiliation = artist.affiliation?.id
             genres = artist.genres.map { it.id!! }
             awards = artist.awards.map { it.id!! }
@@ -169,9 +169,9 @@ class PersonController {
             libOfCongress = artistDTO.libOfCongress
             nationality = artistDTO.nationality
 
-            artistDTO.country?.let {
+            /*artistDTO.country?.let {
                 country = countryRepository.findByIdOrNull(it)
-            }
+            }*/
 
             affiliation = organizationRepository.findByIdOrNull(artistDTO.affiliation ?: -1)
 

@@ -6,7 +6,12 @@ import java.util.*
 import javax.persistence.*
 
 @Entity
-open class QuoteReference : AbstractAuditable<User, Long>() {
+open class QuoteReference {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
+    open var id: Long? = null
+
     @Lob
     open var quote: String? = null
     @JsonIgnore

@@ -8,8 +8,11 @@ import javax.persistence.*
     Index(name = "idx_jobtitle_id_name_unq", columnList = "id, name", unique = true)
 ])
 @Entity
-@EntityListeners(AuditingEntityListener::class)
-open class JobTitle : AbstractAuditable<User, Long>() {
+open class JobTitle {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
+    open var id: Long? = null
 
     open var name: String? = null
 

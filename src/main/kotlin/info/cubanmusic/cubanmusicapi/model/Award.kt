@@ -7,7 +7,11 @@ import javax.persistence.*
 
 @Table(name = "awards")
 @Entity
-open class Award : AbstractAuditable<User, Long>() {
+open class Award {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
+    open var id: Long? = null
 
     @Column(length = 100)
     open var title: String? = null

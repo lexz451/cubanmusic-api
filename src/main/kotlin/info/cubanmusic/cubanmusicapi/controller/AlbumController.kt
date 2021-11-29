@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -21,6 +22,7 @@ class AlbumController {
     private lateinit var recordLabelRepository: RecordLabelRepository
 
     @GetMapping("")
+    @Transactional(readOnly = true)
     fun findAll(): ResponseEntity<*> {
         val albums = albumRepository.findAll()
         if (albums.isEmpty()) {
@@ -30,6 +32,7 @@ class AlbumController {
     }
 
     @GetMapping("/{id}")
+    @Transactional(readOnly = true)
     fun findById(@PathVariable id: Long): ResponseEntity<*> {
         val album = albumRepository.findByIdOrNull(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
         return ResponseEntity(fromModel(album), HttpStatus.OK)

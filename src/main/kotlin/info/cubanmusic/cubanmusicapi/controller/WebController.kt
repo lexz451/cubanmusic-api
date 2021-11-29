@@ -1,33 +1,23 @@
 package info.cubanmusic.cubanmusicapi.controller
 
 
-import com.google.gson.Gson
 import info.cubanmusic.cubanmusicapi.dto.ArticleDTO
 import info.cubanmusic.cubanmusicapi.dto.OrganizationDTO
 import info.cubanmusic.cubanmusicapi.dto.QuoteDTO
 import info.cubanmusic.cubanmusicapi.dto.VenueDTO
+import info.cubanmusic.cubanmusicapi.dto.public.AlbumDTO
 import org.springframework.security.access.annotation.Secured
-import org.springframework.beans.factory.annotation.Autowire
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.http.HttpStatus
-import info.cubanmusic.cubanmusicapi.model.Artist
 import info.cubanmusic.cubanmusicapi.dto.public.ArtistDTO
 import info.cubanmusic.cubanmusicapi.dto.public.ImageDTO
-import info.cubanmusic.cubanmusicapi.dto.public.AlbumDTO
 import info.cubanmusic.cubanmusicapi.helper.Utils
-import info.cubanmusic.cubanmusicapi.model.Group
-import info.cubanmusic.cubanmusicapi.model.Organization
-import info.cubanmusic.cubanmusicapi.model.Venue
+import info.cubanmusic.cubanmusicapi.model.*
 import info.cubanmusic.cubanmusicapi.repository.*
-import jdk.jshell.execution.Util
 import org.slf4j.LoggerFactory
-import kotlin.collections.emptyList
-import org.springframework.data.repository.findByIdOrNull
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
-import java.nio.charset.Charset
-import javax.persistence.EntityManager
-import javax.persistence.PersistenceContext
 
 @RestController
 @RequestMapping("/api/v1/public")
@@ -49,6 +39,10 @@ class WebController {
     lateinit var organizationRepository: OrganizationRepository
     @Autowired
     lateinit var recordLabelRepository: RecordLabelRepository
+    @Autowired
+    lateinit var quoteReferenceRepository: QuoteReferenceRepository
+    @Autowired
+    lateinit var articleReferenceRepository: ArticleReferenceRepository
 
     val logger = LoggerFactory.getLogger(WebController::class.java)
 
@@ -81,9 +75,82 @@ class WebController {
     }
 
     @GetMapping("/artists/{id}")
+    @Transactional(readOnly = true)
+    fun getArtist(@PathVariable id: Long): ResponseEntity<*> {
+        return personRepository.findById(id).map {
+            val artistDTO = ArtistDTO()
+            artistDTO.id = it.id
+            artistDTO.name = it.name
+            artistDTO.occupation = it.jobTitle?.name
+            artistDTO.roles = it.jobRoles.toList()
+            artistDTO.birthDate = Utils.formatDate(it.birthDate)
+            artistDTO.nationality = it.nationality
+            artistDTO.website = it.website
+            artistDTO.spotify = it.spotify;
+            artistDTO.appleMusic = it.appleMusic;
+            artistDTO.soundCloud = it.soundCloud;
+            artistDTO.deezer = it.deezer;
+            artistDTO.youtube = it.youtube;
+            artistDTO.instagram = it.instagram;
+            artistDTO.viberate = it.viberate;
+            artistDTO.facebook = it.facebook;
+            artistDTO.twitter = it.twitter;
+            artistDTO.tiktok = it.tiktok;
+            artistDTO.reverbNation = it.reverbNation;
+
+            it.images.firstOrNull()?.let { image ->
+                artistDTO.image = ImageDTO().apply {
+                    this.data = Utils.decompressBytes(image.filedata)
+                    this.type = image.filetype
+                }
+            }
+
+            artistDTO.residence = it.residencePlace?.let { residence ->
+                val join = mutableSetOf<String>()
+                residence.city?.let { join.add(residence.city!!) }
+                residence.state?.let { join.add(residence.state!!) }
+                residence.country?.let { join.add(residence.country!!.name) }
+                join.joinToString(", ")
+            }
+            artistDTO.yearsActive = it.activeSince?.let { since ->
+                "$since - ${ it.activeUntil ?: "-" }"
+            }
+            artistDTO.instruments = it.instruments.map { i -> i.name }
+            artistDTO.genres = it.genres.map { g -> g.name }
+            artistDTO.albums = it.albums.map {
+                AlbumDTO().apply {
+                    this.id = it.id
+                    this.name = it.title
+                    this.image = it.image
+                    this.releasedDate = Utils.formatDate(it.releaseDate)
+                }
+            }
+            artistDTO.quotes = it.quoteReferences.map { QuoteDTO().apply {
+                this.id = it.id
+                this.author = it.author
+                this.date = Utils.formatDate(it.date)
+                this.quote = it.quote
+                this.source = it.source
+            } }
+            artistDTO.articles = it.articleReferences.map {
+                ArticleDTO().apply {
+                    this.id = it.id
+                    this.source = it.source
+                    this.url = it.url
+                    this.author = it.author
+                    this.title = it.title
+                }
+            }
+            ResponseEntity(artistDTO, HttpStatus.OK)
+        }.orElseGet { ResponseEntity(HttpStatus.NOT_FOUND) }
+    }
+
+    /*@GetMapping("/artists/{id}")
     @Secured("IS_AUTHENTICATED_ANONYMOUSLY")
     fun getArtist(@PathVariable id: Long):  ResponseEntity<*> {
-        val artist = this.personRepository.findByIdOrNull(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND);
+
+        if (artist.isEmpty) return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
+
         return ResponseEntity(ArtistDTO().apply { 
             this.id = artist.id!!
             name = artist.name
@@ -159,7 +226,7 @@ class WebController {
             }
 
          }, HttpStatus.OK);
-    }
+    }*/
 
     @GetMapping("/search")
     @Secured("IS_AUTHENTICATED_ANONYMOUSLY")

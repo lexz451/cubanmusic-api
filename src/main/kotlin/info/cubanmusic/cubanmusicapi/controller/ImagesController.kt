@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.http.HttpStatus
 import org.springframework.data.repository.findByIdOrNull
 import org.slf4j.LoggerFactory
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
 import java.time.Instant
 import java.util.*
@@ -29,6 +30,7 @@ class ImagesController {
     private var logger = LoggerFactory.getLogger(ImagesController::class.java)
 
     @GetMapping("/artist/{id}")
+    @Transactional(readOnly = true)
     fun findByArtist(@PathVariable id: Long): ResponseEntity<*> {
         val images = imageRepository.findByArtistId(id)
         return ResponseEntity(images.map { toResponse(it) }, HttpStatus.OK)

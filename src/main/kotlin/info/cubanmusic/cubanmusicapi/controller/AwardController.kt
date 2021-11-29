@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -23,6 +24,7 @@ class AwardController {
     lateinit var organizationRepository: OrganizationRepository
 
     @GetMapping("")
+    @Transactional(readOnly = true)
     fun findAll(): ResponseEntity<*> {
         val awards = awardRepository.findAll()
         if (awards.isEmpty()) {
@@ -32,6 +34,7 @@ class AwardController {
     }
 
     @GetMapping("/{id}")
+    @Transactional(readOnly = true)
     fun findById(@PathVariable id: Long): ResponseEntity<*> {
         val award = awardRepository.findByIdOrNull(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
         return ResponseEntity(toResponse(award), HttpStatus.OK)

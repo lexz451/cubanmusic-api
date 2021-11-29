@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -27,6 +28,7 @@ class GroupController {
     private lateinit var recordLabelRepository: RecordLabelRepository
 
     @GetMapping("")
+    @Transactional(readOnly = true)
     fun findAll(): ResponseEntity<*> {
         val groups = groupRepository.findAll()
         if (groups.isEmpty()) {
@@ -36,6 +38,7 @@ class GroupController {
     }
 
     @GetMapping("/{id}")
+    @Transactional(readOnly = true)
     fun findById(@PathVariable id: Long): ResponseEntity<*> {
         val group = groupRepository.findByIdOrNull(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
         return ResponseEntity(fromModel(group), HttpStatus.OK)
@@ -88,7 +91,7 @@ class GroupController {
             tiktok = artist.tiktok
             libOfCongress = artist.libOfCongress
             nationality = artist.nationality
-            country = artist.country?.id
+            //country = artist.country?.id
             affiliation = artist.affiliation?.id
             genres = artist.genres.map { it.id!! }
             awards = artist.awards.map { it.id!! }
@@ -120,9 +123,9 @@ class GroupController {
             twitter = artistDTO.twitter
             tiktok = artistDTO.tiktok
             libOfCongress = artistDTO.libOfCongress
-            artistDTO.country?.let {
+            /*artistDTO.country?.let {
                 country = countryRepository.findByIdOrNull(it)
-            }
+            }*/
             artistDTO.affiliation?.let {
                 affiliation = organizationRepository.findByIdOrNull(it)
             }

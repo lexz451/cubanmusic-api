@@ -60,7 +60,7 @@ class ArtistController {
 
     @GetMapping("/{id}/quotes")
     fun getQuotes(@PathVariable id: Long): ResponseEntity<*> {
-        val quotes = quoteRepository.findByArtist_Id(id)
+        val quotes = quoteRepository.findByArtistId(id)
         @Suppress("LocalVariableName") val response = quotes.map {
             val _quote = QuoteDTO()
             _quote.id = it.id
@@ -96,7 +96,7 @@ class ArtistController {
 
     @GetMapping("/{id}/articles")
     fun getArticles(@PathVariable id: Long): ResponseEntity<*> {
-        val articles = articleRepository.findByArtist_Id(id)
+        val articles = articleRepository.findByArtistId(id)
         @Suppress("LocalVariableName") val response = articles.map {
             val _article = ArticleDTO()
             _article.id = it.id
@@ -154,7 +154,7 @@ class ArtistController {
             tiktok = artist.tiktok
             libOfCongress = artist.libOfCongress
             nationality = artist.nationality
-            country = artist.country?.id
+            //country = artist.country?.id
             affiliation = artist.affiliation?.id
             genres = artist.genres.map { it.id!! }
             awards = artist.awards.map { it.id!! }
@@ -188,9 +188,9 @@ class ArtistController {
             tiktok = artistDTO.tiktok
             libOfCongress = artistDTO.libOfCongress
             nationality = artistDTO.nationality
-            artistDTO.country?.let {
+            /*artistDTO.country?.let {
                 country = countryRepository.findByIdOrNull(it)
-            }
+            }*/
             affiliation = organizationRepository.findByIdOrNull(artistDTO.affiliation)
             genres = genreRepository.findAllById(artistDTO.genres)
             awards = awardRepository.findAllById(artistDTO.awards)

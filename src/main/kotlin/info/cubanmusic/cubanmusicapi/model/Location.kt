@@ -8,8 +8,12 @@ import javax.persistence.*
     Index(name = "idx_location_id_city_unq", columnList = "id, city, state, country_id", unique = true)
 ])
 @Entity
-@EntityListeners(AuditingEntityListener::class)
-open class Location : AbstractAuditable<User, Long>() {
+open class Location {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
+    open var id: Long? = null
+
     open var city: String? = null
     open var state: String? = null
 

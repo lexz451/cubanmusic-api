@@ -6,10 +6,14 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.util.*
 import javax.persistence.*
 
+
 @Table(name = "albums")
 @Entity
-@EntityListeners(AuditingEntityListener::class)
-open class Album : AbstractAuditable<User, Long>() {
+open class Album  {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
+    open var id: Long? = null
 
     open var title: String? = null
 
@@ -21,7 +25,7 @@ open class Album : AbstractAuditable<User, Long>() {
 
     open var copyrightYear: Int? = null
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "record_label_id")
     open var recordLabel: RecordLabel? = null
 
