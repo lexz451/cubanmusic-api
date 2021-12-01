@@ -19,9 +19,9 @@ interface PersonRepository : JpaRepository<Person, Long>, JpaSpecificationExecut
     override fun <S : Person?> save(entity: S): S
 
     @CacheEvict(cacheNames = ["person", "persons"], allEntries = true)
-    override fun deleteById(id: Long)
+    override fun deleteById(id: Long) 
 
-    //@Cacheable("person")
+    @Cacheable("person")
     @EntityGraph(value = "person-detail-entity-graph")
     override fun findById(id: Long): Optional<Person>
 
