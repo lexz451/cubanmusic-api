@@ -1,8 +1,5 @@
 package info.cubanmusic.cubanmusicapi.controller
 
-import info.cubanmusic.cubanmusicapi.dto.RecordLabelDTO
-import info.cubanmusic.cubanmusicapi.model.Phone
-import info.cubanmusic.cubanmusicapi.model.RecordLabel
 import info.cubanmusic.cubanmusicapi.repository.CountryRepository
 import info.cubanmusic.cubanmusicapi.repository.RecordLabelRepository
 import org.springframework.beans.factory.annotation.Autowired
@@ -10,6 +7,7 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import java.util.*
 
 @RestController
 @RequestMapping("/api/v1/recordlabels")
@@ -26,19 +24,16 @@ class RecordLabelController {
         if (labels.isEmpty()) {
             return ResponseEntity<HttpStatus>(HttpStatus.NO_CONTENT)
         }
-        return ResponseEntity(labels.map { toResponse(it) }, HttpStatus.OK)
+        return ResponseEntity(labels, HttpStatus.OK)
     }
 
     @GetMapping("/{id}")
-    fun findById(@PathVariable id: Long): ResponseEntity<*> {
-        val label = labelRepository.findByIdOrNull(id)
-        label?.let {
-            return ResponseEntity(toResponse(it), HttpStatus.OK)
-        }
-        return ResponseEntity<HttpStatus>(HttpStatus.NO_CONTENT)
+    fun findById(@PathVariable id: UUID): ResponseEntity<*> {
+        val label = labelRepository.findByIdOrNull(id) ?: ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
+        return ResponseEntity(label, HttpStatus.OK)
     }
 
-    @PostMapping("/new")
+    /*@PostMapping("/new")
     fun create(@RequestBody request: RecordLabelDTO): ResponseEntity<*> {
         var label = fromRequest(RecordLabel(), request)
         label = labelRepository.save(label)
@@ -58,9 +53,9 @@ class RecordLabelController {
         labelRepository.findByIdOrNull(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.OK)
         labelRepository.deleteById(id)
         return ResponseEntity<HttpStatus>(HttpStatus.OK)
-    }
+    }*/
 
-    private fun fromRequest(recordLabel: RecordLabel, request: RecordLabelDTO): RecordLabel {
+    /*private fun fromRequest(recordLabel: RecordLabel, request: RecordLabelDTO): RecordLabel {
         recordLabel.ipiCode = request.ipiCode
         recordLabel.isniCode = request.isniCode
         recordLabel.name = request.name ?: ""
@@ -88,5 +83,5 @@ class RecordLabelController {
             phone = recordLabel.phone ?: Phone()
             website = recordLabel.website
         }
-    }
+    }*/
 }

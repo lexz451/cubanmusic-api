@@ -52,17 +52,17 @@ class PersonController {
         if (persons.isEmpty()) {
             return ResponseEntity<HttpStatus>(HttpStatus.NO_CONTENT)
         }
-        return ResponseEntity(persons.map { fromModel(it) }, HttpStatus.OK)
+        return ResponseEntity(persons, HttpStatus.OK)
     }
 
     @Transactional()
     @GetMapping("/{id}")
     fun findById(@PathVariable id: Long): ResponseEntity<*> {
         val person = personRepository.findByIdOrNull(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
-        return ResponseEntity(fromModel(person), HttpStatus.OK)
+        return ResponseEntity(person, HttpStatus.OK)
     }
 
-    @PostMapping("/new")
+    /*@PostMapping("/new")
     fun create(@RequestBody request: PersonDTO): ResponseEntity<*> {
         var person = toModel(request, Person())
         person = personRepository.save(person)
@@ -82,9 +82,9 @@ class PersonController {
         personRepository.findByIdOrNull(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
         personRepository.deleteById(id)
         return ResponseEntity<HttpStatus>(HttpStatus.OK)
-    }
+    }*/
 
-    fun fromModel(artist: Person): PersonDTO {
+    /*fun fromModel(artist: Person): PersonDTO {
         return PersonDTO().apply {
             id = artist.id
             name = artist.name
@@ -184,5 +184,5 @@ class PersonController {
 
             albums = albumRepository.findAllById(artistDTO.albums)
         }
-    }
+    }*/
 }

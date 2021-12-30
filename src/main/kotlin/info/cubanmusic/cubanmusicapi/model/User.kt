@@ -11,9 +11,7 @@ import java.time.Instant
 import java.util.*
 import javax.persistence.*
 
-@Table(name = "users", indexes = [
-        Index(name = "idx_user_name_email_unq", columnList = "name, email", unique = true)
-])
+@Table(name = "users")
 @Entity
 open class User {
         @Id

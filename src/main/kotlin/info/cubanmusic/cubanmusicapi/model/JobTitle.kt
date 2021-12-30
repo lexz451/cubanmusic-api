@@ -1,18 +1,17 @@
 package info.cubanmusic.cubanmusicapi.model
 
+import org.hibernate.annotations.Type
 import org.springframework.data.jpa.domain.AbstractAuditable
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
+import java.util.*
 import javax.persistence.*
 
-@Table(name = "job_titles", indexes = [
-    Index(name = "idx_jobtitle_id_name_unq", columnList = "id, name", unique = true)
-])
 @Entity
 open class JobTitle {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    open var id: Long? = null
+    @Type(type="org.hibernate.type.UUIDCharType")
+    open var id: UUID = UUID.randomUUID()
 
     open var name: String? = null
 

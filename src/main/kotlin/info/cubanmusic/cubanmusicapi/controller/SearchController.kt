@@ -1,56 +1,55 @@
 package info.cubanmusic.cubanmusicapi.controller
 
-import info.cubanmusic.cubanmusicapi.dto.ResultDTO
+import info.cubanmusic.cubanmusicapi.dto.AlbumDTO
+import info.cubanmusic.cubanmusicapi.helper.Utils.formatDate
+import info.cubanmusic.cubanmusicapi.model.Album
+import info.cubanmusic.cubanmusicapi.model.Venue
+import org.hibernate.search.engine.search.common.BooleanOperator
+import org.hibernate.search.mapper.orm.Search
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
+import org.springframework.transaction.annotation.Transactional
+import org.springframework.ui.ModelMap
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RestController
 import javax.persistence.EntityManager
-import javax.persistence.PersistenceContext
 
 @RestController
 @RequestMapping("/api/v1/search")
 class SearchController {
 
-    val log: Logger = LoggerFactory.getLogger(SearchController::class.java)
+    private val logger: Logger = LoggerFactory.getLogger(SearchController::class.java)
 
-    @PersistenceContext
+    @Autowired
     lateinit var em: EntityManager
 
-    @PostMapping("")
-    fun search(@RequestBody keyword: String?): ResponseEntity<*> {
-        if (keyword == null) return ResponseEntity<HttpStatus>(HttpStatus.NO_CONTENT)
-        val query = em.createNativeQuery(
-             "SELECT 'Artist' OriginatingTable, id, name " +
-                     "FROM contributor " +
-                     "WHERE name LIKE '%$keyword%' AND dtype = 'Person' " +
-                     "UNION ALL " +
-                     "SELECT 'Album', id, title " +
-                     "FROM albums " +
-                     "WHERE title LIKE '%$keyword%' " +
-                     "UNION ALL " +
-                     "SELECT 'Group', id, name " +
-                     "FROM contributor " +
-                     "WHERE name LIKE '%$keyword%' AND dtype = 'Group' " +
-                     "UNION ALL " +
-                     "SELECT 'RecordLabel', id, name " +
-                     "FROM contributor " +
-                     "WHERE name LIKE '%$keyword%' AND dtype = 'RecordLabel' " +
-                     "UNION ALL " +
-                     "SELECT 'Organization', id, name " +
-                     "FROM contributor " +
-                     "WHERE name LIKE '%$keyword%' AND dtype = 'Organization' " +
-                     "UNION ALL " +
-                     "SELECT 'Award', id, title " +
-                     "FROM awards " +
-                     "WHERE title LIKE '%$keyword%' " +
-                     "UNION ALL " +
-                     "SELECT 'Venue', id, name " +
-                     "FROM venues " +
-                     "WHERE name LIKE '%$keyword%'")
-        return ResponseEntity(query.resultList, HttpStatus.OK)
+    @GetMapping("")
+    @Transactional(readOnly = true)
+    fun search(@RequestParam query: String): ResponseEntity<*> {
+        logger.info("Performing full-text search for query: $query")
+        val results = Search.session(em).search(
+            listOf(Album::class.java, Venue::class.java)
+        ).where { f -> f.bool()
+            .must(f.simpleQueryString()
+                .fields("title", "description", "name")
+                .matching(query).defaultOperator(BooleanOperator.OR)) }
+            .fetchHits(20)
+        val response = results.map(resultMapper)
+        return ResponseEntity(response, HttpStatus.OK)
     }
 
+    val resultMapper = { r: Any ->
+        when (r) {
+            is Album -> {
+
+            }
+            else -> r
+        }
+    }
 
 }

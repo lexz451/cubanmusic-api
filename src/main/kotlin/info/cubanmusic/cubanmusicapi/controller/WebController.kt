@@ -5,13 +5,10 @@ import info.cubanmusic.cubanmusicapi.dto.ArticleDTO
 import info.cubanmusic.cubanmusicapi.dto.OrganizationDTO
 import info.cubanmusic.cubanmusicapi.dto.QuoteDTO
 import info.cubanmusic.cubanmusicapi.dto.VenueDTO
-import info.cubanmusic.cubanmusicapi.dto.public.AlbumDTO
 import org.springframework.security.access.annotation.Secured
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.http.HttpStatus
-import info.cubanmusic.cubanmusicapi.dto.public.ArtistDTO
-import info.cubanmusic.cubanmusicapi.dto.public.ImageDTO
 import info.cubanmusic.cubanmusicapi.helper.Utils
 import info.cubanmusic.cubanmusicapi.model.*
 import info.cubanmusic.cubanmusicapi.repository.*
@@ -23,7 +20,7 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/v1/public")
 class WebController {
 
-    @Autowired
+   /* @Autowired
     lateinit var artistRepository: ArtistRepository;
     @Autowired
     lateinit var personRepository: PersonRepository;
@@ -315,5 +312,5 @@ class WebController {
                 }
             }
         }
-    }
+    }*/
 }

@@ -2,88 +2,66 @@ package info.cubanmusic.cubanmusicapi.controller
 
 import info.cubanmusic.cubanmusicapi.dto.AlbumDTO
 import info.cubanmusic.cubanmusicapi.helper.Utils
+import info.cubanmusic.cubanmusicapi.helper.Utils.formatDate
+import info.cubanmusic.cubanmusicapi.helper.Utils.parseDate
+
 import info.cubanmusic.cubanmusicapi.model.Album
 import info.cubanmusic.cubanmusicapi.repository.AlbumRepository
-import info.cubanmusic.cubanmusicapi.repository.RecordLabelRepository
+import org.modelmapper.ModelMapper
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
+import java.util.*
 
 @RestController
 @RequestMapping("/api/v1/albums")
 class AlbumController {
 
+    private val logger = LoggerFactory.getLogger(AlbumController::class.java)
+
     @Autowired
     private lateinit var albumRepository: AlbumRepository
+
     @Autowired
-    private lateinit var recordLabelRepository: RecordLabelRepository
+    private lateinit var mapper: ModelMapper
 
     @GetMapping("")
     @Transactional(readOnly = true)
     fun findAll(): ResponseEntity<*> {
-        val albums = albumRepository.findAll()
-        if (albums.isEmpty()) {
-            return ResponseEntity<HttpStatus>(HttpStatus.NO_CONTENT)
-        }
-        return ResponseEntity(albums.map { fromModel(it) }, HttpStatus.OK)
+        val albums = albumRepository.findAll().map { mapper.map(it, AlbumDTO::class.java) }
+        return ResponseEntity(albums, HttpStatus.OK)
     }
 
     @GetMapping("/{id}")
     @Transactional(readOnly = true)
-    fun findById(@PathVariable id: Long): ResponseEntity<*> {
-        val album = albumRepository.findByIdOrNull(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
-        return ResponseEntity(fromModel(album), HttpStatus.OK)
+    fun findById(@PathVariable id: UUID): ResponseEntity<*> {
+        val album = albumRepository.findByIdOrNull(id)
+            ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
+        val response = mapper.map(album, AlbumDTO::class.java)
+        return ResponseEntity(response, HttpStatus.OK)
     }
 
     @PostMapping("/new")
-    fun create(@RequestBody request: AlbumDTO): ResponseEntity<*> {
-        var album = toModel(request, Album())
+    fun create(@RequestBody albumDTO: AlbumDTO): ResponseEntity<*> {
+        var album = mapper.map(albumDTO, Album::class.java)
         album = albumRepository.save(album)
-        return ResponseEntity(album.id,HttpStatus.OK)
+        return ResponseEntity(album, HttpStatus.OK)
     }
 
     @PutMapping("/{id}")
-    fun update(@PathVariable id: Long, @RequestBody request: AlbumDTO): ResponseEntity<*> {
-        var album = albumRepository.findByIdOrNull(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
-        album = toModel(request, album)
+    fun update(@PathVariable id: UUID, @RequestBody albumDTO: AlbumDTO): ResponseEntity<*> {
+        val album = mapper.map(albumDTO, Album::class.java)
         albumRepository.save(album)
-        return ResponseEntity<HttpStatus>(HttpStatus.OK)
+        return ResponseEntity(album, HttpStatus.OK)
     }
 
     @DeleteMapping("/{id}")
-    fun delete(@PathVariable id: Long): ResponseEntity<*> {
-        albumRepository.findByIdOrNull(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
+    fun delete(@PathVariable id: UUID): ResponseEntity<*> {
         albumRepository.deleteById(id)
         return ResponseEntity<HttpStatus>(HttpStatus.OK);
     }
-
-    fun fromModel(album: Album): AlbumDTO {
-        return AlbumDTO().apply {
-            id = album.id
-            title = album.title
-            description = album.description
-            releasedDate = Utils.formatDate(album.releaseDate)
-            copyrightYear = album.copyrightYear
-            recordLabel = album.recordLabel?.id
-            artists = album.artists.map { it.id!! }
-            image = album.image
-        }
-    }
-
-    fun toModel(albumDTO: AlbumDTO, album: Album): Album {
-        return album.apply {
-            title = albumDTO.title
-            description = albumDTO.description
-            releaseDate = Utils.parseDate(albumDTO.releasedDate)
-            copyrightYear = albumDTO.copyrightYear
-            albumDTO.recordLabel?.let {
-                recordLabel = recordLabelRepository.findByIdOrNull(it);
-            }
-            image = albumDTO.image
-        }
-    }
-
 }

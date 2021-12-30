@@ -22,10 +22,10 @@ class LocationController {
     @GetMapping("")
     fun findAll(): ResponseEntity<*> {
         val locations = locationRepository.findAll()
-        return ResponseEntity(locations.map { fromModel(it) }, HttpStatus.OK)
+        return ResponseEntity(locations, HttpStatus.OK)
     }
 
-    @PostMapping("/new")
+   /* @PostMapping("/new")
     fun create(@RequestBody req: LocationDTO): ResponseEntity<*> {
         var location = toModel(req, Location())
         location = locationRepository.save(location)
@@ -33,28 +33,9 @@ class LocationController {
     }
 
     @DeleteMapping("/{id}")
-    fun delete(@PathVariable id: Long): ResponseEntity<*> {
+    fun delete(@PathVariable id: String): ResponseEntity<*> {
         locationRepository.findByIdOrNull(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
         locationRepository.deleteById(id)
         return ResponseEntity<HttpStatus>(HttpStatus.OK)
-    }
-
-    fun fromModel(location: Location): LocationDTO {
-        return LocationDTO().apply {
-            id = location.id
-            city = location.city
-            state = location.state
-            country = location.country?.id
-        }
-    }
-
-    fun toModel(locationDTO: LocationDTO, location: Location): Location {
-        return location.apply {
-            city = locationDTO.city
-            state = locationDTO.state
-            locationDTO.country?.let {
-                country = countryRepository.findByIdOrNull(it)
-            }
-        }
-    }
+    }*/
 }

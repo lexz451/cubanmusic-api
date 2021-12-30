@@ -61,7 +61,7 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
             .authenticationEntryPoint(unauthorizedHandle)
             .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         http.authorizeRequests()
-            .antMatchers("/", "/api/v1/public/**", "/api/v1/auth/signin").permitAll()
+            .antMatchers("/", "/api/v1/search", "/api/v1/auth/signin").permitAll()
             .anyRequest().authenticated()
         http.addFilterBefore(
             jwtAuthenticationFilter(),

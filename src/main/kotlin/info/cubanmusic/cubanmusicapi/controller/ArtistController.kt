@@ -1,18 +1,12 @@
 package info.cubanmusic.cubanmusicapi.controller
 
-import info.cubanmusic.cubanmusicapi.dto.ArticleDTO
-import info.cubanmusic.cubanmusicapi.dto.ArtistDTO
-import info.cubanmusic.cubanmusicapi.dto.QuoteDTO
-import info.cubanmusic.cubanmusicapi.helper.Utils
-import info.cubanmusic.cubanmusicapi.model.ArticleReference
-import info.cubanmusic.cubanmusicapi.model.Artist
-import info.cubanmusic.cubanmusicapi.model.QuoteReference
 import info.cubanmusic.cubanmusicapi.repository.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import java.util.*
 
 
 @RestController()
@@ -21,10 +15,6 @@ class ArtistController {
 
     @Autowired
     lateinit var artistRepository: ArtistRepository
-    @Autowired
-    lateinit var quoteRepository: QuoteReferenceRepository
-    @Autowired
-    lateinit var articleRepository: ArticleReferenceRepository
     @Autowired
     lateinit var countryRepository: CountryRepository
     @Autowired
@@ -49,16 +39,16 @@ class ArtistController {
         if (artists.isEmpty()) {
             return ResponseEntity<HttpStatus>(HttpStatus.NO_CONTENT)
         }
-        return ResponseEntity(artists.map { fromModel(it) }, HttpStatus.OK)
+        return ResponseEntity(artists, HttpStatus.OK)
     }
 
     @GetMapping("/{id}")
-    fun findById(@PathVariable() id: Long): ResponseEntity<*> {
+    fun findById(@PathVariable id: UUID): ResponseEntity<*> {
         val artist = artistRepository.findByIdOrNull(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
-        return ResponseEntity(fromModel(artist), HttpStatus.OK)
+        return ResponseEntity(artist, HttpStatus.OK)
     }
 
-    @GetMapping("/{id}/quotes")
+    /*@GetMapping("/{id}/quotes")
     fun getQuotes(@PathVariable id: Long): ResponseEntity<*> {
         val quotes = quoteRepository.findByArtistId(id)
         @Suppress("LocalVariableName") val response = quotes.map {
@@ -71,9 +61,9 @@ class ArtistController {
             _quote
         }
         return ResponseEntity(response, HttpStatus.OK)
-    }
+    }*/
 
-    @Suppress("LocalVariableName")
+    /*@Suppress("LocalVariableName")
     @PostMapping("/{id}/quotes")
     fun addQuote(@PathVariable id: Long, @RequestBody req: QuoteDTO): ResponseEntity<*> {
         val _quoteReference = QuoteReference().apply {
@@ -85,16 +75,16 @@ class ArtistController {
         _quoteReference.artist = artistRepository.findByIdOrNull(id)
         quoteRepository.save(_quoteReference)
         return ResponseEntity<HttpStatus>(HttpStatus.OK)
-    }
+    }*/
 
-    @Suppress("LocalVariableName")
+    /*@Suppress("LocalVariableName")
     @DeleteMapping("/quotes/{quoteId}")
     fun deleteQuote(@PathVariable quoteId: Long): ResponseEntity<*> {
         quoteRepository.deleteById(quoteId)
         return ResponseEntity<HttpStatus>(HttpStatus.OK)
-    }
+    }*/
 
-    @GetMapping("/{id}/articles")
+    /*@GetMapping("/{id}/articles")
     fun getArticles(@PathVariable id: Long): ResponseEntity<*> {
         val articles = articleRepository.findByArtistId(id)
         @Suppress("LocalVariableName") val response = articles.map {
@@ -108,9 +98,9 @@ class ArtistController {
             _article
         }
         return ResponseEntity(response, HttpStatus.OK)
-    }
+    }*/
 
-    @PostMapping("/{id}/articles")
+    /*@PostMapping("/{id}/articles")
     fun addArticle(@PathVariable id: Long, @RequestBody req: ArticleDTO): ResponseEntity<*> {
         val articleReference = ArticleReference().apply {
             source = req.source
@@ -122,19 +112,19 @@ class ArtistController {
         articleReference.artist = artistRepository.findByIdOrNull(id)
         articleRepository.save(articleReference)
         return ResponseEntity<HttpStatus>(HttpStatus.OK)
-    }
+    }*/
 
-    @DeleteMapping("/articles/{articleId}")
+    /*@DeleteMapping("/articles/{articleId}")
     fun deleteArticle(@PathVariable articleId: Long): ResponseEntity<*> {
         articleRepository.deleteById(articleId)
         return ResponseEntity<HttpStatus>(HttpStatus.OK)
-    }
+    }*/
 
-    fun fromModel(artist: Artist): ArtistDTO {
+    /*fun fromModel(artist: Artist): ArtistDTO {
         return ArtistDTO().apply {
-            id = artist.id
+            id = artist.id.toString()
             name = artist.name
-            additionalNames = artist.additionalNames.toList()
+            additionalNames = artist.additionalNames
             alias = artist.alias
             biography = artist.biography
             email = artist.email
@@ -155,20 +145,20 @@ class ArtistController {
             libOfCongress = artist.libOfCongress
             nationality = artist.nationality
             //country = artist.country?.id
-            affiliation = artist.affiliation?.id
-            genres = artist.genres.map { it.id!! }
-            awards = artist.awards.map { it.id!! }
-            instruments = artist.instruments.map { it.id!! }
-            studyAt = artist.studyAt?.id
-            albums = artist.albums.map { it.id!! }
-            label = artist.recordLabel?.id;
+            affiliation = artist.affiliation?.id.toString()
+            genres = artist.genres.map { it.id.toString() }
+            awards = artist.awards.map { it.id.toString() }
+            instruments = artist.instruments.map { it.id.toString() }
+            studyAt = artist.school?.id.toString()
+            albums = artist.albums.map { it.id.toString() }
+            label = artist.recordLabel?.id.toString()
         }
     }
 
     fun toModel(artistDTO: ArtistDTO, artist: Artist): Artist {
         return artist.apply {
             name = artistDTO.name
-            additionalNames = artistDTO.additionalNames.toMutableSet()
+            additionalNames = artistDTO.additionalNames.toMutableList()
             alias = artistDTO.alias
             biography = artistDTO.biography
             email = artistDTO.email
@@ -188,16 +178,19 @@ class ArtistController {
             tiktok = artistDTO.tiktok
             libOfCongress = artistDTO.libOfCongress
             nationality = artistDTO.nationality
-            /*artistDTO.country?.let {
-                country = countryRepository.findByIdOrNull(it)
-            }*/
-            affiliation = organizationRepository.findByIdOrNull(artistDTO.affiliation)
-            genres = genreRepository.findAllById(artistDTO.genres)
-            awards = awardRepository.findAllById(artistDTO.awards)
-            instruments = instrumentRepository.findAllById(artistDTO.instruments)
-            studyAt = schoolRepository.findByIdOrNull(artistDTO.studyAt)
+            affiliation = organizationRepository.findById(artistDTO.affiliation.toUUID())
+            if (artistDTO.genres.isNotEmpty()) {
+                val ids = artistDTO.genres.map { UUID.fromString(it) }
+                artist.genres = genreRepository.findAllById(ids)
+            }
+            if (artistDTO.awards.isNotEmpty()) {
+                val ids = artistDTO.awards.map { UUID.fromString(it) }
+                artist.awards = awardRepository.findAllById(ids)
+            }
+            /*instruments = instrumentRepository.findAllById(artistDTO.instruments)
+            school = schoolRepository.findByIdOrNull(artistDTO.studyAt)
             albums = albumRepository.findAllById(artistDTO.albums);
-            recordLabel = labelRepository.findByIdOrNull(artistDTO.label);
+            recordLabel = labelRepository.findByIdOrNull(artistDTO.label);*/
         }
-    }
+    }*/
 }

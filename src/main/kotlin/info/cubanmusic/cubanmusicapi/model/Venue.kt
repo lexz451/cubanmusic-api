@@ -1,22 +1,29 @@
 package info.cubanmusic.cubanmusicapi.model
 
+import org.hibernate.annotations.Type
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed
 import org.springframework.data.jpa.domain.AbstractAuditable
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.util.*
 import javax.persistence.*
 
-@Table(name = "venues", indexes = [
-    Index(name = "idx_venue_id_name_unq", columnList = "id, name", unique = true)
-])
-@Entity
-open class Venue {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    open var id: Long? = null
 
+@Entity
+@Indexed(index = "venue_idx")
+open class Venue(
+
+) {
+
+    @Id
+    @Column(name = "id", nullable = false)
+    @Type(type="org.hibernate.type.UUIDCharType")
+    open var id: UUID = UUID.randomUUID()
+
+    @FullTextField
     open var name: String? = null
 
+    @FullTextField
     @Lob
     open var description: String? = null
 
@@ -25,7 +32,7 @@ open class Venue {
     open var venueType: VenueTypes? = null
 
     @Temporal(TemporalType.DATE)
-    open var foundedAt: Date? = null
+    open var foundationDate: Date? = null
 
     open var capacity: Int? = null
 
@@ -52,6 +59,6 @@ open class Venue {
 
     open var twitter: String? = null
 
-    @Lob
-    open var image: String? = null
+    @Embedded
+    open var imageFile: ImageFile? = null
 }

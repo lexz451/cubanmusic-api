@@ -6,16 +6,9 @@ import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.data.jpa.repository.Query
+import java.util.*
 
-interface InstrumentRepository : JpaRepository<Instrument, Long>, JpaSpecificationExecutor<Instrument> {
+interface InstrumentRepository : JpaRepository<Instrument, UUID>, JpaSpecificationExecutor<Instrument> {
 
-    @Cacheable("instruments")
-    @Query("SELECT * FROM instruments", nativeQuery = true)
-    override fun findAll(): List<Instrument>
 
-    @CacheEvict("instruments", allEntries = true)
-    override fun <S : Instrument?> save(entity: S): S
-
-    @CacheEvict("instruments", allEntries = true)
-    override fun deleteById(id: Long)
 }

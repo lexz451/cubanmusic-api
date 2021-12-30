@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
+import java.util.*
 
 @RestController
 @RequestMapping("/api/v1/groups")
@@ -34,17 +35,17 @@ class GroupController {
         if (groups.isEmpty()) {
             return ResponseEntity<HttpStatus>(HttpStatus.NO_CONTENT)
         }
-        return ResponseEntity(groups.map { fromModel(it) }, HttpStatus.OK)
+        return ResponseEntity(groups, HttpStatus.OK)
     }
 
     @GetMapping("/{id}")
     @Transactional(readOnly = true)
-    fun findById(@PathVariable id: Long): ResponseEntity<*> {
-        val group = groupRepository.findByIdOrNull(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
-        return ResponseEntity(fromModel(group), HttpStatus.OK)
+    fun findById(@PathVariable id: String): ResponseEntity<*> {
+        val group = groupRepository.findByIdOrNull(UUID.fromString(id)) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
+        return ResponseEntity(group, HttpStatus.OK)
     }
 
-    @PostMapping("/new")
+    /*@PostMapping("/new")
     fun create(@RequestBody request: GroupDTO): ResponseEntity<*> {
         var group = toModel(request, Group())
         group = groupRepository.save(group)
@@ -64,8 +65,9 @@ class GroupController {
         groupRepository.findByIdOrNull(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
         groupRepository.deleteById(id)
         return ResponseEntity<HttpStatus>(HttpStatus.OK)
-    }
+    }*/
 
+    /*
     fun fromModel(artist: Group): GroupDTO {
         return GroupDTO().apply {
             id = artist.id
@@ -140,5 +142,5 @@ class GroupController {
             }
             
         }
-    }
+    }*/
 }

@@ -6,17 +6,17 @@ import java.time.Instant
 import java.util.*
 import javax.persistence.*
 import com.fasterxml.jackson.annotation.JsonIgnore
+import org.hibernate.annotations.Type
+import java.time.LocalDate
 
 
-@Table(name = "images", indexes = [
-    Index(name = "idx_image_artist_id", columnList = "artist_id")
-])
+@Table(name = "images")
 @Entity
 open class Image {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
-    open var id: Long? = null
+    @Type(type="org.hibernate.type.UUIDCharType")
+    open var id: UUID = UUID.randomUUID()
 
     open var title: String? = null
 
@@ -25,19 +25,14 @@ open class Image {
     @Temporal(TemporalType.DATE)
     open var date: Date? = null
 
+    @Lob
     open var description: String? = null
 
-    open var filename: String? = null
+    @Embedded
+    open var imageFile: ImageFile? = null
 
-    open var filetype: String? = null
-
-    @ElementCollection(fetch = FetchType.LAZY)
-    open var tags: MutableSet<String> = mutableSetOf()
-
-    @Lob
-    open var filedata: ByteArray = byteArrayOf()
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "artist_id")
-    open var artist: Artist? = null
+    @ElementCollection
+    @CollectionTable(name = "images_tags", joinColumns = [JoinColumn(name = "image_id")])
+    @Column(name = "tag")
+    open var tags: MutableList<String> = mutableListOf()
 }

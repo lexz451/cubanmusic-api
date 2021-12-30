@@ -3,11 +3,11 @@ package info.cubanmusic.cubanmusicapi.dto
 import info.cubanmusic.cubanmusicapi.model.Phone
 
 class VenueDTO {
-    var id: Long? = null
+    var id: String? = null
     var name: String? = null
     var description: String? = null
     var venueType: String? = null
-    var foundedAt: String? = null
+    var foundationDate: String? = null
     var capacity: Int? = null
     var openingHours: String? = null
     var phone: Phone = Phone()
@@ -20,5 +20,5 @@ class VenueDTO {
     var instagram: String? = null
     var facebook: String? = null
     var twitter: String? = null
-    var image: String? = null
+    var imageFile: ImageFileDTO? = null
 }

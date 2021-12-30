@@ -1,6 +1,7 @@
 package info.cubanmusic.cubanmusicapi.controller
 
 import info.cubanmusic.cubanmusicapi.dto.InstrumentDTO
+
 import info.cubanmusic.cubanmusicapi.model.Instrument
 import info.cubanmusic.cubanmusicapi.repository.InstrumentRepository
 
@@ -9,6 +10,7 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import java.util.*
 
 @RestController
 @RequestMapping("/api/v1/instruments")
@@ -37,7 +39,7 @@ class InstrumentController {
     }
 
     @DeleteMapping("/{id}")
-    fun deleteInstrument(@PathVariable id: Long): ResponseEntity<HttpStatus> {
+    fun deleteInstrument(@PathVariable id: UUID): ResponseEntity<HttpStatus> {
         instrumentRepository.findByIdOrNull(id) ?: return ResponseEntity(HttpStatus.NOT_FOUND)
         instrumentRepository.deleteById(id)
         return ResponseEntity(HttpStatus.OK)

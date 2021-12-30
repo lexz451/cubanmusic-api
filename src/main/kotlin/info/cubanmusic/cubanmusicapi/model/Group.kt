@@ -5,8 +5,6 @@ import javax.persistence.*
 
 @Entity
 open class Group : Artist() {
-
     @OneToMany(mappedBy = "memberOf")
     open var members: MutableList<Person> = mutableListOf()
-
 }

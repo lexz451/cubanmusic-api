@@ -7,9 +7,7 @@ import javax.persistence.Entity
 
 @Embeddable
 open class Phone {
-
     @Column(length = 10)
     open var code: String? = null
-
-    open var number: String = ""
+    open var number: String? = null
 }

@@ -10,13 +10,5 @@ import org.springframework.data.jpa.repository.Query
 
 interface JobTitleRepository : JpaRepository<JobTitle, Long>, JpaSpecificationExecutor<JobTitle> {
 
-    @Cacheable("jobTitles")
-    @Query("SELECT * FROM job_titles", nativeQuery = true)
-    override fun findAll(): List<JobTitle>
 
-    @CacheEvict("jobTitles", allEntries = true)
-    override fun <S : JobTitle?> save(entity: S): S
-
-    @CacheEvict("jobTitles", allEntries = true)
-    override fun deleteById(id: Long)
 }

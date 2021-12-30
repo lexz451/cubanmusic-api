@@ -2,26 +2,22 @@ package info.cubanmusic.cubanmusicapi.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import org.hibernate.Hibernate
+import org.hibernate.annotations.Type
 import org.springframework.data.jpa.domain.AbstractAuditable
+import java.util.*
 import javax.persistence.*
 
-@Table(name = "awards")
 @Entity
 open class Award {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    open var id: Long? = null
+    @Type(type="org.hibernate.type.UUIDCharType")
+    open var id: UUID = UUID.randomUUID()
 
-    @Column(length = 100)
-    open var title: String? = null
+    open var name: String? = null
 
     @Lob
-    open var description: String = ""
-
-    @OneToOne
-    @JoinColumn(name = "image_id")
-    open var image: Image? = null
+    open var description: String? = null
 
     @ManyToOne
     @JoinColumn(name = "country_id")
@@ -31,16 +27,9 @@ open class Award {
     @JoinColumn(name = "granted_by_id")
     open var grantedBy: Organization? = null
 
-    @Basic(fetch = FetchType.LAZY)
-    @ElementCollection
-    open var categories: MutableSet<String> = mutableSetOf()
 
-    @JsonIgnore
-    @ManyToMany
-    @JoinTable(
-        name = "ARTIST_AWARD",
-        joinColumns = [JoinColumn(name = "AWARD_id")],
-        inverseJoinColumns = [JoinColumn(name = "ARTIST_id")]
-    )
-    open var artists: MutableList<Artist> = mutableListOf()
+    @ElementCollection
+    @CollectionTable(name = "award_categories", joinColumns = [JoinColumn(name = "award_id")])
+    @Column(name = "category")
+    open var categories: MutableList<String> = mutableListOf()
 }

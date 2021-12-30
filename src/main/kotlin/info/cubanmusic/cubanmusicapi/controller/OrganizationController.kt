@@ -5,11 +5,13 @@ import info.cubanmusic.cubanmusicapi.model.Organization
 import info.cubanmusic.cubanmusicapi.model.Phone
 import info.cubanmusic.cubanmusicapi.repository.CountryRepository
 import info.cubanmusic.cubanmusicapi.repository.OrganizationRepository
+import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import java.util.*
 
 @RestController
 @RequestMapping("/api/v1/organizations")
@@ -19,66 +21,42 @@ class OrganizationController {
     @Autowired
     lateinit var countryRepository: CountryRepository
 
+    @Autowired
+    private lateinit var mapper: ModelMapper
+
     @GetMapping("")
     fun findAll(): ResponseEntity<*> {
-        val organizations = organizationRepository.findAll()
-        if (organizations.isEmpty()) {
-            return ResponseEntity<HttpStatus>(HttpStatus.NO_CONTENT)
+        val organizations = organizationRepository.findAll().map {
+            mapper.map(it, OrganizationDTO::class.java)
         }
-        return ResponseEntity(organizations.map { toResponse(it) }, HttpStatus.OK)
+        return ResponseEntity(organizations, HttpStatus.OK)
     }
 
     @GetMapping("/{id}")
-    fun findById(@PathVariable id: Long): ResponseEntity<*> {
-        val org = organizationRepository.findByIdOrNull(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
-        return ResponseEntity(toResponse(org), HttpStatus.OK)
+    fun findById(@PathVariable id: UUID): ResponseEntity<*> {
+        val organization = organizationRepository.findByIdOrNull(id)
+            ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
+        val response = mapper.map(organization, OrganizationDTO::class.java)
+        return ResponseEntity(response, HttpStatus.OK)
     }
 
     @PostMapping("/new")
-    fun create(@RequestBody request: OrganizationDTO): ResponseEntity<*> {
-        val org = fromRequest(Organization(), request)
-        organizationRepository.save(org)
-        return ResponseEntity<HttpStatus>(HttpStatus.OK)
+    fun create(@RequestBody organizationDTO: OrganizationDTO): ResponseEntity<*> {
+        var organization = mapper.map(organizationDTO, Organization::class.java)
+        organization = organizationRepository.save(organization)
+        return ResponseEntity(organization.id, HttpStatus.OK)
     }
 
     @PutMapping("/{id}")
-    fun update(@PathVariable id: Long, @RequestBody request: OrganizationDTO):  ResponseEntity<*> {
-        var org = organizationRepository.findByIdOrNull(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
-        org = fromRequest(org, request)
-        organizationRepository.save(org)
-        return ResponseEntity<HttpStatus>(HttpStatus.OK)
+    fun update(@RequestBody organizationDTO: OrganizationDTO):  ResponseEntity<*> {
+        var organization = mapper.map(organizationDTO, Organization::class.java)
+        organization = organizationRepository.save(organization)
+        return ResponseEntity(organization.id, HttpStatus.OK)
     }
 
     @DeleteMapping("/{id}")
-    fun delete(@PathVariable id: Long): ResponseEntity<*> {
-        organizationRepository.findByIdOrNull(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
+    fun delete(@PathVariable id: UUID): ResponseEntity<*> {
         organizationRepository.deleteById(id)
         return ResponseEntity<HttpStatus>(HttpStatus.OK)
-    }
-
-    private fun fromRequest(org: Organization, request: OrganizationDTO): Organization {
-        org.name = request.name ?: ""
-        org.description = request.description ?: ""
-        request.country?.let {
-            org.country = countryRepository.findByIdOrNull(it)
-        }
-        org.address = request.address ?: ""
-        org.email = request.email
-        org.phone = request.phone
-        org.website = request.website ?: ""
-        return org
-    }
-
-    private fun toResponse(org: Organization): OrganizationDTO {
-        return OrganizationDTO().apply {
-            id = org.id
-            name = org.name
-            description = org.description
-            country = org.country?.id
-            address = org.address
-            email = org.email
-            phone = org.phone ?: Phone()
-            website = org.website
-        }
     }
 }

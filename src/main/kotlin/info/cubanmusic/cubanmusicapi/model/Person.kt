@@ -3,13 +3,6 @@ package info.cubanmusic.cubanmusicapi.model
 import java.util.*
 import javax.persistence.*
 
-@NamedEntityGraph(
-    name = "person-detail-entity-graph",
-    attributeNodes = [
-        NamedAttributeNode("jobRoles"),
-        //NamedAttributeNode("additionalNames")
-    ]
-)
 @Entity
 open class Person : Artist() {
 
@@ -21,10 +14,6 @@ open class Person : Artist() {
 
     @Enumerated
     open var gender: Gender = Gender.OTHER
-
-    @Basic(fetch = FetchType.LAZY)
-    @ElementCollection
-    open var jobRoles: MutableSet<String> = mutableSetOf()
 
     @ManyToOne
     @JoinColumn(name = "birth_place_id")
@@ -38,15 +27,21 @@ open class Person : Artist() {
     @JoinColumn(name = "residence_place_id")
     open var residencePlace: Location? = null
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "job_title_id")
-    open var jobTitle: JobTitle? = null
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "related_to_id")
-    open var relatedTo: Person? = null
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_of_id")
     open var memberOf: Group? = null
+
+    @OneToMany
+    @JoinColumn(name = "person_id")
+    open var relatedArtists: MutableList<Artist> = mutableListOf()
+
+    @ElementCollection
+    @CollectionTable(name = "job_roles", joinColumns = [JoinColumn(name = "person_id")])
+    @Column(name = "job_role")
+    open var jobRoles: MutableList<String> = mutableListOf()
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "job_title_id")
+    open var jobTitle: JobTitle? = null
 }

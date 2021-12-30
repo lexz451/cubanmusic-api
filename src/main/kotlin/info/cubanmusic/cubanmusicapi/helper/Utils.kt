@@ -14,29 +14,30 @@ object Utils {
 
     private val logger = LoggerFactory.getLogger(Utils::class.java)
 
-    fun parseDate(dateString: String?): Date? {
+    fun String?.parseDate(): Date? {
         val formatter = SimpleDateFormat("yyyy-MM-dd")
         return try {
-            formatter.parse(dateString)
+            formatter.parse(this)
         } catch (e: Exception) {
-            logger.error("Invalid date received. Returning null...")
+            logger.error("Invalid date received. setting it to null...")
             null
         }
     }
 
-    fun formatDate(date: Date?): String? {
-        date?.let {
+    fun Date?.formatDate(): String? {
+        this?.let {
             val format = SimpleDateFormat("YYYY-MM-dd")
-            return format.format(date)
+            return format.format(this)
         }
         return null
     }
 
-    fun compressBytes(data: ByteArray): ByteArray {
+    @Suppress("SpellCheckingInspection")
+    fun ByteArray.compress(): ByteArray {
         val deflater = Deflater()
-        deflater.setInput(data)
+        deflater.setInput(this)
         deflater.finish()
-        val outputStream = ByteArrayOutputStream(data.size)
+        val outputStream = ByteArrayOutputStream(this.size)
         val buffer = ByteArray(1024)
         while (!deflater.finished()) {
             val count = deflater.deflate(buffer)
@@ -51,10 +52,10 @@ object Utils {
     }
 
 
-    fun decompressBytes(data: ByteArray): ByteArray? {
+    fun ByteArray.decompress(): ByteArray? {
         val inflater = Inflater()
-        inflater.setInput(data)
-        val outputStream = ByteArrayOutputStream(data.size)
+        inflater.setInput(this)
+        val outputStream = ByteArrayOutputStream(this.size)
         val buffer = ByteArray(1024)
         try {
             while (!inflater.finished()) {
@@ -63,7 +64,9 @@ object Utils {
             }
             outputStream.close()
         } catch (ioe: IOException) {
+            logger.error(ioe.message)
         } catch (e: DataFormatException) {
+            logger.error(e.message);
         }
         return outputStream.toByteArray()
     }

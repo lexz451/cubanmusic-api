@@ -12,18 +12,9 @@ import org.springframework.stereotype.Repository
 import java.util.*
 
 @Repository
-interface CountryRepository : JpaRepository<Country, Long>, JpaSpecificationExecutor<Country> {
+interface CountryRepository : JpaRepository<Country, UUID>, JpaSpecificationExecutor<Country> {
 
-    @Cacheable("countries")
-    @Query("SELECT * FROM countries", nativeQuery = true)
-    override fun findAll(): List<Country>
 
-    @Query("SELECT * FROM countries WHERE id = ?1", nativeQuery = true)
-    fun findByIdNative(id: Long): Country?
+    fun findByIso2Code(iso2Code: String): Country?
 
-    @CacheEvict("countries", allEntries = true)
-    override fun <S : Country?> save(entity: S): S
-
-    @CacheEvict("countries", allEntries = true)
-    override fun deleteById(id: Long)
 }

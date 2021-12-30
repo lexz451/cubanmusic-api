@@ -5,12 +5,14 @@ import info.cubanmusic.cubanmusicapi.model.Award
 import info.cubanmusic.cubanmusicapi.repository.AwardRepository
 import info.cubanmusic.cubanmusicapi.repository.CountryRepository
 import info.cubanmusic.cubanmusicapi.repository.OrganizationRepository
+import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
+import java.util.*
 
 @RestController
 @RequestMapping("/api/v1/awards")
@@ -21,68 +23,41 @@ class AwardController {
     @Autowired
     lateinit var countryRepository: CountryRepository
     @Autowired
-    lateinit var organizationRepository: OrganizationRepository
+    lateinit var mapper: ModelMapper
 
     @GetMapping("")
     @Transactional(readOnly = true)
     fun findAll(): ResponseEntity<*> {
-        val awards = awardRepository.findAll()
-        if (awards.isEmpty()) {
-            return ResponseEntity<HttpStatus>(HttpStatus.NO_CONTENT)
-        }
-        return ResponseEntity(awards.map { toResponse(it) }, HttpStatus.OK)
+        val awards = awardRepository.findAll().map { mapper.map(it, AwardDTO::class.java) }
+        return ResponseEntity(awards, HttpStatus.OK)
     }
 
     @GetMapping("/{id}")
     @Transactional(readOnly = true)
-    fun findById(@PathVariable id: Long): ResponseEntity<*> {
+    fun findById(@PathVariable id: UUID): ResponseEntity<*> {
         val award = awardRepository.findByIdOrNull(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
-        return ResponseEntity(toResponse(award), HttpStatus.OK)
+        val response = mapper.map(award, AwardDTO::class.java)
+        return ResponseEntity(response, HttpStatus.OK)
     }
 
     @PostMapping("/new")
-    fun create(@RequestBody request: AwardDTO): ResponseEntity<*> {
-        var award = fromRequest(Award(), request)
+    fun create(@RequestBody awardDTO: AwardDTO): ResponseEntity<*> {
+        var award = mapper.map(awardDTO, Award::class.java)
         award = awardRepository.save(award)
         return ResponseEntity(award.id, HttpStatus.OK)
     }
 
     @PutMapping("/{id}")
-    fun update(@PathVariable id: Long, @RequestBody request: AwardDTO): ResponseEntity<*> {
-        var award = awardRepository.findByIdOrNull(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
-        award = fromRequest(award, request)
-        awardRepository.save(award)
-        return ResponseEntity<HttpStatus>(HttpStatus.OK)
+    fun update(@PathVariable id: UUID, @RequestBody awardDTO: AwardDTO): ResponseEntity<*> {
+        var award = mapper.map(awardDTO, Award::class.java)
+        award = awardRepository.save(award)
+        return ResponseEntity(award.id, HttpStatus.OK)
     }
 
     @DeleteMapping("/{id}")
-    fun delete(@PathVariable id: Long): ResponseEntity<*> {
-        awardRepository.findByIdOrNull(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
+    fun delete(@PathVariable id: UUID): ResponseEntity<*> {
         awardRepository.deleteById(id)
         return ResponseEntity<HttpStatus>(HttpStatus.OK)
     }
 
-    private fun fromRequest(award: Award, request: AwardDTO): Award {
-        award.title = request.title
-        award.description = request.description
-        request.country?.let {
-            award.country = countryRepository.findByIdOrNull(it)
-        }
-        request.grantedBy?.let {
-            award.grantedBy = organizationRepository.findByIdOrNull(it)
-        }
-        award.categories = request.categories.toMutableSet()
-        return award
-    }
-
-    private fun toResponse(award: Award): AwardDTO {
-        return AwardDTO().apply {
-            id  = award.id
-            title = award.title ?: ""
-            description = award.description
-            country = award.country?.id
-            grantedBy = award.grantedBy?.id
-            categories = award.categories.toMutableList()
-        }
-    }
 }

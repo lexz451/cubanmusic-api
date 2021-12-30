@@ -7,20 +7,11 @@ import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.data.jpa.repository.Query
+import java.util.*
 
 @Suppress("FunctionName")
-interface AlbumRepository : JpaRepository<Album, Long>, JpaSpecificationExecutor<Album> {
+interface AlbumRepository : JpaRepository<Album, UUID>, JpaSpecificationExecutor<Album> {
 
-    @Cacheable("albums")
-    @Query("SELECT * FROM albums", nativeQuery = true)
-    override fun findAll(): List<Album>
 
-    @CacheEvict("albums", allEntries = true)
-    override fun <S : Album?> save(entity: S): S
-
-    @CacheEvict("albums", allEntries = true)
-    override fun deleteById(id: Long)
-
-    fun findDistinctByArtists_IdOrderByReleaseDateAsc(id: Long): List<AlbumItemInfo>
 
 }
