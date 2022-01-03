@@ -1,14 +1,13 @@
 package info.cubanmusic.cubanmusicapi.controller
 
-import info.cubanmusic.cubanmusicapi.dto.InstrumentDTO
-
 import info.cubanmusic.cubanmusicapi.model.Instrument
+import info.cubanmusic.cubanmusicapi.model.InstrumentDto
 import info.cubanmusic.cubanmusicapi.repository.InstrumentRepository
+import org.modelmapper.ModelMapper
 
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.repository.findByIdOrNull
-import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
 import java.util.*
 
@@ -17,31 +16,30 @@ import java.util.*
 class InstrumentController {
 
     @Autowired
-    lateinit var instrumentRepository: InstrumentRepository
+    private lateinit var instrumentRepository: InstrumentRepository
+    @Autowired
+    private lateinit var mapper: ModelMapper
 
     @GetMapping("")
-    fun findAll(): ResponseEntity<*> {
-        val instruments = instrumentRepository.findAll()
-        if (instruments.isEmpty()) {
-            return ResponseEntity<HttpStatus>(HttpStatus.NO_CONTENT)
+    @Transactional(readOnly = true)
+    fun findAll(): ResponseEntity<Any> {
+        val instruments = instrumentRepository.findAll().map {
+            mapper.map(it, InstrumentDto::class.java)
         }
-        return ResponseEntity(instruments, HttpStatus.OK)
+        return ResponseEntity.ok(instruments)
     }
 
     @PostMapping("/new")
-    fun addInstrument(@RequestBody req: InstrumentDTO): ResponseEntity<HttpStatus> {
-        val instrument = Instrument().apply {
-            name = req.name ?: ""
-            description = req.description ?: ""
-        }
-        instrumentRepository.save(instrument)
-        return ResponseEntity(HttpStatus.OK)
+    fun create(@RequestBody instrumentDTO: InstrumentDto): ResponseEntity<Any> {
+        var instrument = mapper.map(instrumentDTO, Instrument::class.java)
+        instrument = instrumentRepository.save(instrument)
+        return ResponseEntity.ok(instrument.id)
     }
 
     @DeleteMapping("/{id}")
-    fun deleteInstrument(@PathVariable id: UUID): ResponseEntity<HttpStatus> {
-        instrumentRepository.findByIdOrNull(id) ?: return ResponseEntity(HttpStatus.NOT_FOUND)
+    fun delete(@PathVariable id: UUID): ResponseEntity<Any> {
+        if (!instrumentRepository.existsById(id)) return ResponseEntity.notFound().build()
         instrumentRepository.deleteById(id)
-        return ResponseEntity(HttpStatus.OK)
+        return ResponseEntity.ok().build()
     }
 }

@@ -1,7 +1,7 @@
 package info.cubanmusic.cubanmusicapi.controller
 
-import info.cubanmusic.cubanmusicapi.dto.VenueDTO
 import info.cubanmusic.cubanmusicapi.model.Venue
+import info.cubanmusic.cubanmusicapi.model.VenueDto
 import info.cubanmusic.cubanmusicapi.repository.VenueRepository
 import org.modelmapper.ModelMapper
 import org.slf4j.LoggerFactory
@@ -39,19 +39,19 @@ class VenueController {
     @Transactional(readOnly = true)
     fun findById(@PathVariable id: UUID): ResponseEntity<*> {
         val venue = venueRepository.findByIdOrNull(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
-        val response = mapper.map(venue, VenueDTO::class.java)
+        val response = mapper.map(venue, VenueDto::class.java)
         return ResponseEntity(response, HttpStatus.OK)
     }
 
     @PostMapping("/new")
-    fun create(@RequestBody venueDTO: VenueDTO): ResponseEntity<*> {
+    fun create(@RequestBody venueDTO: VenueDto): ResponseEntity<*> {
         var venue = mapper.map(venueDTO, Venue::class.java)
         venue = venueRepository.save(venue)
         return ResponseEntity(venue.id, HttpStatus.OK)
     }
 
     @PutMapping("/{id}")
-    fun update(@RequestBody venueDTO: VenueDTO): ResponseEntity<*> {
+    fun update(@RequestBody venueDTO: VenueDto): ResponseEntity<*> {
         var venue = mapper.map(venueDTO, Venue::class.java)
         venue = venueRepository.save(venue)
         return ResponseEntity(venue.id, HttpStatus.OK)

@@ -1,8 +1,7 @@
 package info.cubanmusic.cubanmusicapi.controller
 
-import info.cubanmusic.cubanmusicapi.dto.OrganizationDTO
 import info.cubanmusic.cubanmusicapi.model.Organization
-import info.cubanmusic.cubanmusicapi.model.Phone
+import info.cubanmusic.cubanmusicapi.model.OrganizationDto
 import info.cubanmusic.cubanmusicapi.repository.CountryRepository
 import info.cubanmusic.cubanmusicapi.repository.OrganizationRepository
 import org.modelmapper.ModelMapper
@@ -27,7 +26,7 @@ class OrganizationController {
     @GetMapping("")
     fun findAll(): ResponseEntity<*> {
         val organizations = organizationRepository.findAll().map {
-            mapper.map(it, OrganizationDTO::class.java)
+            mapper.map(it, OrganizationDto::class.java)
         }
         return ResponseEntity(organizations, HttpStatus.OK)
     }
@@ -36,27 +35,28 @@ class OrganizationController {
     fun findById(@PathVariable id: UUID): ResponseEntity<*> {
         val organization = organizationRepository.findByIdOrNull(id)
             ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
-        val response = mapper.map(organization, OrganizationDTO::class.java)
+        val response = mapper.map(organization, OrganizationDto::class.java)
         return ResponseEntity(response, HttpStatus.OK)
     }
 
     @PostMapping("/new")
-    fun create(@RequestBody organizationDTO: OrganizationDTO): ResponseEntity<*> {
+    fun create(@RequestBody organizationDTO: OrganizationDto): ResponseEntity<*> {
         var organization = mapper.map(organizationDTO, Organization::class.java)
         organization = organizationRepository.save(organization)
         return ResponseEntity(organization.id, HttpStatus.OK)
     }
 
     @PutMapping("/{id}")
-    fun update(@RequestBody organizationDTO: OrganizationDTO):  ResponseEntity<*> {
+    fun update(@RequestBody organizationDTO: OrganizationDto):  ResponseEntity<*> {
         var organization = mapper.map(organizationDTO, Organization::class.java)
         organization = organizationRepository.save(organization)
         return ResponseEntity(organization.id, HttpStatus.OK)
     }
 
     @DeleteMapping("/{id}")
-    fun delete(@PathVariable id: UUID): ResponseEntity<*> {
-        organizationRepository.deleteById(id)
-        return ResponseEntity<HttpStatus>(HttpStatus.OK)
+    fun delete(@PathVariable id: UUID): ResponseEntity<Any> {
+        val organization = organizationRepository.findByIdOrNull(id) ?: return ResponseEntity.notFound().build()
+        organizationRepository.delete(organization)
+        return ResponseEntity.ok().build()
     }
 }

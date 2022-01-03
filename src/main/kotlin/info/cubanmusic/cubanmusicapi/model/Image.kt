@@ -6,11 +6,11 @@ import java.time.Instant
 import java.util.*
 import javax.persistence.*
 import com.fasterxml.jackson.annotation.JsonIgnore
+import org.hibernate.Hibernate
 import org.hibernate.annotations.Type
 import java.time.LocalDate
 
 
-@Table(name = "images")
 @Entity
 open class Image {
     @Id
@@ -35,4 +35,17 @@ open class Image {
     @CollectionTable(name = "images_tags", joinColumns = [JoinColumn(name = "image_id")])
     @Column(name = "tag")
     open var tags: MutableList<String> = mutableListOf()
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "artist_id")
+    open var artist: Artist? = null
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
+        other as Image
+        return id == other.id
+    }
+
+    override fun hashCode(): Int = javaClass.hashCode()
 }

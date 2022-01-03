@@ -28,10 +28,23 @@ open class Organization {
     @JoinColumn(name = "country_id")
     open var country: Country? = null
 
-    @OneToMany(mappedBy = "grantedBy", cascade = [CascadeType.ALL])
+    @OneToMany(mappedBy = "grantedBy")
     open var awards: MutableList<Award> = mutableListOf()
 
     open var website: String? = null
 
     open var address: String? = null
+
+    @OneToMany(mappedBy = "organization")
+    open var artists: MutableList<Artist> = mutableListOf()
+
+    @PreRemove
+    fun onOrganizationRemove() {
+        for (award in this.awards) {
+            award.grantedBy = null
+        }
+        for (artist in this.artists) {
+            artist.organization = null
+        }
+    }
 }

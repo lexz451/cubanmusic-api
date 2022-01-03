@@ -1,5 +1,6 @@
 package info.cubanmusic.cubanmusicapi.model
 
+import org.hibernate.Hibernate
 import java.util.*
 import javax.persistence.*
 
@@ -27,21 +28,43 @@ open class Person : Artist() {
     @JoinColumn(name = "residence_place_id")
     open var residencePlace: Location? = null
 
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_of_id")
-    open var memberOf: Group? = null
-
-    @OneToMany
-    @JoinColumn(name = "person_id")
-    open var relatedArtists: MutableList<Artist> = mutableListOf()
-
-    @ElementCollection
-    @CollectionTable(name = "job_roles", joinColumns = [JoinColumn(name = "person_id")])
-    @Column(name = "job_role")
-    open var jobRoles: MutableList<String> = mutableListOf()
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "job_title_id")
     open var jobTitle: JobTitle? = null
+
+    @ElementCollection
+    @CollectionTable(name = "person_job_roles", joinColumns = [JoinColumn(name = "owner_id")])
+    @Column(name = "job_role")
+    open var jobRoles: MutableSet<String> = mutableSetOf()
+
+    @ManyToMany
+    @JoinTable(
+        name = "artist_instruments",
+        joinColumns = [JoinColumn(name = "artist_id")],
+        inverseJoinColumns = [JoinColumn(name = "instruments_id")]
+    )
+    open var instruments: MutableSet<Instrument> = mutableSetOf()
+
+    @ManyToMany(mappedBy = "members")
+    open var groups: MutableList<Group> = mutableListOf()
+
+    fun setInstrumentsIds(ids: MutableSet<UUID>) {
+        this.instruments = ids.map {
+            Instrument().apply { id = it }
+        }.toMutableSet()
+    }
+
+    fun getInstrumentsIds(): MutableSet<UUID> {
+        return this.instruments.map { it.id }.toMutableSet()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
+        other as Person
+
+        return id == other.id
+    }
+
+    override fun hashCode(): Int = javaClass.hashCode()
 }

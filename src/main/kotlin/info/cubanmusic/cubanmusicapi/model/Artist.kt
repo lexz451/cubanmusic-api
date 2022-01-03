@@ -1,5 +1,6 @@
 package info.cubanmusic.cubanmusicapi.model
 
+import org.hibernate.Hibernate
 import org.hibernate.annotations.Type
 import org.springframework.data.jpa.domain.AbstractAuditable
 import java.util.*
@@ -55,73 +56,100 @@ open class Artist {
 
     open var nationality: String? = null
 
-    @ElementCollection
-    @CollectionTable(name = "additional_names", joinColumns = [JoinColumn(name = "artist_id")])
-    @Column(name = "name")
-    open var additionalNames: MutableList<String> = mutableListOf()
-
-    @ElementCollection
-    @CollectionTable(name = "article_references", joinColumns = [JoinColumn(name = "artist_id")])
-    @AttributeOverrides(
-        AttributeOverride(name = "title", column = Column(name = "article_reference_title")),
-        AttributeOverride(name = "url", column = Column(name = "article_reference_url")),
-        AttributeOverride(name = "source", column = Column(name = "article_reference_source")),
-        AttributeOverride(name = "author", column = Column(name = "article_reference_author")),
-        AttributeOverride(name = "date", column = Column(name = "article_reference_date"))
-    )
-    open var articleReferences: MutableList<ArticleReference> = mutableListOf()
-
-    @ElementCollection
-    @CollectionTable(name = "quote_references", joinColumns = [JoinColumn(name = "artist_id")])
-    @AttributeOverrides(
-        AttributeOverride(name = "quote", column = Column(name = "quote_references_quote")),
-        AttributeOverride(name = "source", column = Column(name = "quote_references_source")),
-        AttributeOverride(name = "author", column = Column(name = "quote_references_author")),
-        AttributeOverride(name = "date", column = Column(name = "quote_references_date"))
-    )
-    open var quoteReferences: MutableList<QuoteReference> = mutableListOf()
-
-    @ManyToMany
-    @JoinTable(
-        name = "artists_genres",
-        joinColumns = [JoinColumn(name = "artist_id")],
-        inverseJoinColumns = [JoinColumn(name = "genres_id")]
-    )
-    open var genres: MutableList<Genre> = mutableListOf()
-
-    @ManyToMany
-    @JoinTable(
-        name = "artists_awards",
-        joinColumns = [JoinColumn(name = "artist_id")],
-        inverseJoinColumns = [JoinColumn(name = "awards_id")]
-    )
-    open var awards: MutableList<Award> = mutableListOf()
-
-    @ManyToMany
-    @JoinTable(
-        name = "artists_instruments",
-        joinColumns = [JoinColumn(name = "artist_id")],
-        inverseJoinColumns = [JoinColumn(name = "instruments_id")]
-    )
-    open var instruments: MutableList<Instrument> = mutableListOf()
-
-    @ManyToMany
-    @JoinTable(
-        name = "artists_albums",
-        joinColumns = [JoinColumn(name = "artist_id")],
-        inverseJoinColumns = [JoinColumn(name = "albums_id")]
-    )
-    open var albums: MutableList<Album> = mutableListOf()
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "school_id")
     open var school: School? = null
 
-    @ManyToOne
-    @JoinColumn(name = "affiliation_id")
-    open var affiliation: Organization? = null
+    @OneToMany(mappedBy = "artist", orphanRemoval = true)
+    open var images: MutableList<Image> = mutableListOf()
 
-    @ManyToOne
-    @JoinColumn(name = "label_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "record_label_id")
     open var recordLabel: RecordLabel? = null
+
+    @Embedded
+    open var imageFile: ImageFile? = null
+
+    @ManyToMany
+    @JoinTable(
+        name = "artist_awards",
+        joinColumns = [JoinColumn(name = "artist_id")],
+        inverseJoinColumns = [JoinColumn(name = "awards_id")]
+    )
+    open var awards: MutableSet<Award> = mutableSetOf()
+
+    @ManyToMany
+    @JoinTable(
+        name = "artist_genres",
+        joinColumns = [JoinColumn(name = "artist_id")],
+        inverseJoinColumns = [JoinColumn(name = "genres_id")]
+    )
+    open var genres: MutableSet<Genre> = mutableSetOf()
+
+    @ManyToMany
+    @JoinTable(
+        name = "artist_albums",
+        joinColumns = [JoinColumn(name = "artist_id")],
+        inverseJoinColumns = [JoinColumn(name = "albums_id")]
+    )
+    open var albums: MutableSet<Album> = mutableSetOf()
+
+    @ElementCollection
+    @CollectionTable(name = "artist_additional_names", joinColumns = [JoinColumn(name = "owner_id")])
+    @Column(name = "additional_name")
+    open var additionalNames: MutableSet<String> = mutableSetOf()
+
+    @OneToMany(mappedBy = "artist", orphanRemoval = true)
+    open var articleReferences: MutableList<ArticleReference> = mutableListOf()
+
+    @OneToMany(mappedBy = "artist", orphanRemoval = true)
+    open var quoteReferences: MutableList<QuoteReference> = mutableListOf()
+
+    @ElementCollection
+    @CollectionTable(name = "artist_related_artists", joinColumns = [JoinColumn(name = "owner_id")])
+    @Column(name = "related_artist")
+    open var relatedArtists: MutableSet<String> = mutableSetOf()
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "organization_id")
+    open var organization: Organization? = null
+
+    fun getAlbumsIds(): MutableSet<UUID> {
+        return this.albums.map { it.id }.toMutableSet()
+    }
+
+    fun setAlbumsIds(ids: MutableSet<UUID>) {
+        this.albums = ids.map { Album().apply {
+            id = it
+        }}.toMutableSet()
+    }
+
+    fun getGenresIds(): MutableSet<UUID> {
+        return this.genres.map { it.id }.toMutableSet()
+    }
+
+    fun setGenresIds(ids: MutableSet<UUID>) {
+        this.genres = ids.map { Genre().apply {
+            id = it
+        } }.toMutableSet()
+    }
+
+    fun getAwardsIds(): MutableSet<UUID> {
+        return this.awards.map { it.id }.toMutableSet()
+    }
+
+    fun setAwardsIds(ids: MutableSet<UUID>) {
+        this.awards = ids.map { Award().apply {
+            id = it
+        } }.toMutableSet()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
+        other as Artist
+        return id == other.id
+    }
+
+    override fun hashCode(): Int = javaClass.hashCode()
 }

@@ -1,0 +1,15 @@
+package info.cubanmusic.cubanmusicapi.repository;
+
+import info.cubanmusic.cubanmusicapi.model.ArticleReference
+import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor
+import org.springframework.data.jpa.repository.Query
+import java.util.*
+
+interface ArticleReferenceRepository : JpaRepository<ArticleReference, UUID>,
+    JpaSpecificationExecutor<ArticleReference> {
+
+    @Query("select a from ArticleReference a where a.artist.id = ?1")
+    fun findByArtistId(id: UUID): List<ArticleReference>
+
+}

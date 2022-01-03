@@ -21,4 +21,13 @@ open class Country {
     open var iso2Code: String? = null
 
     open var phoneCode: String? = null
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
+        other as Country
+        return id == other.id
+    }
+
+    override fun hashCode(): Int = javaClass.hashCode()
 }

@@ -1,5 +1,6 @@
 package info.cubanmusic.cubanmusicapi.model
 
+import org.hibernate.Hibernate
 import org.hibernate.annotations.Type
 import java.util.*
 import javax.persistence.Column
@@ -18,4 +19,13 @@ open class School {
 
     @Lob
     open var description: String? = null
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
+        other as School
+        return id == other.id
+    }
+
+    override fun hashCode(): Int = javaClass.hashCode()
 }

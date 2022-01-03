@@ -1,44 +1,44 @@
 package info.cubanmusic.cubanmusicapi.controller
 
-import info.cubanmusic.cubanmusicapi.dto.JobTitleDTO
 import info.cubanmusic.cubanmusicapi.model.JobTitle
+import info.cubanmusic.cubanmusicapi.model.JobTitleDto
 import info.cubanmusic.cubanmusicapi.repository.JobTitleRepository
+import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.repository.findByIdOrNull
-import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
+import java.util.*
 
 @RestController
 @RequestMapping("/api/v1/jobtitles")
 class JobTitleController {
 
     @Autowired
-    lateinit var jobTitleRepository: JobTitleRepository
+    private lateinit var jobTitleRepository: JobTitleRepository
+    @Autowired
+    private lateinit var mapper: ModelMapper
 
     @GetMapping("")
-    fun findAll(): ResponseEntity<*> {
-        val titles = jobTitleRepository.findAll()
-        if (titles.isEmpty()) {
-            return ResponseEntity<HttpStatus>(HttpStatus.NO_CONTENT)
+    @Transactional(readOnly = true)
+    fun findAll(): ResponseEntity<Any> {
+        val titles = jobTitleRepository.findAll().map {
+            mapper.map(it, JobTitleDto::class.java)
         }
-        return ResponseEntity(titles, HttpStatus.OK)
+        return ResponseEntity.ok(titles)
     }
 
     @PostMapping("/new")
-    fun addJobTitle(@RequestBody req: JobTitleDTO): ResponseEntity<*> {
-        var job = JobTitle().apply {
-            name = req.name
-            description = req.description ?: ""
-        }
+    fun create(@RequestBody jobTitleDTO: JobTitleDto): ResponseEntity<Any> {
+        var job = mapper.map(jobTitleDTO, JobTitle::class.java)
         job = jobTitleRepository.save(job)
-        return ResponseEntity(job.id, HttpStatus.OK)
+        return ResponseEntity.ok(job.id)
     }
 
     @DeleteMapping("/{id}")
-    fun deleteJobTitle(@PathVariable id: Long): ResponseEntity<HttpStatus> {
-        jobTitleRepository.findByIdOrNull(id) ?: return ResponseEntity(HttpStatus.NOT_FOUND)
+    fun deleteJobTitle(@PathVariable id: UUID): ResponseEntity<Any> {
+        if (!jobTitleRepository.existsById(id)) return ResponseEntity.notFound().build()
         jobTitleRepository.deleteById(id)
-        return ResponseEntity(HttpStatus.OK)
+        return ResponseEntity.ok().build()
     }
 }

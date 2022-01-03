@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import java.util.*
 
-interface PersonRepository : JpaRepository<Person, Long>, JpaSpecificationExecutor<Person> {
+interface PersonRepository : JpaRepository<Person, UUID>, JpaSpecificationExecutor<Person> {
 
 
 }

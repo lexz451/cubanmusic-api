@@ -1,6 +1,7 @@
 package info.cubanmusic.cubanmusicapi.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import org.hibernate.Hibernate
 import org.hibernate.annotations.Type
 import org.springframework.data.jpa.domain.AbstractAuditable
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
@@ -18,4 +19,17 @@ open class Genre {
 
     @Lob
     open var description: String = ""
+
+    @ManyToMany(mappedBy = "genres")
+    open var artists: MutableList<Artist> = mutableListOf()
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
+        other as Genre
+
+        return id == other.id
+    }
+
+    override fun hashCode(): Int = javaClass.hashCode()
 }

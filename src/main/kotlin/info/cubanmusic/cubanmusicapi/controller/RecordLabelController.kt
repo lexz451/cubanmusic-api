@@ -1,10 +1,11 @@
 package info.cubanmusic.cubanmusicapi.controller
 
-import info.cubanmusic.cubanmusicapi.repository.CountryRepository
+import info.cubanmusic.cubanmusicapi.model.RecordLabel
+import info.cubanmusic.cubanmusicapi.model.RecordLabelDto
 import info.cubanmusic.cubanmusicapi.repository.RecordLabelRepository
+import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.findByIdOrNull
-import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.util.*
@@ -14,74 +15,44 @@ import java.util.*
 class RecordLabelController {
 
     @Autowired
-    lateinit var labelRepository: RecordLabelRepository
+    private lateinit var labelRepository: RecordLabelRepository
     @Autowired
-    lateinit var countryRepository: CountryRepository
+    private lateinit var mapper: ModelMapper
 
     @GetMapping("")
     fun findAll(): ResponseEntity<*> {
-        val labels = labelRepository.findAll()
-        if (labels.isEmpty()) {
-            return ResponseEntity<HttpStatus>(HttpStatus.NO_CONTENT)
+        val labels = labelRepository.findAll().map {
+            mapper.map(it, RecordLabelDto::class.java)
         }
-        return ResponseEntity(labels, HttpStatus.OK)
+        return ResponseEntity.ok(labels)
     }
 
     @GetMapping("/{id}")
-    fun findById(@PathVariable id: UUID): ResponseEntity<*> {
-        val label = labelRepository.findByIdOrNull(id) ?: ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
-        return ResponseEntity(label, HttpStatus.OK)
+    fun findById(@PathVariable id: UUID): ResponseEntity<Any> {
+        val label = labelRepository.findByIdOrNull(id) ?: return ResponseEntity.notFound().build()
+        val response = mapper.map(label, RecordLabelDto::class.java)
+        return ResponseEntity.ok(response)
     }
 
-    /*@PostMapping("/new")
-    fun create(@RequestBody request: RecordLabelDTO): ResponseEntity<*> {
-        var label = fromRequest(RecordLabel(), request)
+    @PostMapping("/new")
+    fun create(@RequestBody recordLabelDTO: RecordLabelDto): ResponseEntity<*> {
+        var label = mapper.map(recordLabelDTO, RecordLabel::class.java)
         label = labelRepository.save(label)
-        return ResponseEntity(label.id, HttpStatus.OK)
+        return ResponseEntity.ok(label.id)
     }
 
     @PutMapping("/{id}")
-    fun update(@PathVariable id: Long, @RequestBody request: RecordLabelDTO): ResponseEntity<*> {
-        var label = labelRepository.findByIdOrNull(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
-        label = fromRequest(label, request)
-        labelRepository.save(label)
-        return ResponseEntity<HttpStatus>(HttpStatus.OK)
+    fun update(@PathVariable id: UUID, @RequestBody recordLabelDTO: RecordLabelDto): ResponseEntity<Any> {
+        if (!labelRepository.existsById(id)) return ResponseEntity.notFound().build()
+        var label = mapper.map(recordLabelDTO, RecordLabel::class.java)
+        label = labelRepository.save(label)
+        return ResponseEntity.ok(label.id)
     }
 
     @DeleteMapping("/{id}")
-    fun delete(@PathVariable id: Long): ResponseEntity<*> {
-        labelRepository.findByIdOrNull(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.OK)
-        labelRepository.deleteById(id)
-        return ResponseEntity<HttpStatus>(HttpStatus.OK)
-    }*/
-
-    /*private fun fromRequest(recordLabel: RecordLabel, request: RecordLabelDTO): RecordLabel {
-        recordLabel.ipiCode = request.ipiCode
-        recordLabel.isniCode = request.isniCode
-        recordLabel.name = request.name ?: ""
-        recordLabel.description = request.description ?: ""
-        request.country?.let {
-            recordLabel.country = countryRepository.findByIdOrNull(it)
-        }
-        recordLabel.address = request.address ?: ""
-        recordLabel.email = request.email
-        recordLabel.phone = request.phone
-        recordLabel.website = request.website ?: ""
-        return recordLabel
+    fun delete(@PathVariable id: UUID): ResponseEntity<Any> {
+        val label = labelRepository.findByIdOrNull(id) ?: return ResponseEntity.notFound().build()
+        labelRepository.delete(label)
+        return ResponseEntity.ok().build()
     }
-
-    private fun toResponse(recordLabel: RecordLabel): RecordLabelDTO {
-        return RecordLabelDTO().apply {
-            id = recordLabel.id
-            ipiCode = recordLabel.ipiCode
-            isniCode = recordLabel.isniCode
-            name = recordLabel.name
-            description = recordLabel.description
-            country = recordLabel.country?.id
-            address = recordLabel.address
-            email = recordLabel.email
-            phone = recordLabel.phone ?: Phone()
-            website = recordLabel.website
-        }
-    }*/
 }

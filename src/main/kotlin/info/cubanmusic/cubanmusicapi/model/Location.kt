@@ -1,5 +1,6 @@
 package info.cubanmusic.cubanmusicapi.model
 
+import org.hibernate.Hibernate
 import org.hibernate.annotations.Type
 import org.springframework.data.jpa.domain.AbstractAuditable
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
@@ -21,8 +22,17 @@ open class Location {
     @JoinColumn(name = "country_id")
     open var country: Country? = null
 
-    fun toSingleString(): String {
+    open fun toSingleString(): String {
         val fields = listOf(city, state, country?.name)
-        return fields.filterNotNull().joinToString(",")
+        return fields.filterNotNull().joinToString(", ")
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
+        other as Location
+        return id == other.id
+    }
+
+    override fun hashCode(): Int = javaClass.hashCode()
 }

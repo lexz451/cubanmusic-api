@@ -1,7 +1,7 @@
 package info.cubanmusic.cubanmusicapi.controller
 
-import info.cubanmusic.cubanmusicapi.dto.CountryDTO
 import info.cubanmusic.cubanmusicapi.model.Country
+import info.cubanmusic.cubanmusicapi.model.CountryDto
 import info.cubanmusic.cubanmusicapi.repository.CountryRepository
 import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
@@ -20,12 +20,12 @@ class CountryController {
 
     @GetMapping("")
     fun findAll(): ResponseEntity<*> {
-        val countries = countryRepository.findAll().map { mapper.map(it, CountryDTO::class.java) }
+        val countries = countryRepository.findAll().map { mapper.map(it, CountryDto::class.java) }
         return ResponseEntity(countries, HttpStatus.OK)
     }
 
     @PostMapping("/new")
-    fun create(@RequestBody countryDTO: CountryDTO): ResponseEntity<*> {
+    fun create(@RequestBody countryDTO: CountryDto): ResponseEntity<*> {
         var country = mapper.map(countryDTO, Country::class.java)
         country = countryRepository.save(country)
         return ResponseEntity(country.id, HttpStatus.OK)

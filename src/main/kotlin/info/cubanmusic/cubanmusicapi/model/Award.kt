@@ -27,9 +27,27 @@ open class Award {
     @JoinColumn(name = "granted_by_id")
     open var grantedBy: Organization? = null
 
-
     @ElementCollection
     @CollectionTable(name = "award_categories", joinColumns = [JoinColumn(name = "award_id")])
     @Column(name = "category")
     open var categories: MutableList<String> = mutableListOf()
+
+    @ManyToMany(mappedBy = "awards")
+    open var artists: MutableList<Artist> = mutableListOf()
+
+    @PreRemove
+    fun onAwardRemove() {
+        this.artists.forEach {
+            it.awards.remove(this)
+        }
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
+        other as Award
+        return id == other.id
+    }
+
+    override fun hashCode(): Int = javaClass.hashCode()
 }

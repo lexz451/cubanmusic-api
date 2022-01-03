@@ -3,17 +3,13 @@ package info.cubanmusic.cubanmusicapi.model
 import org.hibernate.annotations.Type
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed
-import org.springframework.data.jpa.domain.AbstractAuditable
-import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.util.*
 import javax.persistence.*
 
 
 @Entity
 @Indexed(index = "venue_idx")
-open class Venue(
-
-) {
+open class Venue {
 
     @Id
     @Column(name = "id", nullable = false)
@@ -29,13 +25,14 @@ open class Venue(
 
     @Enumerated
     @Column(name = "venue_type")
-    open var venueType: VenueTypes? = null
+    open var venueType: VenueType? = null
 
     @Temporal(TemporalType.DATE)
     open var foundationDate: Date? = null
 
     open var capacity: Int? = null
 
+    @Lob
     open var openingHours: String? = null
 
     @Embedded
@@ -61,4 +58,23 @@ open class Venue(
 
     @Embedded
     open var imageFile: ImageFile? = null
+
+    enum class VenueType {
+        BAR,
+        PUB,
+        CLUB,
+        RESTAURANT,
+        HOTEL,
+        CONFERENCE_CENTER,
+        BUSINESS_CENTER,
+        COMMUNITY_CENTER,
+        SPORT_CLUB,
+        ART_GALLERY,
+        ACADEMY,
+        HOME,
+        PARK,
+        FIELD,
+        CONCERT_HALL,
+        THEATER
+    }
 }

@@ -1,13 +1,12 @@
 package info.cubanmusic.cubanmusicapi.controller
 
+import info.cubanmusic.cubanmusicapi.wrapper.*
 import info.cubanmusic.cubanmusicapi.model.Role
 import info.cubanmusic.cubanmusicapi.model.User
+import info.cubanmusic.cubanmusicapi.model.UserDto
 import info.cubanmusic.cubanmusicapi.security.JwtTokenProvider
 import info.cubanmusic.cubanmusicapi.services.UserService
-import info.cubanmusic.cubanmusicapi.dto.ApiResponse
-import info.cubanmusic.cubanmusicapi.dto.JWTAuthenticationResponse
-import info.cubanmusic.cubanmusicapi.dto.SignInRequest
-import info.cubanmusic.cubanmusicapi.dto.SignUpRequest
+import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -34,28 +33,29 @@ class AuthController {
     private lateinit var userService: UserService
     @Autowired
     private lateinit var passwordEncoder: PasswordEncoder
+    @Autowired
+    private lateinit var mapper: ModelMapper
 
     @GetMapping("/users")
-    fun getUsers(): ResponseEntity<*> {
-        val users = userService.findAll();
-        return ResponseEntity(users, HttpStatus.OK);
+    fun getUsers(): ResponseEntity<Any> {
+        val users = userService.findAll().map { mapper.map(it, UserDto::class.java) }
+        return ResponseEntity.ok(users)
     }
 
     @PostMapping("/signin")
     @Secured("IS_AUTHENTICATED_ANONYMOUSLY")
-    fun signInUser(@RequestBody request: SignInRequest): ResponseEntity<*> {
-        val auth = authManager.authenticate(
-            UsernamePasswordAuthenticationToken(
-                request.email,
-                request.password
-            )
-        )
+    fun signIn(@RequestBody request: SignInRequest): ResponseEntity<Any> {
+        if (request.email.isNullOrEmpty() || request.password.isNullOrEmpty())
+            return ResponseEntity.badRequest().build()
+        val user = userService.findByEmail(request.email)
+            ?: return ResponseEntity.status(HttpStatus.FORBIDDEN).build()
+        val authToken = UsernamePasswordAuthenticationToken(request.email, request.password)
+        val auth = authManager.authenticate(authToken)
         SecurityContextHolder.getContext().authentication = auth
         val jwt = tokenProvider.generateToken(auth)
-        val user = userService.findByEmail(request.email!!)
         return ResponseEntity.ok(
-            JWTAuthenticationResponse(
-                name = user!!.name!!,
+            SignInResponse(
+                name = user.name!!,
                 email = user.email!!,
                 role = user.role!!.name,
                 accessToken = jwt
@@ -64,23 +64,18 @@ class AuthController {
     }
 
     @PostMapping("/signup")
-    fun signUpUser(@RequestBody request: SignUpRequest): ResponseEntity<*> {
-        if (userService.existsByEmail(request.email)) {
-            return ResponseEntity(
-                ApiResponse(false, "Email address already in use."),
-                HttpStatus.BAD_REQUEST)
+    fun signUp(@RequestBody request: SignUpRequest): ResponseEntity<*> {
+        if (userService.existsByEmail(request.email))
+            return ResponseEntity.badRequest().body(
+                ApiResponse(false, "Email address already in use."))
+        val user = User().apply {
+            name = request.name
+            email = request.email
+            password = passwordEncoder.encode(request.password)
+            role = Role.CURATOR
+            enabled = true
         }
-
-        val user = User()
-        user.name = request.name
-        user.email = request.email
-        user.password = passwordEncoder.encode(request.password)
-        user.role = Role.CURATOR
-        user.enabled = true
         userService.save(user)
-        return ResponseEntity(
-            ApiResponse(true, "User successfully registered"),
-            HttpStatus.OK
-        )
+        return ResponseEntity.ok(ApiResponse(true, "User successfully registered"))
     }
 }

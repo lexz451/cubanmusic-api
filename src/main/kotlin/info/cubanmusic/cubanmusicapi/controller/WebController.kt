@@ -1,19 +1,6 @@
 package info.cubanmusic.cubanmusicapi.controller
 
 
-import info.cubanmusic.cubanmusicapi.dto.ArticleDTO
-import info.cubanmusic.cubanmusicapi.dto.OrganizationDTO
-import info.cubanmusic.cubanmusicapi.dto.QuoteDTO
-import info.cubanmusic.cubanmusicapi.dto.VenueDTO
-import org.springframework.security.access.annotation.Secured
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.ResponseEntity
-import org.springframework.http.HttpStatus
-import info.cubanmusic.cubanmusicapi.helper.Utils
-import info.cubanmusic.cubanmusicapi.model.*
-import info.cubanmusic.cubanmusicapi.repository.*
-import org.slf4j.LoggerFactory
-import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
 
 @RestController

@@ -1,7 +1,5 @@
 package info.cubanmusic.cubanmusicapi.controller
 
-import info.cubanmusic.cubanmusicapi.dto.AlbumDTO
-import info.cubanmusic.cubanmusicapi.helper.Utils.formatDate
 import info.cubanmusic.cubanmusicapi.model.Album
 import info.cubanmusic.cubanmusicapi.model.Venue
 import org.hibernate.search.engine.search.common.BooleanOperator
@@ -12,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.ui.ModelMap
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam

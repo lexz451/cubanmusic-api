@@ -1,14 +1,15 @@
 package info.cubanmusic.cubanmusicapi.controller
 
-import info.cubanmusic.cubanmusicapi.dto.LocationDTO
 import info.cubanmusic.cubanmusicapi.model.Location
-import info.cubanmusic.cubanmusicapi.repository.CountryRepository
+import info.cubanmusic.cubanmusicapi.model.LocationRequestDto
+import info.cubanmusic.cubanmusicapi.model.LocationResponseDto
 import info.cubanmusic.cubanmusicapi.repository.LocationRepository
+import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.repository.findByIdOrNull
-import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
+import java.util.*
 
 @RestController
 @RequestMapping("/api/v1/locations")
@@ -17,25 +18,26 @@ class LocationController {
    @Autowired
    private lateinit var locationRepository: LocationRepository
    @Autowired
-   private lateinit var countryRepository: CountryRepository
+   private lateinit var mapper: ModelMapper
 
     @GetMapping("")
-    fun findAll(): ResponseEntity<*> {
-        val locations = locationRepository.findAll()
-        return ResponseEntity(locations, HttpStatus.OK)
+    @Transactional(readOnly = true)
+    fun findAll(): ResponseEntity<Any> {
+        val locations = locationRepository.findAll().map { mapper.map(it, LocationResponseDto::class.java) }
+        return ResponseEntity.ok(locations)
     }
 
-   /* @PostMapping("/new")
-    fun create(@RequestBody req: LocationDTO): ResponseEntity<*> {
-        var location = toModel(req, Location())
+    @PostMapping("/new")
+    fun create(@RequestBody locationRequestDTO: LocationRequestDto): ResponseEntity<Any> {
+        var location = mapper.map(locationRequestDTO, Location::class.java)
         location = locationRepository.save(location)
-        return ResponseEntity(location.id, HttpStatus.OK)
+        return ResponseEntity.ok(location.id)
     }
 
     @DeleteMapping("/{id}")
-    fun delete(@PathVariable id: String): ResponseEntity<*> {
-        locationRepository.findByIdOrNull(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
+    fun delete(@PathVariable id: UUID): ResponseEntity<Any> {
+        if (!locationRepository.existsById(id)) return ResponseEntity.notFound().build()
         locationRepository.deleteById(id)
-        return ResponseEntity<HttpStatus>(HttpStatus.OK)
-    }*/
+        return ResponseEntity.ok().build()
+    }
 }

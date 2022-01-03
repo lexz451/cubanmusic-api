@@ -1,10 +1,9 @@
 package info.cubanmusic.cubanmusicapi.controller
 
-import info.cubanmusic.cubanmusicapi.dto.AwardDTO
 import info.cubanmusic.cubanmusicapi.model.Award
+import info.cubanmusic.cubanmusicapi.model.AwardDto
 import info.cubanmusic.cubanmusicapi.repository.AwardRepository
 import info.cubanmusic.cubanmusicapi.repository.CountryRepository
-import info.cubanmusic.cubanmusicapi.repository.OrganizationRepository
 import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.findByIdOrNull
@@ -28,7 +27,7 @@ class AwardController {
     @GetMapping("")
     @Transactional(readOnly = true)
     fun findAll(): ResponseEntity<*> {
-        val awards = awardRepository.findAll().map { mapper.map(it, AwardDTO::class.java) }
+        val awards = awardRepository.findAll().map { mapper.map(it, AwardDto::class.java) }
         return ResponseEntity(awards, HttpStatus.OK)
     }
 
@@ -36,19 +35,19 @@ class AwardController {
     @Transactional(readOnly = true)
     fun findById(@PathVariable id: UUID): ResponseEntity<*> {
         val award = awardRepository.findByIdOrNull(id) ?: return ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND)
-        val response = mapper.map(award, AwardDTO::class.java)
+        val response = mapper.map(award, AwardDto::class.java)
         return ResponseEntity(response, HttpStatus.OK)
     }
 
     @PostMapping("/new")
-    fun create(@RequestBody awardDTO: AwardDTO): ResponseEntity<*> {
+    fun create(@RequestBody awardDTO: AwardDto): ResponseEntity<*> {
         var award = mapper.map(awardDTO, Award::class.java)
         award = awardRepository.save(award)
         return ResponseEntity(award.id, HttpStatus.OK)
     }
 
     @PutMapping("/{id}")
-    fun update(@PathVariable id: UUID, @RequestBody awardDTO: AwardDTO): ResponseEntity<*> {
+    fun update(@PathVariable id: UUID, @RequestBody awardDTO: AwardDto): ResponseEntity<*> {
         var award = mapper.map(awardDTO, Award::class.java)
         award = awardRepository.save(award)
         return ResponseEntity(award.id, HttpStatus.OK)
