@@ -18,10 +18,10 @@ open class Venue : Auditable {
     @Type(type="org.hibernate.type.UUIDCharType")
     open var id: UUID = UUID.randomUUID()
 
-    @FullTextField
+    @FullTextField(analyzer = "stop")
     open var name: String? = null
 
-    @FullTextField
+    @FullTextField(analyzer = "stop")
     @Lob
     open var description: String? = null
 
@@ -82,7 +82,7 @@ open class Venue : Auditable {
 
     override fun entityId(): UUID? = id
 
-    override fun entityType(): String? = Venue::class.simpleName
+    override fun entityType(): String? = Venue::class.qualifiedName
 
     override fun entityName(): String? = name
 }

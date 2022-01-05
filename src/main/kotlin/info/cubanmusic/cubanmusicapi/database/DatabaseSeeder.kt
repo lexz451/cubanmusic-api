@@ -2,6 +2,7 @@ package info.cubanmusic.cubanmusicapi.database
 
 import info.cubanmusic.cubanmusicapi.model.*
 import info.cubanmusic.cubanmusicapi.repository.CountryRepository
+import info.cubanmusic.cubanmusicapi.repository.UserRepository
 import info.cubanmusic.cubanmusicapi.services.*
 
 import org.slf4j.LoggerFactory
@@ -16,7 +17,7 @@ import org.springframework.stereotype.Component
 class DatabaseSeeder : ApplicationRunner {
 
     @Autowired
-    private lateinit var userService: UserService
+    private lateinit var userRepository: UserRepository
 
     @Autowired
     private lateinit var countryRepository: CountryRepository
@@ -36,7 +37,7 @@ class DatabaseSeeder : ApplicationRunner {
         logger.info("Start seeding database...!")
 
         logger.info("Seeding admin account...!")
-        if (userService.findByEmail(adminEmail) == null) {
+        if (userRepository.findByEmail(adminEmail) == null) {
             try {
                 val admin = User()
                 admin.email = adminEmail
@@ -44,7 +45,7 @@ class DatabaseSeeder : ApplicationRunner {
                 admin.enabled = true
                 admin.password = passwordEncoder.encode(adminPassword)
                 admin.role = Role.SUPER_ADMIN
-                userService.save(admin)
+                userRepository.save(admin)
                 logger.info("Admin user created successfully.")
             } catch (e: Exception) {
                 logger.error("An error occurred while creating admin user.", e)

@@ -8,6 +8,12 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.util.*
 import javax.persistence.*
 
+@NamedEntityGraph(
+    name = "location",
+    attributeNodes = [
+        NamedAttributeNode("country")
+    ]
+)
 @Entity
 open class Location : Auditable {
     @Id

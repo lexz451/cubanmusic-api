@@ -10,7 +10,12 @@ import org.hibernate.search.mapper.pojo.mapping.definition.annotation.KeywordFie
 import java.util.*
 import javax.persistence.*
 
-
+@NamedEntityGraph(
+    name = "album",
+    attributeNodes = [
+        NamedAttributeNode("contributors")
+    ]
+)
 @Entity
 @Indexed(index = "album_idx")
 open class Album : Auditable {
@@ -20,10 +25,10 @@ open class Album : Auditable {
     @Type(type="org.hibernate.type.UUIDCharType")
     open var id: UUID = UUID.randomUUID()
 
-    @FullTextField
+    @FullTextField(analyzer = "stop")
     open var name: String? = null
 
-    @FullTextField
+    @FullTextField(analyzer = "stop")
     @Lob
     open var description: String? = null
 

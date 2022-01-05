@@ -14,6 +14,10 @@ object Utils {
 
     private val logger = LoggerFactory.getLogger(Utils::class.java)
 
+    const val CACHE_RESULT_NULL = "#result==null"
+    const val CACHE_RESULT_EMPTY = "#result.size()==0"
+    const val CACHE_KEY_ID = "#p0.id"
+
     fun String?.parseDate(): Date? {
         val formatter = SimpleDateFormat("yyyy-MM-dd")
         return try {

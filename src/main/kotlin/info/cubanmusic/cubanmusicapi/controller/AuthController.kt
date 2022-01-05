@@ -5,9 +5,9 @@ import info.cubanmusic.cubanmusicapi.wrapper.*
 import info.cubanmusic.cubanmusicapi.model.Role
 import info.cubanmusic.cubanmusicapi.model.User
 import info.cubanmusic.cubanmusicapi.model.UserDto
+import info.cubanmusic.cubanmusicapi.repository.UserRepository
 import info.cubanmusic.cubanmusicapi.security.JwtTokenProvider
 import info.cubanmusic.cubanmusicapi.services.AuditService
-import info.cubanmusic.cubanmusicapi.services.UserService
 import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -32,7 +32,7 @@ class AuthController {
     @Autowired
     private lateinit var tokenProvider: JwtTokenProvider
     @Autowired
-    private lateinit var userService: UserService
+    private lateinit var userRepository: UserRepository
     @Autowired
     private lateinit var passwordEncoder: PasswordEncoder
     @Autowired
@@ -42,7 +42,7 @@ class AuthController {
 
     @GetMapping("/users")
     fun getUsers(): ResponseEntity<Any> {
-        val users = userService.findAll().map { mapper.map(it, UserDto::class.java) }
+        val users = userRepository.findAll().map { mapper.map(it, UserDto::class.java) }
         return ResponseEntity.ok(users)
     }
 
@@ -51,7 +51,7 @@ class AuthController {
     fun signIn(@RequestBody request: SignInRequest): ResponseEntity<Any> {
         if (request.email.isNullOrEmpty() || request.password.isNullOrEmpty())
             return ResponseEntity.badRequest().build()
-        val user = userService.findByEmail(request.email)
+        val user = userRepository.findByEmail(request.email)
             ?: return ResponseEntity.status(HttpStatus.FORBIDDEN).build()
         val authToken = UsernamePasswordAuthenticationToken(request.email, request.password)
         val auth = authManager.authenticate(authToken)
@@ -69,7 +69,7 @@ class AuthController {
 
     @PostMapping("/signup")
     fun signUp(@RequestBody request: SignUpRequest): ResponseEntity<*> {
-        if (userService.existsByEmail(request.email))
+        if (userRepository.existsByEmail(request.email))
             return ResponseEntity.badRequest().body(
                 ApiResponse(false, "Email address already in use."))
         var user = User().apply {
@@ -79,7 +79,7 @@ class AuthController {
             role = Role.CURATOR
             enabled = true
         }
-        user = userService.save(user)
+        user = userRepository.save(user)
         auditService.logEvent(user, Log.LogType.CREATE)
         return ResponseEntity.ok(ApiResponse(true, "User successfully registered"))
     }

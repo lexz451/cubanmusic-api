@@ -1,5 +1,6 @@
 package info.cubanmusic.cubanmusicapi.repository;
 
+import info.cubanmusic.cubanmusicapi.helper.Utils
 import info.cubanmusic.cubanmusicapi.model.JobTitle
 import org.hibernate.annotations.Cache
 import org.springframework.cache.annotation.CacheEvict
@@ -11,7 +12,7 @@ import java.util.*
 
 interface JobTitleRepository : JpaRepository<JobTitle, UUID>, JpaSpecificationExecutor<JobTitle> {
 
-    @Cacheable("jobTitles")
+    @Cacheable("jobTitles", unless = Utils.CACHE_RESULT_EMPTY)
     override fun findAll(): MutableList<JobTitle>
 
     @CacheEvict("jobTitles", allEntries = true)

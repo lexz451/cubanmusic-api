@@ -4,6 +4,12 @@ import org.hibernate.annotations.Type
 import java.util.*
 import javax.persistence.*
 
+@NamedEntityGraph(
+    name = "log",
+    attributeNodes = [
+        NamedAttributeNode("user")
+    ]
+)
 @Entity
 @Table(name = "log")
 open class Log {

@@ -11,6 +11,12 @@ import org.hibernate.annotations.Type
 import java.time.LocalDate
 
 
+@NamedEntityGraph(
+    name = "image",
+    attributeNodes = [
+        NamedAttributeNode("tags")
+    ]
+)
 @Entity
 open class Image {
     @Id

@@ -8,6 +8,13 @@ import org.springframework.data.jpa.domain.AbstractAuditable
 import java.util.*
 import javax.persistence.*
 
+@NamedEntityGraph(
+    name = "artist",
+    attributeNodes = [
+        NamedAttributeNode("additionalNames"),
+        NamedAttributeNode("relatedArtists")
+    ]
+)
 @Entity
 @Indexed(index = "artists_idx")
 open class Artist : Auditable {
@@ -16,14 +23,14 @@ open class Artist : Auditable {
     @Type(type="org.hibernate.type.UUIDCharType")
     open var id: UUID = UUID.randomUUID()
 
-    @FullTextField
+    @FullTextField(analyzer = "stop")
     open var name: String? = null
 
-    @FullTextField
+    @FullTextField(analyzer = "stop")
     @Lob
     open var biography: String? = null
 
-    @FullTextField
+    @FullTextField(analyzer = "stop")
     open var alias: String? = null
 
     open var email: String? = null
@@ -100,7 +107,7 @@ open class Artist : Auditable {
     )
     open var albums: MutableSet<Album> = mutableSetOf()
 
-    @FullTextField
+    @FullTextField(analyzer = "stop")
     @ElementCollection
     @CollectionTable(name = "artist_additional_names", joinColumns = [JoinColumn(name = "owner_id")])
     @Column(name = "additional_name")

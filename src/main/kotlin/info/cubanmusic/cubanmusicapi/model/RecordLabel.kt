@@ -1,5 +1,6 @@
 package info.cubanmusic.cubanmusicapi.model
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import info.cubanmusic.cubanmusicapi.helper.Auditable
 import org.hibernate.Hibernate
 import org.hibernate.annotations.Type
@@ -10,6 +11,12 @@ import org.hibernate.search.mapper.pojo.mapping.definition.annotation.KeywordFie
 import java.util.*
 import javax.persistence.*
 
+@NamedEntityGraph(
+    name = "record_label",
+    attributeNodes = [
+        NamedAttributeNode("country")
+    ]
+)
 @Entity
 @Indexed(index = "labels_idx")
 open class RecordLabel : Auditable {
@@ -18,7 +25,7 @@ open class RecordLabel : Auditable {
     @Type(type="org.hibernate.type.UUIDCharType")
     open var id: UUID = UUID.randomUUID()
 
-    @FullTextField
+    @FullTextField(analyzer = "stop")
     open var name: String? = null
 
     @Embedded
@@ -35,7 +42,7 @@ open class RecordLabel : Auditable {
     open var address: String? = null
 
     @Lob
-    @FullTextField
+    @FullTextField(analyzer = "stop")
     open var description: String? = null
 
     @Column(unique = true)
@@ -44,6 +51,7 @@ open class RecordLabel : Auditable {
     @Column(unique = true)
     open var isniCode: String? = null
 
+    @JsonIgnore
     @OneToMany(mappedBy = "recordLabel")
     open var albums: MutableList<Album> = mutableListOf()
 

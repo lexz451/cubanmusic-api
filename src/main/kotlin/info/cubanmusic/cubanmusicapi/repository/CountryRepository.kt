@@ -1,5 +1,6 @@
 package info.cubanmusic.cubanmusicapi.repository;
 
+import info.cubanmusic.cubanmusicapi.helper.Utils
 import info.cubanmusic.cubanmusicapi.model.Country
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.cache.annotation.Cacheable
@@ -14,7 +15,7 @@ import java.util.*
 @Repository
 interface CountryRepository : JpaRepository<Country, UUID>, JpaSpecificationExecutor<Country> {
 
-    @Cacheable("countries")
+    @Cacheable("countries", unless = Utils.CACHE_RESULT_EMPTY)
     override fun findAll(): MutableList<Country>
 
     @CacheEvict("countries", allEntries = true)

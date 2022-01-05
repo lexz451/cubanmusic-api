@@ -1,6 +1,7 @@
 package info.cubanmusic.cubanmusicapi.model
 
 import com.fasterxml.jackson.annotation.JsonFormat
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.databind.util.StdDateFormat
 import info.cubanmusic.cubanmusicapi.helper.Auditable
 import org.hibernate.Hibernate
@@ -32,6 +33,7 @@ open class User : Auditable {
         @Enumerated
         open var role: Role? = Role.CURATOR
 
+        @JsonIgnore
         @OneToMany(mappedBy = "user")
         open var logs: MutableList<Log> = mutableListOf()
 

@@ -11,6 +11,12 @@ import org.springframework.data.jpa.domain.AbstractAuditable
 import java.util.*
 import javax.persistence.*
 
+@NamedEntityGraph(
+    name = "award",
+    attributeNodes = [
+        NamedAttributeNode("categories")
+    ]
+)
 @Entity
 @Indexed(index = "awards_idx")
 open class Award : Auditable {
@@ -19,10 +25,10 @@ open class Award : Auditable {
     @Type(type="org.hibernate.type.UUIDCharType")
     open var id: UUID = UUID.randomUUID()
 
-    @FullTextField
+    @FullTextField(analyzer = "stop")
     open var name: String? = null
 
-    @FullTextField
+    @FullTextField(analyzer = "stop")
     @Lob
     open var description: String? = null
 
@@ -39,6 +45,7 @@ open class Award : Auditable {
     @Column(name = "category")
     open var categories: MutableList<String> = mutableListOf()
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "awards")
     open var artists: MutableList<Artist> = mutableListOf()
 

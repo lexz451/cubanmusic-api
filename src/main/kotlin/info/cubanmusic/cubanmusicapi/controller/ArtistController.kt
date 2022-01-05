@@ -121,7 +121,8 @@ class ArtistController {
 
     @DeleteMapping("/images/{imageId}")
     fun deleteImage(@PathVariable imageId: UUID): ResponseEntity<Any> {
-        imageRepository.deleteById(imageId)
+        val image = imageRepository.findByIdOrNull(imageId) ?: return ResponseEntity.notFound().build()
+        imageRepository.delete(image)
         return ResponseEntity.ok().build()
     }
 }

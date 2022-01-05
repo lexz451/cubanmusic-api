@@ -20,7 +20,7 @@ open class JobTitle: Auditable {
     @Lob
     open var description: String = ""
 
-    @OneToMany(orphanRemoval = true)
+    @OneToMany
     @JoinColumn
     open var persons: MutableList<Person> = mutableListOf()
 

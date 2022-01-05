@@ -1,9 +1,17 @@
 package info.cubanmusic.cubanmusicapi.controller
 
+import info.cubanmusic.cubanmusicapi.helper.Auditable
 import info.cubanmusic.cubanmusicapi.model.*
 import info.cubanmusic.cubanmusicapi.wrapper.SearchResponse
-import org.hibernate.search.engine.search.predicate.dsl.SimpleQueryFlag
+import org.apache.lucene.search.Explanation
+import org.hibernate.graph.GraphSemantic
+import org.hibernate.search.backend.lucene.LuceneExtension
+import org.hibernate.search.backend.lucene.search.query.dsl.LuceneSearchQuerySelectStep
+import org.hibernate.search.backend.lucene.types.sort.impl.LuceneStandardFieldSort
+import org.hibernate.search.engine.search.query.dsl.SearchQueryDslExtension
+import org.hibernate.search.engine.search.sort.SearchSort
 import org.hibernate.search.mapper.orm.Search
+import org.hibernate.search.mapper.orm.common.EntityReference
 import org.hibernate.search.mapper.orm.search.loading.EntityLoadingCacheLookupStrategy
 import org.hibernate.search.mapper.orm.search.loading.dsl.SearchLoadingOptionsStep
 import org.modelmapper.ModelMapper
@@ -16,7 +24,10 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import java.awt.print.Book
 import javax.persistence.EntityManager
+import javax.persistence.PersistenceContext
+
 
 @RestController
 @RequestMapping("/api/v1/search")
@@ -24,7 +35,7 @@ class SearchController {
 
     private val logger: Logger = LoggerFactory.getLogger(SearchController::class.java)
 
-    @Autowired
+    @PersistenceContext
     lateinit var em: EntityManager
     @Autowired
     lateinit var mapper: ModelMapper
@@ -49,18 +60,29 @@ class SearchController {
 
     @GetMapping("")
     @Transactional(readOnly = true)
-    fun search(@RequestParam query: String): ResponseEntity<*> {
+    fun search(@RequestParam query: String, @RequestParam("result_size") resultSize: Int?): ResponseEntity<*> {
         logger.info("Performing full-text search for query: $query")
         val results = Search.session(em)
             .search(indexedEntities)
-            .where { f -> f.bool()
-                .must { s -> s.simpleQueryString().field("name").matching("$query~") }
-            }
+            .where { p -> p.match().fields(*indexedFields).matching(query).fuzzy(2,1) }
             .loading { o ->
-                (o as SearchLoadingOptionsStep).cacheLookupStrategy(
-                    EntityLoadingCacheLookupStrategy.PERSISTENCE_CONTEXT_THEN_SECOND_LEVEL_CACHE
-                )
-            }.fetchHits(20)
+                (o as SearchLoadingOptionsStep)
+                    .graph("award", GraphSemantic.FETCH)
+                    .graph("person", GraphSemantic.FETCH)
+                    .graph("album", GraphSemantic.FETCH)
+                    .graph("group", GraphSemantic.FETCH)
+                    .graph("record_label", GraphSemantic.FETCH)
+                    .graph("organization", GraphSemantic.FETCH)
+                    .cacheLookupStrategy(EntityLoadingCacheLookupStrategy.PERSISTENCE_CONTEXT_THEN_SECOND_LEVEL_CACHE)
+            }
+            .fetchHits(resultSize ?: 10)
+        /*val hits: List<Explanation> = Search.session(em).search(indexedEntities)
+            .extension(LuceneExtension.get<Explanation,EntityReference,Auditable,SearchLoadingOptionsStep>())
+            .select { f -> f.explanation() }
+            .where { f -> f.match().fields(*indexedFields).matching(query).fuzzy() }
+            .sort { s -> s.score()}
+            .fetchHits(20)*/
+
         val response = results.map(resultMapper)
         return ResponseEntity.ok(response)
     }

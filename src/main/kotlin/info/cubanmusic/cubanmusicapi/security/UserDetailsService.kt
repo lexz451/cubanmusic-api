@@ -24,9 +24,7 @@ class UserDetailsService : UserDetailsService {
     }
 
     fun loadUserById(id: Long): UserDetails {
-        val user = userRepository.findById(id).orElseThrow {
-            UsernameNotFoundException("User not found with id: $id")
-        }
+        val user = userRepository.findByIdOrNull(id) ?: throw UsernameNotFoundException("User not found with id: $id")
         return UserPrincipal.create(user)
     }
 }
