@@ -3,6 +3,7 @@ package info.cubanmusic.cubanmusicapi.services
 import info.cubanmusic.cubanmusicapi.model.User
 import info.cubanmusic.cubanmusicapi.repository.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.cache.annotation.CacheEvict
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 
@@ -16,6 +17,7 @@ class UserService {
         return userRepository.findByEmail(email)
     }
 
+    @CacheEvict("users", allEntries = true)
     fun save(user: User) = userRepository.save(user)
 
     fun existsByEmail(email: String): Boolean {

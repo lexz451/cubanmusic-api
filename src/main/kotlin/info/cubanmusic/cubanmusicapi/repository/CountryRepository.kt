@@ -14,6 +14,11 @@ import java.util.*
 @Repository
 interface CountryRepository : JpaRepository<Country, UUID>, JpaSpecificationExecutor<Country> {
 
+    @Cacheable("countries")
+    override fun findAll(): MutableList<Country>
+
+    @CacheEvict("countries", allEntries = true)
+    override fun <S : Country?> save(entity: S): S
 
     fun findByIso2Code(iso2Code: String): Country?
 

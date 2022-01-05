@@ -1,7 +1,9 @@
 package info.cubanmusic.cubanmusicapi.model
 
+import info.cubanmusic.cubanmusicapi.helper.Auditable
 import org.hibernate.annotations.Type
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed
 import java.util.*
 import javax.persistence.*
@@ -9,7 +11,7 @@ import javax.persistence.*
 
 @Entity
 @Indexed(index = "venue_idx")
-open class Venue {
+open class Venue : Auditable {
 
     @Id
     @Column(name = "id", nullable = false)
@@ -77,4 +79,10 @@ open class Venue {
         CONCERT_HALL,
         THEATER
     }
+
+    override fun entityId(): UUID? = id
+
+    override fun entityType(): String? = Venue::class.simpleName
+
+    override fun entityName(): String? = name
 }

@@ -1,9 +1,11 @@
 package info.cubanmusic.cubanmusicapi.controller
 
+import info.cubanmusic.cubanmusicapi.model.Log
 import info.cubanmusic.cubanmusicapi.model.Organization
 import info.cubanmusic.cubanmusicapi.model.OrganizationDto
 import info.cubanmusic.cubanmusicapi.repository.CountryRepository
 import info.cubanmusic.cubanmusicapi.repository.OrganizationRepository
+import info.cubanmusic.cubanmusicapi.services.AuditService
 import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.findByIdOrNull
@@ -18,7 +20,7 @@ class OrganizationController {
     @Autowired
     lateinit var organizationRepository: OrganizationRepository
     @Autowired
-    lateinit var countryRepository: CountryRepository
+    lateinit var auditService: AuditService
 
     @Autowired
     private lateinit var mapper: ModelMapper
@@ -43,6 +45,7 @@ class OrganizationController {
     fun create(@RequestBody organizationDTO: OrganizationDto): ResponseEntity<*> {
         var organization = mapper.map(organizationDTO, Organization::class.java)
         organization = organizationRepository.save(organization)
+        auditService.logEvent(organization, Log.LogType.CREATE)
         return ResponseEntity(organization.id, HttpStatus.OK)
     }
 
@@ -50,6 +53,7 @@ class OrganizationController {
     fun update(@RequestBody organizationDTO: OrganizationDto):  ResponseEntity<*> {
         var organization = mapper.map(organizationDTO, Organization::class.java)
         organization = organizationRepository.save(organization)
+        auditService.logEvent(organization, Log.LogType.UPDATE)
         return ResponseEntity(organization.id, HttpStatus.OK)
     }
 
@@ -57,6 +61,7 @@ class OrganizationController {
     fun delete(@PathVariable id: UUID): ResponseEntity<Any> {
         val organization = organizationRepository.findByIdOrNull(id) ?: return ResponseEntity.notFound().build()
         organizationRepository.delete(organization)
+        auditService.logEvent(organization, Log.LogType.DELETE)
         return ResponseEntity.ok().build()
     }
 }

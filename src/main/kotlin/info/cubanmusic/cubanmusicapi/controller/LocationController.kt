@@ -3,7 +3,9 @@ package info.cubanmusic.cubanmusicapi.controller
 import info.cubanmusic.cubanmusicapi.model.Location
 import info.cubanmusic.cubanmusicapi.model.LocationRequestDto
 import info.cubanmusic.cubanmusicapi.model.LocationResponseDto
+import info.cubanmusic.cubanmusicapi.model.Log
 import info.cubanmusic.cubanmusicapi.repository.LocationRepository
+import info.cubanmusic.cubanmusicapi.services.AuditService
 import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
@@ -19,6 +21,8 @@ class LocationController {
    private lateinit var locationRepository: LocationRepository
    @Autowired
    private lateinit var mapper: ModelMapper
+   @Autowired
+   private lateinit var auditService: AuditService
 
     @GetMapping("")
     @Transactional(readOnly = true)
@@ -31,6 +35,7 @@ class LocationController {
     fun create(@RequestBody locationRequestDTO: LocationRequestDto): ResponseEntity<Any> {
         var location = mapper.map(locationRequestDTO, Location::class.java)
         location = locationRepository.save(location)
+        auditService.logEvent(location, Log.LogType.CREATE)
         return ResponseEntity.ok(location.id)
     }
 

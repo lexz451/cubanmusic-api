@@ -2,7 +2,9 @@ package info.cubanmusic.cubanmusicapi.controller
 
 import info.cubanmusic.cubanmusicapi.model.Instrument
 import info.cubanmusic.cubanmusicapi.model.InstrumentDto
+import info.cubanmusic.cubanmusicapi.model.Log
 import info.cubanmusic.cubanmusicapi.repository.InstrumentRepository
+import info.cubanmusic.cubanmusicapi.services.AuditService
 import org.modelmapper.ModelMapper
 
 import org.springframework.beans.factory.annotation.Autowired
@@ -19,6 +21,8 @@ class InstrumentController {
     private lateinit var instrumentRepository: InstrumentRepository
     @Autowired
     private lateinit var mapper: ModelMapper
+    @Autowired
+    private lateinit var auditService: AuditService
 
     @GetMapping("")
     @Transactional(readOnly = true)
@@ -33,6 +37,7 @@ class InstrumentController {
     fun create(@RequestBody instrumentDTO: InstrumentDto): ResponseEntity<Any> {
         var instrument = mapper.map(instrumentDTO, Instrument::class.java)
         instrument = instrumentRepository.save(instrument)
+        auditService.logEvent(instrument, Log.LogType.CREATE)
         return ResponseEntity.ok(instrument.id)
     }
 

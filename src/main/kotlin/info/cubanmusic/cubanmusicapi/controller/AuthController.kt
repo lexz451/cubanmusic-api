@@ -1,10 +1,12 @@
 package info.cubanmusic.cubanmusicapi.controller
 
+import info.cubanmusic.cubanmusicapi.model.Log
 import info.cubanmusic.cubanmusicapi.wrapper.*
 import info.cubanmusic.cubanmusicapi.model.Role
 import info.cubanmusic.cubanmusicapi.model.User
 import info.cubanmusic.cubanmusicapi.model.UserDto
 import info.cubanmusic.cubanmusicapi.security.JwtTokenProvider
+import info.cubanmusic.cubanmusicapi.services.AuditService
 import info.cubanmusic.cubanmusicapi.services.UserService
 import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
@@ -35,6 +37,8 @@ class AuthController {
     private lateinit var passwordEncoder: PasswordEncoder
     @Autowired
     private lateinit var mapper: ModelMapper
+    @Autowired
+    private lateinit var auditService: AuditService
 
     @GetMapping("/users")
     fun getUsers(): ResponseEntity<Any> {
@@ -68,14 +72,15 @@ class AuthController {
         if (userService.existsByEmail(request.email))
             return ResponseEntity.badRequest().body(
                 ApiResponse(false, "Email address already in use."))
-        val user = User().apply {
+        var user = User().apply {
             name = request.name
             email = request.email
             password = passwordEncoder.encode(request.password)
             role = Role.CURATOR
             enabled = true
         }
-        userService.save(user)
+        user = userService.save(user)
+        auditService.logEvent(user, Log.LogType.CREATE)
         return ResponseEntity.ok(ApiResponse(true, "User successfully registered"))
     }
 }

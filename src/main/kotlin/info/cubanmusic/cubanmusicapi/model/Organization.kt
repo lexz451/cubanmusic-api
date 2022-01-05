@@ -2,20 +2,27 @@ package info.cubanmusic.cubanmusicapi.model
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import info.cubanmusic.cubanmusicapi.helper.Auditable
 import org.hibernate.annotations.Type
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed
 import org.springframework.data.jpa.domain.AbstractAuditable
 import java.util.*
 import javax.persistence.*
 
 @Entity
-open class Organization {
+@Indexed(index = "organizations_idx")
+open class Organization : Auditable {
     @Id
     @Column(name = "id", nullable = false)
     @Type(type="org.hibernate.type.UUIDCharType")
     open var id: UUID = UUID.randomUUID()
 
+    @FullTextField
     open var name: String? = null
 
+    @FullTextField
     @Lob
     open var description: String? = null
 
@@ -47,4 +54,10 @@ open class Organization {
             artist.organization = null
         }
     }
+
+    override fun entityId(): UUID? = id
+
+    override fun entityType(): String? = Organization::class.qualifiedName
+
+    override fun entityName(): String? = name
 }

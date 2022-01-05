@@ -1,9 +1,11 @@
 package info.cubanmusic.cubanmusicapi.model
 
 import org.hibernate.Hibernate
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed
 import java.util.*
 import javax.persistence.*
 
+@Indexed(index = "persons_idx")
 @Entity
 open class Person : Artist() {
 

@@ -2,6 +2,7 @@ package info.cubanmusic.cubanmusicapi.controller
 
 import info.cubanmusic.cubanmusicapi.model.*
 import info.cubanmusic.cubanmusicapi.repository.*
+import info.cubanmusic.cubanmusicapi.services.AuditService
 import org.hibernate.Hibernate
 import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
@@ -25,7 +26,7 @@ class ArtistController {
     @Autowired
     private lateinit var imageRepository: ImageRepository
     @Autowired
-    private lateinit var albumRepository: AlbumRepository
+    private lateinit var auditService: AuditService
     @Autowired
     private lateinit var mapper: ModelMapper
 
@@ -61,12 +62,15 @@ class ArtistController {
         var quote = mapper.map(quoteDTO, QuoteReference::class.java)
         quote.artist = artist
         quote = quoteReferenceRepository.save(quote)
+        auditService.logEvent(quote, Log.LogType.CREATE)
         return ResponseEntity.ok(quote.id)
     }
 
     @DeleteMapping("/quotes/{quoteID}")
     fun deleteQuote(@PathVariable quoteID: UUID): ResponseEntity<Any> {
-        quoteReferenceRepository.deleteById(quoteID)
+        val quote = quoteReferenceRepository.findByIdOrNull(quoteID) ?: return ResponseEntity.notFound().build()
+        quoteReferenceRepository.delete(quote)
+        auditService.logEvent(quote, Log.LogType.DELETE)
         return ResponseEntity.ok().build()
     }
 
@@ -85,12 +89,15 @@ class ArtistController {
         var article = mapper.map(articleDTO, ArticleReference::class.java)
         article.artist = artist
         article = articleReferenceRepository.save(article)
+        auditService.logEvent(article, Log.LogType.CREATE)
         return ResponseEntity.ok(article.id)
     }
 
     @DeleteMapping("/articles/{articleID}")
     fun deleteArticle(@PathVariable articleID: UUID): ResponseEntity<Any> {
-        articleReferenceRepository.deleteById(articleID)
+        val article = articleReferenceRepository.findByIdOrNull(articleID) ?: return ResponseEntity.notFound().build()
+        articleReferenceRepository.delete(article)
+        auditService.logEvent(article, Log.LogType.DELETE)
         return ResponseEntity.ok().build()
     }
 

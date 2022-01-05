@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody
 import info.cubanmusic.cubanmusicapi.repository.GenreRepository;
 import info.cubanmusic.cubanmusicapi.model.Genre
 import info.cubanmusic.cubanmusicapi.model.GenreDto
+import info.cubanmusic.cubanmusicapi.model.Log
+import info.cubanmusic.cubanmusicapi.services.AuditService
 import org.modelmapper.ModelMapper
 import org.springframework.transaction.annotation.Transactional
 
@@ -21,6 +23,8 @@ class GenreController {
     private lateinit var genreRepository: GenreRepository
     @Autowired
     private lateinit var mapper: ModelMapper
+    @Autowired
+    private lateinit var auditService: AuditService
 
     @GetMapping("")
     @Transactional(readOnly = true)
@@ -35,6 +39,7 @@ class GenreController {
     fun create(@RequestBody genreDTO: GenreDto): ResponseEntity<Any> {
         var genre = mapper.map(genreDTO, Genre::class.java)
         genre = genreRepository.save(genre)
+        auditService.logEvent(genre, Log.LogType.CREATE)
         return ResponseEntity.ok(genre.id)
     }
 }

@@ -1,8 +1,10 @@
 package info.cubanmusic.cubanmusicapi.controller
 
+import info.cubanmusic.cubanmusicapi.model.Log
 import info.cubanmusic.cubanmusicapi.model.RecordLabel
 import info.cubanmusic.cubanmusicapi.model.RecordLabelDto
 import info.cubanmusic.cubanmusicapi.repository.RecordLabelRepository
+import info.cubanmusic.cubanmusicapi.services.AuditService
 import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.findByIdOrNull
@@ -18,6 +20,8 @@ class RecordLabelController {
     private lateinit var labelRepository: RecordLabelRepository
     @Autowired
     private lateinit var mapper: ModelMapper
+    @Autowired
+    private lateinit var auditService: AuditService
 
     @GetMapping("")
     fun findAll(): ResponseEntity<*> {
@@ -38,6 +42,7 @@ class RecordLabelController {
     fun create(@RequestBody recordLabelDTO: RecordLabelDto): ResponseEntity<*> {
         var label = mapper.map(recordLabelDTO, RecordLabel::class.java)
         label = labelRepository.save(label)
+        auditService.logEvent(label, Log.LogType.CREATE)
         return ResponseEntity.ok(label.id)
     }
 
@@ -46,6 +51,7 @@ class RecordLabelController {
         if (!labelRepository.existsById(id)) return ResponseEntity.notFound().build()
         var label = mapper.map(recordLabelDTO, RecordLabel::class.java)
         label = labelRepository.save(label)
+        auditService.logEvent(label, Log.LogType.UPDATE)
         return ResponseEntity.ok(label.id)
     }
 
@@ -53,6 +59,7 @@ class RecordLabelController {
     fun delete(@PathVariable id: UUID): ResponseEntity<Any> {
         val label = labelRepository.findByIdOrNull(id) ?: return ResponseEntity.notFound().build()
         labelRepository.delete(label)
+        auditService.logEvent(label, Log.LogType.DELETE)
         return ResponseEntity.ok().build()
     }
 }

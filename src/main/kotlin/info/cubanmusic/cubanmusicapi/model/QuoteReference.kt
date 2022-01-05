@@ -1,6 +1,7 @@
 package info.cubanmusic.cubanmusicapi.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import info.cubanmusic.cubanmusicapi.helper.Auditable
 import org.hibernate.Hibernate
 import org.hibernate.annotations.Type
 import org.springframework.data.jpa.domain.AbstractAuditable
@@ -8,7 +9,7 @@ import java.util.*
 import javax.persistence.*
 
 @Entity
-open class QuoteReference {
+open class QuoteReference : Auditable {
     @Id
     @Column(name = "id", nullable = false)
     @Type(type="org.hibernate.type.UUIDCharType")
@@ -27,6 +28,12 @@ open class QuoteReference {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "artist_id")
     open var artist: Artist? = null
+
+    override fun entityId(): UUID? = id
+
+    override fun entityType(): String? = QuoteReference::class.qualifiedName
+
+    override fun entityName(): String? = "$source - $author"
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

@@ -2,7 +2,9 @@ package info.cubanmusic.cubanmusicapi.controller
 
 import info.cubanmusic.cubanmusicapi.model.Album
 import info.cubanmusic.cubanmusicapi.model.AlbumDto
+import info.cubanmusic.cubanmusicapi.model.Log
 import info.cubanmusic.cubanmusicapi.repository.AlbumRepository
+import info.cubanmusic.cubanmusicapi.services.AuditService
 import org.modelmapper.ModelMapper
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -21,6 +23,8 @@ class AlbumController {
 
     @Autowired
     private lateinit var albumRepository: AlbumRepository
+    @Autowired
+    private lateinit var auditService: AuditService
 
     @Autowired
     private lateinit var mapper: ModelMapper
@@ -45,6 +49,7 @@ class AlbumController {
     fun create(@RequestBody albumDTO: AlbumDto): ResponseEntity<*> {
         var album = mapper.map(albumDTO, Album::class.java)
         album = albumRepository.save(album)
+        auditService.logEvent(album, Log.LogType.CREATE)
         return ResponseEntity.ok(album.id)
     }
 
@@ -52,6 +57,7 @@ class AlbumController {
     fun update(@PathVariable id: UUID, @RequestBody albumDTO: AlbumDto): ResponseEntity<*> {
         var album = mapper.map(albumDTO, Album::class.java)
         album = albumRepository.save(album)
+        auditService.logEvent(album, Log.LogType.UPDATE)
         return ResponseEntity.ok(album.id)
     }
 
@@ -59,6 +65,7 @@ class AlbumController {
     fun delete(@PathVariable id: UUID): ResponseEntity<Any> {
         val album = albumRepository.findByIdOrNull(id) ?: return ResponseEntity.notFound().build()
         albumRepository.delete(album)
+        auditService.logEvent(album, Log.LogType.DELETE)
         return ResponseEntity.ok().build()
     }
 }

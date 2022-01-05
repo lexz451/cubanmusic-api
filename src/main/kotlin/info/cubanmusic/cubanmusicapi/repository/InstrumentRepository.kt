@@ -10,5 +10,9 @@ import java.util.*
 
 interface InstrumentRepository : JpaRepository<Instrument, UUID>, JpaSpecificationExecutor<Instrument> {
 
+    @Cacheable("instruments")
+    override fun findAll(): MutableList<Instrument>
 
+    @CacheEvict("instruments", allEntries = true)
+    override fun <S : Instrument?> save(entity: S): S
 }

@@ -10,5 +10,9 @@ import java.util.*
 
 interface LocationRepository : JpaRepository<Location, UUID>, JpaSpecificationExecutor<Location> {
 
+    @Cacheable("locations")
+    override fun findAll(): MutableList<Location>
 
+    @CacheEvict("locations", allEntries = true)
+    override fun <S : Location?> save(entity: S): S
 }

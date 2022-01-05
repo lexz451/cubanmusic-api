@@ -1,14 +1,18 @@
 package info.cubanmusic.cubanmusicapi.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import info.cubanmusic.cubanmusicapi.helper.Auditable
 import org.hibernate.Hibernate
 import org.hibernate.annotations.Type
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.KeywordField
 import org.springframework.data.jpa.domain.AbstractAuditable
 import java.util.*
 import javax.persistence.*
 
 @Entity
-open class ArticleReference {
+open class ArticleReference : Auditable {
 
     @Id
     @Column(name = "id", nullable = false)
@@ -29,6 +33,12 @@ open class ArticleReference {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "artist_id")
     open var artist: Artist? = null
+
+    override fun entityId(): UUID? = id
+
+    override fun entityType(): String? = ArticleReference::class.qualifiedName
+
+    override fun entityName(): String? = title
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

@@ -1,5 +1,6 @@
 package info.cubanmusic.cubanmusicapi.model
 
+import info.cubanmusic.cubanmusicapi.helper.Auditable
 import org.hibernate.Hibernate
 import org.hibernate.annotations.Type
 import org.springframework.data.jpa.domain.AbstractAuditable
@@ -8,7 +9,7 @@ import java.util.*
 import javax.persistence.*
 
 @Entity
-open class JobTitle {
+open class JobTitle: Auditable {
     @Id
     @Column(name = "id", nullable = false)
     @Type(type="org.hibernate.type.UUIDCharType")
@@ -22,6 +23,12 @@ open class JobTitle {
     @OneToMany(orphanRemoval = true)
     @JoinColumn
     open var persons: MutableList<Person> = mutableListOf()
+
+    override fun entityId(): UUID? = id
+
+    override fun entityType(): String? = Instrument::class.qualifiedName
+
+    override fun entityName(): String? = name
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

@@ -1,10 +1,8 @@
 package info.cubanmusic.cubanmusicapi.controller
 
-import info.cubanmusic.cubanmusicapi.model.Album
-import info.cubanmusic.cubanmusicapi.model.AlbumDto
-import info.cubanmusic.cubanmusicapi.model.Group
-import info.cubanmusic.cubanmusicapi.model.GroupDto
+import info.cubanmusic.cubanmusicapi.model.*
 import info.cubanmusic.cubanmusicapi.repository.*
+import info.cubanmusic.cubanmusicapi.services.AuditService
 import org.modelmapper.ModelMapper
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -25,6 +23,8 @@ class GroupController {
     private lateinit var groupRepository: GroupRepository
     @Autowired
     private lateinit var mapper: ModelMapper
+    @Autowired
+    private lateinit var auditService: AuditService
 
     @GetMapping("")
     @Transactional(readOnly = true)
@@ -48,6 +48,7 @@ class GroupController {
     fun create(@RequestBody groupDto: GroupDto): ResponseEntity<Any> {
         var group = mapper.map(groupDto, Group::class.java)
         group = groupRepository.save(group)
+        auditService.logEvent(group, Log.LogType.CREATE)
         return ResponseEntity.ok(group.id)
     }
 
@@ -57,12 +58,15 @@ class GroupController {
         logger.info(groupDto.albumsIds.map { it.toString() }.toString())
         logger.info(group.albums.map { it.id }.toString())
         group = groupRepository.save(group)
+        auditService.logEvent(group, Log.LogType.UPDATE)
         return ResponseEntity.ok(group.id)
     }
 
     @DeleteMapping("/{id}")
     fun delete(@PathVariable id: UUID): ResponseEntity<Any> {
-        groupRepository.deleteById(id)
+        val group = groupRepository.findByIdOrNull(id) ?: return ResponseEntity.notFound().build()
+        groupRepository.delete(group)
+        auditService.logEvent(group, Log.LogType.DELETE)
         return ResponseEntity.ok().build()
     }
 

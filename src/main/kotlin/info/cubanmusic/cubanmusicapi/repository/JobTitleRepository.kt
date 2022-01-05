@@ -11,5 +11,9 @@ import java.util.*
 
 interface JobTitleRepository : JpaRepository<JobTitle, UUID>, JpaSpecificationExecutor<JobTitle> {
 
+    @Cacheable("jobTitles")
+    override fun findAll(): MutableList<JobTitle>
 
+    @CacheEvict("jobTitles", allEntries = true)
+    override fun <S : JobTitle?> save(entity: S): S
 }

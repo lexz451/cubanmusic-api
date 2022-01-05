@@ -1,8 +1,10 @@
 package info.cubanmusic.cubanmusicapi.controller
 
+import info.cubanmusic.cubanmusicapi.model.Log
 import info.cubanmusic.cubanmusicapi.model.Venue
 import info.cubanmusic.cubanmusicapi.model.VenueDto
 import info.cubanmusic.cubanmusicapi.repository.VenueRepository
+import info.cubanmusic.cubanmusicapi.services.AuditService
 import org.modelmapper.ModelMapper
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -24,6 +26,8 @@ class VenueController {
     private lateinit var venueRepository: VenueRepository
     @Autowired
     private lateinit var mapper: ModelMapper
+    @Autowired
+    private lateinit var auditService: AuditService
 
     @GetMapping("")
     @Transactional(readOnly = true)
@@ -47,6 +51,7 @@ class VenueController {
     fun create(@RequestBody venueDTO: VenueDto): ResponseEntity<*> {
         var venue = mapper.map(venueDTO, Venue::class.java)
         venue = venueRepository.save(venue)
+        auditService.logEvent(venue, Log.LogType.CREATE)
         return ResponseEntity(venue.id, HttpStatus.OK)
     }
 
@@ -54,12 +59,15 @@ class VenueController {
     fun update(@RequestBody venueDTO: VenueDto): ResponseEntity<*> {
         var venue = mapper.map(venueDTO, Venue::class.java)
         venue = venueRepository.save(venue)
+        auditService.logEvent(venue, Log.LogType.UPDATE)
         return ResponseEntity(venue.id, HttpStatus.OK)
     }
     
     @DeleteMapping("/{id}")
     fun delete(@PathVariable id: UUID): ResponseEntity<*> {
+        val venue = venueRepository.findByIdOrNull(id) ?: return ResponseEntity.notFound().build<Any>()
         venueRepository.deleteById(id)
+        auditService.logEvent(venue, Log.LogType.DELETE)
         return ResponseEntity<HttpStatus>(HttpStatus.OK)
     }
 }

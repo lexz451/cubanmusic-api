@@ -2,6 +2,7 @@ package info.cubanmusic.cubanmusicapi.model
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.databind.util.StdDateFormat
+import info.cubanmusic.cubanmusicapi.helper.Auditable
 import org.hibernate.Hibernate
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.Type
@@ -13,7 +14,7 @@ import java.util.*
 import javax.persistence.*
 
 @Entity
-open class User {
+open class User : Auditable {
         @Id
         @GeneratedValue(strategy = GenerationType.AUTO)
         @Column(name = "id", nullable = false)
@@ -33,6 +34,12 @@ open class User {
 
         @OneToMany(mappedBy = "user")
         open var logs: MutableList<Log> = mutableListOf()
+
+        override fun entityId(): UUID? = null
+
+        override fun entityType(): String? = User::class.qualifiedName
+
+        override fun entityName(): String? = email
 
         override fun equals(other: Any?): Boolean {
                 if (this === other) return true

@@ -2,8 +2,10 @@ package info.cubanmusic.cubanmusicapi.controller
 
 import info.cubanmusic.cubanmusicapi.model.Award
 import info.cubanmusic.cubanmusicapi.model.AwardDto
+import info.cubanmusic.cubanmusicapi.model.Log
 import info.cubanmusic.cubanmusicapi.repository.AwardRepository
 import info.cubanmusic.cubanmusicapi.repository.CountryRepository
+import info.cubanmusic.cubanmusicapi.services.AuditService
 import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.findByIdOrNull
@@ -19,10 +21,12 @@ class AwardController {
 
     @Autowired
     lateinit var awardRepository: AwardRepository
-    @Autowired
-    lateinit var countryRepository: CountryRepository
+
     @Autowired
     lateinit var mapper: ModelMapper
+
+    @Autowired
+    lateinit var auditService: AuditService
 
     @GetMapping("")
     @Transactional(readOnly = true)
@@ -43,6 +47,7 @@ class AwardController {
     fun create(@RequestBody awardDTO: AwardDto): ResponseEntity<*> {
         var award = mapper.map(awardDTO, Award::class.java)
         award = awardRepository.save(award)
+        auditService.logEvent(award, Log.LogType.CREATE)
         return ResponseEntity(award.id, HttpStatus.OK)
     }
 
@@ -50,12 +55,15 @@ class AwardController {
     fun update(@PathVariable id: UUID, @RequestBody awardDTO: AwardDto): ResponseEntity<*> {
         var award = mapper.map(awardDTO, Award::class.java)
         award = awardRepository.save(award)
+        auditService.logEvent(award, Log.LogType.UPDATE)
         return ResponseEntity(award.id, HttpStatus.OK)
     }
 
     @DeleteMapping("/{id}")
     fun delete(@PathVariable id: UUID): ResponseEntity<*> {
-        awardRepository.deleteById(id)
+        val award = awardRepository.findByIdOrNull(id) ?: return ResponseEntity.notFound().build<Any>()
+        awardRepository.delete(award)
+        auditService.logEvent(award, Log.LogType.DELETE)
         return ResponseEntity<HttpStatus>(HttpStatus.OK)
     }
 

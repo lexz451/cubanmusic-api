@@ -1,8 +1,10 @@
 package info.cubanmusic.cubanmusicapi.controller
 
+import info.cubanmusic.cubanmusicapi.model.Log
 import info.cubanmusic.cubanmusicapi.model.Person
 import info.cubanmusic.cubanmusicapi.model.PersonDto
 import info.cubanmusic.cubanmusicapi.repository.*
+import info.cubanmusic.cubanmusicapi.services.AuditService
 import org.modelmapper.ModelMapper
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -24,6 +26,8 @@ class PersonController {
     private lateinit var personRepository: PersonRepository
     @Autowired
     private lateinit var mapper: ModelMapper
+    @Autowired
+    private lateinit var auditService: AuditService
 
 
     @GetMapping("")
@@ -47,6 +51,7 @@ class PersonController {
     fun create(@RequestBody personDto: PersonDto): ResponseEntity<Any> {
         var person = mapper.map(personDto, Person::class.java)
         person = personRepository.save(person)
+        auditService.logEvent(person, Log.LogType.CREATE)
         return ResponseEntity.ok(person.id)
     }
 
@@ -54,12 +59,15 @@ class PersonController {
     fun update(@RequestBody personDto: PersonDto): ResponseEntity<Any> {
         var person = mapper.map(personDto, Person::class.java)
         person = personRepository.save(person)
+        auditService.logEvent(person, Log.LogType.UPDATE)
         return ResponseEntity.ok(person.id)
     }
 
     @DeleteMapping("/{id}")
     fun delete(@PathVariable id: UUID): ResponseEntity<Any> {
-        personRepository.deleteById(id)
+        val person = personRepository.findByIdOrNull(id) ?: return ResponseEntity.notFound().build()
+        personRepository.delete(person)
+        auditService.logEvent(person, Log.LogType.DELETE)
         return ResponseEntity.ok().build()
     }
 }

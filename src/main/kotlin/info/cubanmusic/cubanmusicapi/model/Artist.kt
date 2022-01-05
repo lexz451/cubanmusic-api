@@ -1,23 +1,29 @@
 package info.cubanmusic.cubanmusicapi.model
 
+import info.cubanmusic.cubanmusicapi.helper.Auditable
 import org.hibernate.Hibernate
 import org.hibernate.annotations.Type
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.*
 import org.springframework.data.jpa.domain.AbstractAuditable
 import java.util.*
 import javax.persistence.*
 
 @Entity
-open class Artist {
+@Indexed(index = "artists_idx")
+open class Artist : Auditable {
     @Id
     @Column(name = "id", nullable = false)
     @Type(type="org.hibernate.type.UUIDCharType")
     open var id: UUID = UUID.randomUUID()
 
+    @FullTextField
     open var name: String? = null
 
+    @FullTextField
     @Lob
     open var biography: String? = null
 
+    @FullTextField
     open var alias: String? = null
 
     open var email: String? = null
@@ -94,6 +100,7 @@ open class Artist {
     )
     open var albums: MutableSet<Album> = mutableSetOf()
 
+    @FullTextField
     @ElementCollection
     @CollectionTable(name = "artist_additional_names", joinColumns = [JoinColumn(name = "owner_id")])
     @Column(name = "additional_name")
@@ -143,6 +150,12 @@ open class Artist {
             id = it
         } }.toMutableSet()
     }
+
+    override fun entityId(): UUID? = id
+
+    override fun entityType(): String? = Artist::class.qualifiedName
+
+    override fun entityName(): String? = name
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

@@ -10,5 +10,15 @@ import java.util.*
 
 interface AwardRepository : JpaRepository<Award, UUID>, JpaSpecificationExecutor<Award> {
 
+    @Cacheable("awards")
+    override fun findAll(): MutableList<Award>
+
+    @CacheEvict(
+        cacheNames = [
+            "awards"
+        ],
+        allEntries = true
+    )
+    override fun <S : Award?> save(entity: S): S
 
 }

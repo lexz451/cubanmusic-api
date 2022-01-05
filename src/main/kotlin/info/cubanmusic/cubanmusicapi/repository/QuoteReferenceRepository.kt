@@ -1,6 +1,8 @@
 package info.cubanmusic.cubanmusicapi.repository;
 
 import info.cubanmusic.cubanmusicapi.model.QuoteReference
+import org.springframework.cache.annotation.CacheEvict
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.data.jpa.repository.Query
@@ -8,7 +10,15 @@ import java.util.*
 
 interface QuoteReferenceRepository : JpaRepository<QuoteReference, UUID>, JpaSpecificationExecutor<QuoteReference> {
 
+    @Cacheable("quotesByArtist")
     @Query("select q from QuoteReference q where q.artist.id = ?1")
     fun findByArtistId(id: UUID): List<QuoteReference>
 
+    @CacheEvict(
+        cacheNames = [
+            "quotesByArtist"
+        ],
+        allEntries = true
+    )
+    override fun <S : QuoteReference?> save(entity: S): S
 }

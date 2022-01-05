@@ -1,17 +1,24 @@
 package info.cubanmusic.cubanmusicapi.model
 
+import info.cubanmusic.cubanmusicapi.helper.Auditable
 import org.hibernate.Hibernate
 import org.hibernate.annotations.Type
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.KeywordField
 import java.util.*
 import javax.persistence.*
 
 @Entity
-open class RecordLabel {
+@Indexed(index = "labels_idx")
+open class RecordLabel : Auditable {
     @Id
     @Column(name = "id", nullable = false)
     @Type(type="org.hibernate.type.UUIDCharType")
     open var id: UUID = UUID.randomUUID()
 
+    @FullTextField
     open var name: String? = null
 
     @Embedded
@@ -28,6 +35,7 @@ open class RecordLabel {
     open var address: String? = null
 
     @Lob
+    @FullTextField
     open var description: String? = null
 
     @Column(unique = true)
@@ -45,6 +53,12 @@ open class RecordLabel {
             album.recordLabel = null
         }
     }
+
+    override fun entityId(): UUID? = id
+
+    override fun entityType(): String? = RecordLabel::class.qualifiedName
+
+    override fun entityName(): String? = name
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
