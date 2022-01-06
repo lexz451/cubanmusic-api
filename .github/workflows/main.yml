@@ -59,7 +59,7 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.SSH_KEY_PASS }}
-          source: "./target/cubanmusic-api.jar"
+          source: "./target/cubanmusic-api.jar,.env"
           strip_components: 2
           target: "cubanmusic-api"
           rm: true
