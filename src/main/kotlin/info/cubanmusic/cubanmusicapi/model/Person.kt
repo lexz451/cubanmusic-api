@@ -58,6 +58,13 @@ open class Person : Artist() {
     @ManyToMany(mappedBy = "members")
     open var groups: MutableList<Group> = mutableListOf()
 
+    @PreRemove
+    fun onRemovePerson() {
+        for (group in this.groups) {
+            group.members.remove(this)
+        }
+    }
+
     fun setInstrumentsIds(ids: MutableSet<UUID>) {
         this.instruments = ids.map {
             Instrument().apply { id = it }
@@ -67,6 +74,7 @@ open class Person : Artist() {
     fun getInstrumentsIds(): MutableSet<UUID> {
         return this.instruments.map { it.id }.toMutableSet()
     }
+
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

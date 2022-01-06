@@ -24,6 +24,8 @@ class ArtistController {
     @Autowired
     private lateinit var articleReferenceRepository: ArticleReferenceRepository
     @Autowired
+    private lateinit var albumRepository: AlbumRepository
+    @Autowired
     private lateinit var imageRepository: ImageRepository
     @Autowired
     private lateinit var auditService: AuditService
@@ -45,6 +47,15 @@ class ArtistController {
         val artist = artistRepository.findByIdOrNull(id) ?: return ResponseEntity.notFound().build()
         val response = mapper.map(artist, ArtistDto::class.java)
         return ResponseEntity.ok(response)
+    }
+
+    @GetMapping("/{artistId}/albums")
+    @Transactional(readOnly = true)
+    fun getAlbums(@PathVariable artistId: UUID): ResponseEntity<Any> {
+        val albums = albumRepository.findByArtistsId(artistId).map {
+            mapper.map(it, AlbumDto::class.java)
+        }
+        return ResponseEntity.ok(albums)
     }
 
     @GetMapping("/{artistId}/quotes")

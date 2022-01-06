@@ -45,10 +45,10 @@ open class RecordLabel : Auditable {
     @FullTextField(analyzer = "stop")
     open var description: String? = null
 
-    @Column(unique = true)
+    @Column(unique = false)
     open var ipiCode: String? = null
 
-    @Column(unique = true)
+    @Column(unique = false)
     open var isniCode: String? = null
 
     @JsonIgnore

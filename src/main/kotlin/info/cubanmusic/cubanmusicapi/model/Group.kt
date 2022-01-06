@@ -34,6 +34,13 @@ open class Group : Artist() {
         return this.members.map { it.id }.toMutableSet()
     }
 
+    @PreRemove
+    fun onRemoveGroup() {
+        for (member in this.members) {
+            member.groups.remove(this)
+        }
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false

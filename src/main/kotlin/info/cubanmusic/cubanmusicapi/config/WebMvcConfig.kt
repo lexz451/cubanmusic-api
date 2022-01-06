@@ -13,7 +13,13 @@ class WebMvcConfig : WebMvcConfigurer {
 
     override fun addCorsMappings(registry: CorsRegistry) {
         registry.addMapping("/**")
-            .allowedOrigins("*")
+            .allowedOrigins(
+                "http://localhost:4200",
+                "http://localhost:1234",
+                "https://admin.cubanmusic.info",
+                "https://api.cubanmusic.info",
+                "https://cubanmusic.info"
+            )
             .allowedHeaders("*")
             .allowedMethods("HEAD", "OPTIONS", "GET", "POST", "PUT", "PATCH", "DELETE")
             .maxAge(MAX_AGE_SECS.toLong())

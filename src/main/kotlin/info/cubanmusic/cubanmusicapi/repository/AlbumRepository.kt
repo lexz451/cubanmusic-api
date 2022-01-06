@@ -2,6 +2,7 @@ package info.cubanmusic.cubanmusicapi.repository;
 
 import info.cubanmusic.cubanmusicapi.helper.Utils
 import info.cubanmusic.cubanmusicapi.model.Album
+import org.hibernate.Cache
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.cache.annotation.CachePut
 import org.springframework.cache.annotation.Cacheable
@@ -24,9 +25,15 @@ interface AlbumRepository : JpaRepository<Album, UUID>, JpaSpecificationExecutor
     @Query("select a from Album a where a.id = ?1")
     fun findByIdOrNull(id: UUID): Album?
 
+    @Cacheable("albumsByArtist", unless = Utils.CACHE_RESULT_EMPTY)
+    @EntityGraph("album")
+    @Query("select a from Album a left join a.artists artists where artists.id = ?1 order by a.copyrightYear")
+    fun findByArtistsId(id: UUID): MutableList<Album>
+
     @Caching(
         evict = [
-            CacheEvict("albums", allEntries = true)
+            CacheEvict("albums", allEntries = true),
+            CacheEvict("albumsByArtist", allEntries = true)
         ],
         put = [
             CachePut("album", key = Utils.CACHE_KEY_ID)
@@ -37,8 +44,13 @@ interface AlbumRepository : JpaRepository<Album, UUID>, JpaSpecificationExecutor
     @Caching(
         evict = [
             CacheEvict("albums", allEntries = true),
-            CacheEvict("album", key = Utils.CACHE_KEY_ID)
+            CacheEvict("album", key = Utils.CACHE_KEY_ID),
+            CacheEvict("albumsByArtist", allEntries = true)
         ]
     )
     override fun delete(entity: Album)
+
+
+
+
 }
