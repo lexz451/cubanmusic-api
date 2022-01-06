@@ -60,6 +60,6 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.SSH_KEY_PASS }}
           source: "./target/cubanmusic-api.war"
-          strip_components: 1
+          strip_components: 2
           target: "/opt/tomcat/webapps"
           rm: true
