@@ -60,7 +60,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.SSH_KEY_PASS }}
           source: "./target/cubanmusic-api.jar,.env"
-          strip_components: 2
+          #strip_components: 2
           target: "cubanmusic-api"
           rm: true
 
@@ -75,7 +75,7 @@ jobs:
           script: |
             cd cubanmusic-api
             kill -9 $(cat ../cubamusic.pid)
-            nohup java -jar ./cubanmusic-api.jar > ./log.txt 2>&1 &
+            nohup java -jar ./target/cubanmusic-api.jar > ./log.txt 2>&1 &
             echo $! > ../cubamusic.pid
             exit
 
