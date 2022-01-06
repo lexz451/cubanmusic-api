@@ -38,7 +38,7 @@ open class Person : Artist() {
     @JoinColumn(name = "residence_place_id")
     open var residencePlace: Location? = null
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "job_title_id")
     open var jobTitle: JobTitle? = null
 
