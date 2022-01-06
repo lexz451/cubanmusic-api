@@ -9,11 +9,7 @@ import org.springframework.cache.annotation.EnableCaching
 
 @SpringBootApplication
 @EnableCaching
-class Application : SpringBootServletInitializer() {
-	override fun configure(builder: SpringApplicationBuilder?): SpringApplicationBuilder? {
-		return builder?.sources(Application::class.java)
-	}
-}
+class Application
 fun main(args: Array<String>) {
 	runApplication<Application>(*args)
 }
