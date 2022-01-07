@@ -20,7 +20,7 @@ interface PersonRepository : JpaRepository<Person, UUID>, JpaSpecificationExecut
 
     @Cacheable("persons", unless = Utils.CACHE_RESULT_EMPTY)
     @Query("select p from Person p")
-    @EntityGraph("personPublic")
+    //@EntityGraph("personPublic")
     fun findAllPublic(): MutableList<Person>
 
     @Cacheable("person", unless = Utils.CACHE_RESULT_NULL)
