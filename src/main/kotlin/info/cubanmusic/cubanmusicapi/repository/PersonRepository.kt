@@ -15,7 +15,7 @@ import java.util.*
 interface PersonRepository : JpaRepository<Person, UUID>, JpaSpecificationExecutor<Person> {
 
     @Cacheable("persons", unless = Utils.CACHE_RESULT_EMPTY)
-    @EntityGraph("person")
+    //@EntityGraph("person")
     override fun findAll(): MutableList<Person>
 
     @Cacheable("persons", unless = Utils.CACHE_RESULT_EMPTY)
