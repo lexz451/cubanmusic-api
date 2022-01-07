@@ -56,7 +56,7 @@ class WebController {
     @GetMapping("/persons")
     @Transactional(readOnly = true)
     fun findArtists(): ResponseEntity<Any> {
-        val artists = personRepository.findAll().map {
+        val artists = personRepository.findAllPublic().map {
             mapper.map(it, PersonWebDto::class.java)
         }
         return ResponseEntity.ok(artists)
