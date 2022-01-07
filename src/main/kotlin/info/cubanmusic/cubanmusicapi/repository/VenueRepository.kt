@@ -15,8 +15,13 @@ import java.util.*
 @Repository
 interface VenueRepository : JpaRepository<Venue, UUID>, JpaSpecificationExecutor<Venue> {
 
+    @Query("select v from Venue v")
     @Cacheable("venues", unless = Utils.CACHE_RESULT_EMPTY)
     override fun findAll(): MutableList<Venue>
+
+    @Query("select v from Venue v")
+    @Cacheable("venues_public", unless = Utils.CACHE_RESULT_EMPTY)
+    fun findAllPublic(): MutableList<Venue>
 
     @Cacheable("venue", unless = Utils.CACHE_RESULT_NULL)
     @Query("select v from Venue v where v.id = ?1")
@@ -25,6 +30,7 @@ interface VenueRepository : JpaRepository<Venue, UUID>, JpaSpecificationExecutor
     @Caching(
         evict = [
             CacheEvict("venues", allEntries = true),
+            CacheEvict("venues_public", allEntries = true),
             CacheEvict("venue", key = Utils.CACHE_KEY_ID)
         ]
     )
@@ -32,7 +38,8 @@ interface VenueRepository : JpaRepository<Venue, UUID>, JpaSpecificationExecutor
 
     @Caching(
         evict = [
-            CacheEvict("venues", allEntries = true)
+            CacheEvict("venues", allEntries = true),
+            CacheEvict("venues_public", allEntries = true)
         ],
         put = [
             CachePut("venue", key = Utils.CACHE_KEY_ID)

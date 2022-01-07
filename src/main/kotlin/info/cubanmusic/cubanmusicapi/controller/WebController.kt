@@ -73,7 +73,7 @@ class WebController {
     @GetMapping("/groups")
     @Transactional(readOnly = true)
     fun findGroups(): ResponseEntity<Any> {
-        val groups = groupRepository.findAll().map {
+        val groups = groupRepository.findAllPublic().map {
             mapper.map(it, GroupWebDto::class.java)
         }
         return ResponseEntity.ok(groups)
@@ -82,7 +82,7 @@ class WebController {
     @GetMapping("/venues")
     @Transactional(readOnly = true)
     fun findVenues(): ResponseEntity<Any> {
-        val venues = venueRepository.findAll().map {
+        val venues = venueRepository.findAllPublic().map {
             mapper.map(it, VenueWebDto::class.java)
         }
         return ResponseEntity.ok(venues)
@@ -91,7 +91,7 @@ class WebController {
     @GetMapping("/organizations")
     @Transactional(readOnly = true)
     fun findOrganizations(): ResponseEntity<Any> {
-        val venues = organizationRepository.findAll().map {
+        val venues = organizationRepository.findAllPublic().map {
             mapper.map(it, OrganizationWebDto::class.java)
         }
         return ResponseEntity.ok(venues)
