@@ -5,12 +5,31 @@ import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed
 import java.util.*
 import javax.persistence.*
 
-@NamedEntityGraph(
-    name = "person",
-    attributeNodes = [
-        NamedAttributeNode("jobRoles"),
-        NamedAttributeNode("additionalNames"),
-        NamedAttributeNode("relatedArtists"),
+@NamedEntityGraphs(
+    value = [
+        NamedEntityGraph(
+            name = "person",
+            attributeNodes = [
+                NamedAttributeNode("jobRoles"),
+                NamedAttributeNode("additionalNames"),
+                NamedAttributeNode("relatedArtists"),
+            ]
+        ),
+        NamedEntityGraph(
+            name = "personPublic",
+            attributeNodes = [
+                NamedAttributeNode("jobRoles"),
+                NamedAttributeNode("jobTitle"),
+                NamedAttributeNode("additionalNames"),
+                NamedAttributeNode("relatedArtists"),
+                //NamedAttributeNode("articleReferences"),
+                //NamedAttributeNode("quoteReferences"),
+                NamedAttributeNode("residencePlace"),
+                NamedAttributeNode("instruments"),
+                NamedAttributeNode("albums"),
+                NamedAttributeNode("genres")
+            ]
+        )
     ]
 )
 @Indexed(index = "persons_idx")
@@ -74,7 +93,6 @@ open class Person : Artist() {
     fun getInstrumentsIds(): MutableSet<UUID> {
         return this.instruments.map { it.id }.toMutableSet()
     }
-
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
