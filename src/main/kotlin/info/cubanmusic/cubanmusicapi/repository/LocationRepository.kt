@@ -12,7 +12,7 @@ import java.util.*
 interface LocationRepository : JpaRepository<Location, UUID>, JpaSpecificationExecutor<Location> {
 
     @Cacheable("locations")
-    @EntityGraph("location")
+    //@EntityGraph("location")
     override fun findAll(): MutableList<Location>
 
     @CacheEvict("locations", allEntries = true)

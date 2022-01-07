@@ -16,12 +16,12 @@ import java.util.*
 interface RecordLabelRepository : JpaRepository<RecordLabel, UUID>, JpaSpecificationExecutor<RecordLabel> {
 
     @Cacheable("labels", unless = Utils.CACHE_RESULT_EMPTY)
-    @EntityGraph("record_label")
+    //@EntityGraph("record_label")
     override fun findAll(): MutableList<RecordLabel>
 
     @Cacheable("label", unless = Utils.CACHE_RESULT_NULL)
     @Query("select r from RecordLabel r where r.id = ?1")
-    @EntityGraph("record_label")
+    //@EntityGraph("record_label")
     fun findByIdOrNull(id: UUID): RecordLabel?
 
     @Caching(

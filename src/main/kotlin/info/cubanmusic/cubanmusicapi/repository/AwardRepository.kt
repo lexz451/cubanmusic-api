@@ -14,12 +14,12 @@ import java.util.*
 
 interface AwardRepository : JpaRepository<Award, UUID>, JpaSpecificationExecutor<Award> {
 
-    @EntityGraph("award")
+    //@EntityGraph("award")
     @Cacheable("awards", unless = Utils.CACHE_RESULT_EMPTY)
     override fun findAll(): MutableList<Award>
 
     @Cacheable("award", unless = Utils.CACHE_RESULT_NULL)
-    @EntityGraph("award")
+    //@EntityGraph("award")
     @Query("select a from Award a where a.id = ?1")
     fun findByIdOrNull(id: UUID): Award?
 

@@ -15,11 +15,9 @@ import java.util.*
 interface GroupRepository : JpaRepository<Group, UUID>, JpaSpecificationExecutor<Group> {
 
     @Cacheable("groups", unless = Utils.CACHE_RESULT_EMPTY)
-    @EntityGraph("group")
     override fun findAll(): MutableList<Group>
 
     @Cacheable("group", unless = Utils.CACHE_RESULT_NULL)
-    @EntityGraph("group")
     @Query("select g from Group g where g.id = ?1")
     fun findByIdOrNull(id: UUID): Group?
 

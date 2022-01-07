@@ -16,12 +16,12 @@ interface ArticleReferenceRepository : JpaRepository<ArticleReference, UUID>,
     JpaSpecificationExecutor<ArticleReference> {
 
     @Cacheable("articles", unless = Utils.CACHE_RESULT_EMPTY)
-    @EntityGraph("article")
+    //@EntityGraph("article")
     @Query("select a from ArticleReference a where a.artist.id = ?1")
     fun findByArtistId(id: UUID): List<ArticleReference>
 
     @Cacheable("article", unless = Utils.CACHE_RESULT_NULL)
-    @EntityGraph("article")
+    //@EntityGraph("article")
     @Query("select a from ArticleReference a where a.id = ?1")
     fun findByIdOrNull(id: UUID): ArticleReference?
 

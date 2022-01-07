@@ -15,12 +15,12 @@ import java.util.*
 interface QuoteReferenceRepository : JpaRepository<QuoteReference, UUID>, JpaSpecificationExecutor<QuoteReference> {
 
     @Cacheable("quotes", unless = Utils.CACHE_RESULT_EMPTY)
-    @EntityGraph("quote")
+    //@EntityGraph("quote")
     @Query("select q from QuoteReference q where q.artist.id = ?1")
     fun findByArtistId(id: UUID): List<QuoteReference>
 
     @Cacheable("quote", unless = Utils.CACHE_RESULT_NULL)
-    @EntityGraph("quote")
+    //@EntityGraph("quote")
     @Query("select q from QuoteReference q where q.id = ?1")
     fun findByIdOrNull(id: UUID): QuoteReference?
 

@@ -15,11 +15,11 @@ import java.util.*
 interface OrganizationRepository : JpaRepository<Organization, UUID>, JpaSpecificationExecutor<Organization> {
 
     @Cacheable("organizations", unless = Utils.CACHE_RESULT_EMPTY)
-    @EntityGraph("organization")
+    //@EntityGraph("organization")
     override fun findAll(): MutableList<Organization>
 
     @Cacheable("organization", unless = Utils.CACHE_RESULT_NULL)
-    @EntityGraph("organization")
+    //@EntityGraph("organization")
     @Query("select o from Organization o where o.id = ?1")
     fun findByIdOrNull(id: UUID): Organization?
 

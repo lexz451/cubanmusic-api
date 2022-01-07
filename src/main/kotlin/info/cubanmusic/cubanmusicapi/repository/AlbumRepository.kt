@@ -17,16 +17,16 @@ import java.util.*
 interface AlbumRepository : JpaRepository<Album, UUID>, JpaSpecificationExecutor<Album> {
 
     @Cacheable("albums", unless = Utils.CACHE_RESULT_EMPTY)
-    @EntityGraph("album")
+    //@EntityGraph("album")
     override fun findAll(): MutableList<Album>
 
     @Cacheable("album", unless = Utils.CACHE_RESULT_NULL)
-    @EntityGraph("album")
+    //@EntityGraph("album")
     @Query("select a from Album a where a.id = ?1")
     fun findByIdOrNull(id: UUID): Album?
 
     @Cacheable("albumsByArtist", unless = Utils.CACHE_RESULT_EMPTY)
-    @EntityGraph("album")
+    //@EntityGraph("album")
     @Query("select a from Album a left join a.artists artists where artists.id = ?1 order by a.copyrightYear")
     fun findByArtistsId(id: UUID): MutableList<Album>
 

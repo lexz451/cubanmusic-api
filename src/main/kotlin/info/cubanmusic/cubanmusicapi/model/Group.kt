@@ -5,14 +5,7 @@ import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed
 import java.util.*
 import javax.persistence.*
 
-@NamedEntityGraph(
-    name = "group",
-    attributeNodes = [
-        NamedAttributeNode("members"),
-        NamedAttributeNode("additionalNames"),
-        NamedAttributeNode("relatedArtists"),
-    ]
-)
+
 @Indexed(index = "groups_idx")
 @Entity
 open class Group : Artist() {

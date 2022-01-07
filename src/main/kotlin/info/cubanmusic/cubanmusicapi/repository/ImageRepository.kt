@@ -16,12 +16,12 @@ interface ImageRepository : JpaRepository<Image, UUID>, JpaSpecificationExecutor
 
 
     @Cacheable("images", unless = Utils.CACHE_RESULT_EMPTY)
-    @EntityGraph("image")
+    //@EntityGraph("image")
     @Query("select i from Image i where i.artist.id = ?1")
     fun findByArtistId(id: UUID): List<Image>
 
     @Cacheable("image", unless = Utils.CACHE_RESULT_NULL)
-    @EntityGraph("image")
+    //@EntityGraph("image")
     @Query("select i from Image i where i.id = ?1")
     fun findByIdOrNull(id: UUID): Image?
 
