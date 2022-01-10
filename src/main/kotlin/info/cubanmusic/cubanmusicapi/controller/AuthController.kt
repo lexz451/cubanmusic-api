@@ -17,11 +17,7 @@ import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.password.PasswordEncoder
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -44,6 +40,14 @@ class AuthController {
     fun getUsers(): ResponseEntity<Any> {
         val users = userRepository.findAll().map { mapper.map(it, UserDto::class.java) }
         return ResponseEntity.ok(users)
+    }
+
+    @DeleteMapping("/users/{id}")
+    fun removeUser(@PathVariable id: Long): ResponseEntity<Any> {
+        val user = userRepository.findByIdOrNull(id) ?: return ResponseEntity.notFound().build()
+        userRepository.delete(user)
+        auditService.logEvent(user, Log.LogType.DELETE)
+        return ResponseEntity.ok().build()
     }
 
     @PostMapping("/signin")
