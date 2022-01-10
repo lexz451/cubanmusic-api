@@ -8,12 +8,6 @@ import org.springframework.data.jpa.domain.AbstractAuditable
 import java.util.*
 import javax.persistence.*
 
-@NamedEntityGraph(
-    name = "quote",
-    attributeNodes = [
-        NamedAttributeNode("artist")
-    ]
-)
 @Entity
 open class QuoteReference : Auditable {
     @Id

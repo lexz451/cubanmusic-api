@@ -11,12 +11,7 @@ import org.springframework.data.jpa.domain.AbstractAuditable
 import java.util.*
 import javax.persistence.*
 
-@NamedEntityGraph(
-    name = "article",
-    attributeNodes = [
-        NamedAttributeNode("artist")
-    ]
-)
+
 @Entity
 open class ArticleReference : Auditable {
 

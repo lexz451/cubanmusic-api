@@ -11,12 +11,7 @@ import org.hibernate.search.mapper.pojo.mapping.definition.annotation.KeywordFie
 import java.util.*
 import javax.persistence.*
 
-@NamedEntityGraph(
-    name = "record_label",
-    attributeNodes = [
-        NamedAttributeNode("country")
-    ]
-)
+
 @Entity
 @Indexed(index = "labels_idx")
 open class RecordLabel : Auditable {

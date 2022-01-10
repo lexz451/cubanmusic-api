@@ -8,13 +8,7 @@ import org.springframework.data.jpa.domain.AbstractAuditable
 import java.util.*
 import javax.persistence.*
 
-@NamedEntityGraph(
-    name = "artist",
-    attributeNodes = [
-        NamedAttributeNode("additionalNames"),
-        NamedAttributeNode("relatedArtists")
-    ]
-)
+
 @Entity
 @Indexed(index = "artists_idx")
 open class Artist : Auditable {

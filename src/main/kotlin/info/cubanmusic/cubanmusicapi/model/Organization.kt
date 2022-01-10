@@ -11,12 +11,7 @@ import org.springframework.data.jpa.domain.AbstractAuditable
 import java.util.*
 import javax.persistence.*
 
-@NamedEntityGraph(
-    name = "organization",
-    attributeNodes = [
-        NamedAttributeNode("country")
-    ]
-)
+
 @Entity
 @Indexed(index = "organizations_idx")
 open class Organization : Auditable {

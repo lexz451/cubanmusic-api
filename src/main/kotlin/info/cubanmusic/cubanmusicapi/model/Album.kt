@@ -10,12 +10,7 @@ import org.hibernate.search.mapper.pojo.mapping.definition.annotation.KeywordFie
 import java.util.*
 import javax.persistence.*
 
-@NamedEntityGraph(
-    name = "album",
-    attributeNodes = [
-        NamedAttributeNode("contributors")
-    ]
-)
+
 @Entity
 @Indexed(index = "album_idx")
 open class Album : Auditable {

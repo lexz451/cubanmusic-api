@@ -105,12 +105,6 @@ class WebController {
             .where { p -> p.match().fields(*indexedFields).matching(query).fuzzy(2,1) }
             .loading { o ->
                 (o as SearchLoadingOptionsStep)
-                    //.graph("award", GraphSemantic.FETCH)
-                    .graph("person", GraphSemantic.FETCH)
-                    .graph("album", GraphSemantic.FETCH)
-                    .graph("group", GraphSemantic.FETCH)
-                    //.graph("record_label", GraphSemantic.FETCH)
-                    .graph("organization", GraphSemantic.FETCH)
                     .cacheLookupStrategy(EntityLoadingCacheLookupStrategy.PERSISTENCE_CONTEXT_THEN_SECOND_LEVEL_CACHE)
             }
             .fetchHits(resultSize ?: 10)
